@@ -1,20 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { Box, Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import Button from "react-bootstrap/Button";
+import { Box, Select, Switch, Typography } from "@mui/material";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 import axios from "axios";
-function Users({ users, roles }) {
-    const [create, setCreate] = useState(true);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [idRole, setIdRole] = useState(0);
+import { DataGrid } from "@mui/x-data-grid";
+function Users({ roles, users }) {
+    const [show1, setShow1] = useState(false);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
+    const handleClose1 = () => setShow1(false);
+    const style = {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 400,
+        bgcolor: "background.paper",
+        border: "2px solid #000",
+        boxShadow: 24,
+        p: 4,
+    };
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [idRole, setIdRole] = useState(0);
+    const [data, setData] = useState(users);
+    const handleShow = () => setShow(true);
+    const resetCreate = () => {
+        setName("");
+        setEmail("");
+        setIdRole(0);
+        handleClose();
+    };
     const notyf = new Notyf({
         duration: 1000,
         position: {
@@ -39,185 +58,372 @@ function Users({ users, roles }) {
             },
             {
                 type: "success",
-                background: "green",
-                color: "white",
+                background: "#7dd3e8",
                 duration: 2000,
                 dismissible: true,
             },
-            {
-                type: "info",
-                background: "#24b3f0",
-                color: "white",
-                duration: 1500,
-                dismissible: false,
-                icon: '<i class="bi bi-bag-check"></i>',
-            },
         ],
     });
-    const resetCreate = () => {
-        setIdRole(0);
-        setEmail("");
-        setName("");
-        setFullName('');
-        setShow(true);
+    const [idUser, setIdUser] = useState(0);
+
+    const setEditRole = (idUser) => {
+        setIdUser(idUser);
+        setShow1(true);
     };
-    const submitUser =()=>{
-        if(name==''){
+    const formatCreatedAt = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString();
+    };
+    const submitCreate = () => {
+        if (name == "") {
             notyf.open({
                 type: "error",
-                message: "Vui lòng nhập tên tài khoản",
-              });
-        }else if(email==''){
+                message: "Username is required",
+            });
+        } else if (email == "") {
             notyf.open({
                 type: "error",
-                message: "Vui lòng nhập email",
-              });
-        }else if(fullName==''){
+                message: "Email is required",
+            });
+        } else if (idRole == 0) {
             notyf.open({
                 type: "error",
-                message: "Vui lòng nhập họ tên",
-              });
-        }else if(idRole==0){
-            notyf.open({
-                type: "error",
-                message: "Vui lòng chọn loại tài khoản",
-              });
+                message: "Please choose a role",
+            });
+        } else {
+            axios
+                .post(
+                    "/users",
+                    {
+                        name: name,
+                        email: email,
+                        idRole: idRole,
+                    }
+                    // {
+                    //     headers: {
+                    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    //         Accept: "application/json",
+                    //     },
+                    // }
+                )
+                .then((res) => {
+                    if (res.data.check == false) {
+                        if (res.data.msg) {
+                            notyf.open({
+                                type: "error",
+                                message: res.data.msg,
+                            });
+                        }
+                    } else if (res.data.check == true) {
+                        notyf.open({
+                            type: "success",
+                            message: "Tạo tài khoản thành công",
+                        });
+                        resetCreate();
+                        if (res.data.data) {
+                            setData(res.data.data);
+                            resetCreate();
+                        } else {
+                            setData([]);
+                        }
+                    }
+                });
+        }
+    };
+    function switchUser(params, value) {
+        if(params.row.status==1){
+            var newStatus=0;
         }else{
-            axios.post('/admin/users',{
-                name:name,
-                email:email,
-                fullName:fullName,
-                idRole:idRole
-            }).then((res)=>{
-                if(res.data.check==true){
+            var newStatus=1;
+        }
+            axios.put("/admin/users/" + params.id, {
+            status:newStatus
+        }).then((res) => {
+            if (res.data.check == false) {
+                if (res.data.msg) {
+                    notyf.open({
+                        type: "error",
+                        message: res.data.msg,
+                    });
+                }
+            } else if (res.data.check == true) {
+                notyf.open({
+                    type: "success",
+                    message: "Switch successfully",
+                });
+                if (res.data.data) {
+                    setData(res.data.data);
+                } else {
+                    setData([]);
+                }
+            }
+        });
+    }
+    const submitEdit = () => {
+        if (idRole == 0 || idUser == 0) {
+            notyf.open({
+                type: "error",
+                message: "Data is missing",
+            });
+            console.log(idRole, idUser);
+        } else {
+            axios
+                .put("/users/" + idUser, {
+                    idRole: idRole,
+                })
+                .then((res) => {
+                    if (res.data.check == false) {
+                        if (res.data.msg) {
+                            notyf.open({
+                                type: "error",
+                                message: res.data.msg,
+                            });
+                        }
+                    } else if (res.data.check == true) {
+                        notyf.open({
+                            type: "success",
+                            message: "Thêm tài khoản thành công",
+                        });
+                        const updatedUsers = res.data.data.map((user) => {
+                            return {
+                                ...user,
+                                rolename: user.role.name,
+                            };
+                        });
+                        setData(updatedUsers);
+                        setIdRole(0);
+                        setShow1(false);
+                    }
+                });
+        }
+    };
+
+    const columns = [
+        {
+            field: "id",
+            headerName: "#",
+            width: 100,
+            renderCell: (params) => params.rowIndex,
+        },
+        { field: "name", headerName: "Username", width: 100, editable: true },
+        { field: "email", headerName: "Email", width: 200, editable: true },
+        {
+            field: "status",
+            headerName: "Status",
+            width: 70,
+            renderCell: (params) => (
+                <Switch
+                    checked={params.value == 1}
+                    onChange={(e) => switchUser(params, e.target.value)}
+                    inputProps={{ "aria-label": "controlled" }}
+                />
+            ),
+        },
+        {
+            field: "roleName",
+            headerName: "Role Name",
+            width: 130,
+            renderCell: (params) => params.row.role.name,
+        },
+        {
+            field: "created_at",
+            headerName: "Created at",
+            width: 200,
+            valueGetter: (params) => formatCreatedAt(params),
+        },
+        {
+            headerName: "Roles",
+            width: 70,
+            renderCell: (params) => (
+                <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => setEditRole(params.id)}
+                >
+                    Roles
+                </button>
+            ),
+        },
+    ];
+    const handleCellEditStop = (id, field, params, value) => {
+        let data = {};
+        console.log(params);
+        if (field == "email") {
+            data = {
+                id: id,
+                name: params.row.name,
+                email: value,
+            };
+        } else if (field == "name") {
+            data = {
+                id: id,
+                name: value,
+                email: params.row.email,
+            };
+        }
+        axios
+            .put(`/users/${id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Accept: "application/json",
+                },
+            })
+            .then((res) => {
+                if (res.data.check == true) {
                     notyf.open({
                         type: "success",
-                        message: "Đã tạo tài khoản",
-                      });
-                      resetCreate();
-                }else if(res.data.check==false){
-                    if(res.data.msg){
-                        notyf.open({
-                            type: "error",
-                            message: res.data.msg,
-                          });
-                    }
+                        message: "User is updated successfully",
+                    });
+                    setData(res.data.data);
+                } else if (res.data.check == false) {
+                    notyf.open({
+                        type: "error",
+                        message: res.data.msg,
+                    });
                 }
-            })
-        }
-    }
+            });
+    };
+    useEffect(() => {}, []);
     return (
         <Layout>
             <>
-                <Modal show={show} onHide={handleClose}>
+                <Modal show={show1} onHide={handleClose1}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Tạo tài khoản</Modal.Title>
+                        <Modal.Title>Roles Modal</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div className="input-group mb-3">
-                            <span
-                                className="input-group-text"
-                                id="basic-addon1"
-                            >
-                                Username
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Username"
-                                aria-label="Username"
-                                aria-describedby="basic-addon1"
-                                onChange={(e)=>setName(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-group mb-3">
-                            <span
-                                className="input-group-text"
-                                id="basic-addon2"
-                            >
-                                Email
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Email"
-                                aria-label="Email"
-                                aria-describedby="basic-addon2"
-                                onChange={(e)=>setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-group mb-3">
-                            <span
-                                className="input-group-text"
-                                id="basic-addon3"
-                            >
-                                Họ tên
-                            </span>
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Họ tên"
-                                aria-label="Họ tên"
-                                aria-describedby="basic-addon3"
-                                onChange={(e)=>setFullName(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-group mb-3">
-                            <span
-                                className="input-group-text"
-                                id="basic-addon4"
-                            >
-                                Loại tài khoản
-                            </span>
-                            <select name="" id="" defaultValue={0} onChange={(e)=>setIdRole(e.target.value)} className="form-control">
-                                <option value={0} disabled>Chọn loại tài khoản</option>
-                                {roles.length>0 && roles.map((item,index)=>(
-                                    <option key={index} value={item.id}>{item.name}</option>
+                        <select
+                            name=""
+                            onChange={(e) => setIdRole(e.target.value)}
+                            defaultValue={idRole}
+                            className="form-control"
+                        >
+                            <option value="0" disabled>
+                                Choose a role
+                            </option>
+                            {roles &&
+                                roles.length > 0 &&
+                                roles.map((item, index) => (
+                                    <option key={index} value={item.id}>
+                                        {item.name}
+                                    </option>
                                 ))}
-                            </select>
-                        </div>
+                        </select>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Đóng
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handleClose}
+                        >
+                            Close
                         </Button>
-                        <Button variant="primary" onClick={(e) => submitUser()}>
-                            Tạo mới
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => submitEdit()}
+                        >
+                            Save
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                    <div className="container-fluid">
+
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>User Modal</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <input
+                            type="text"
+                            placeholder={
+                                name == "" ? "Please input username" : ""
+                            }
+                            value={name}
+                            className="form-control mb-2"
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            placeholder={
+                                email == "" ? "Please input email " : ""
+                            }
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="form-control mb-2"
+                        />
+                        <select
+                            defaultValue={idRole}
+                            onChange={(e) => setIdRole(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value={0} disabled>
+                                Choose a role
+                            </option>
+                            {roles &&
+                                roles.length > 0 &&
+                                roles.map((item, index) => (
+                                    <option key={index} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={handleClose}
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => submitCreate()}
+                        >
+                            Save
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <div className="row mb-2">
+                    <div className="col-md-2">
                         <button
-                            className="navbar-toggler"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#navbarSupportedContent"
-                            aria-controls="navbarSupportedContent"
-                            aria-expanded="false"
-                            aria-label="Toggle navigation"
+                            className="btn btn-sm btn-primary"
+                            onClick={handleShow}
                         >
-                            <span className="navbar-toggler-icon" />
+                            Create
                         </button>
-                        <div
-                            className="collapse navbar-collapse"
-                            id="navbarSupportedContent"
-                        >
-                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li className="nav-item">
-                                    <a
-                                        className="btn btn-primary"
-                                        onClick={(e) => resetCreate()}
-                                        aria-current="page"
-                                        href="#"
-                                    >
-                                        Tạo mới
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
-                </nav>
+                </div>
+                <div className="row">
+                    <div className="col-md-7">
+                        {data && data.length > 0 && (
+                            <Box sx={{ height: 400, width: "100%" }}>
+                                <DataGrid
+                                    rows={data}
+                                    columns={columns}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 5,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[5]}
+                                    checkboxSelection
+                                    disableRowSelectionOnClick
+                                    onCellEditStop={(params, e) =>
+                                        handleCellEditStop(
+                                            params.row.id,
+                                            params.field,
+                                            params,
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </Box>
+                        )}
+                    </div>
+                </div>
             </>
         </Layout>
     );
