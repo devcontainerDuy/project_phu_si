@@ -53,6 +53,7 @@
   <h1>Tạo tài khoản mới</h1>
   <ul>
     <li> Email: {{$data['email']}}</li>
+    <li> Tên đăng nhập: {{$data['name']}}</li>
     <li> Password: {{$data['password']}}</li>
   </ul>
 </div>

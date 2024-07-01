@@ -1,6 +1,6 @@
 <?php
 
-namespace Leo\Users\Mail;
+namespace App\Mail\Users;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,18 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CreateUser extends Mailable
+class Create extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     protected $data;
 
-    public function __construct($data)
+    /**
+     * Create a new message instance.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data)
     {
-        $this->data=$data;
+        $this->data = $data;
     }
 
     /**
@@ -29,17 +31,17 @@ class CreateUser extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Admin Phú Sĩ- Thông báo tài khoản',
+            subject: 'Admin Phú Sĩ - Thông báo tài khoản',
         );
     }
 
     /**
-     * Get the message content definition.
+     * Build the message.
      */
     public function build()
     {
-        return $this->view('mail::create')
-                    ->with(['data' => $this->data]);
+        return $this->view('mail.create')
+                    ->with('data', $this->data);
     }
 
     /**

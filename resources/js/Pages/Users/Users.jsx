@@ -11,6 +11,7 @@ function Users({ users, roles }) {
     const [create, setCreate] = useState(true);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [fullName, setFullName] = useState("");
     const [idRole, setIdRole] = useState(0);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -57,8 +58,54 @@ function Users({ users, roles }) {
         setIdRole(0);
         setEmail("");
         setName("");
+        setFullName('');
         setShow(true);
     };
+    const submitUser =()=>{
+        if(name==''){
+            notyf.open({
+                type: "error",
+                message: "Vui lòng nhập tên tài khoản",
+              });
+        }else if(email==''){
+            notyf.open({
+                type: "error",
+                message: "Vui lòng nhập email",
+              });
+        }else if(fullName==''){
+            notyf.open({
+                type: "error",
+                message: "Vui lòng nhập họ tên",
+              });
+        }else if(idRole==0){
+            notyf.open({
+                type: "error",
+                message: "Vui lòng chọn loại tài khoản",
+              });
+        }else{
+            axios.post('/admin/users',{
+                name:name,
+                email:email,
+                fullName:fullName,
+                idRole:idRole
+            }).then((res)=>{
+                if(res.data.check==true){
+                    notyf.open({
+                        type: "success",
+                        message: "Đã tạo tài khoản",
+                      });
+                      resetCreate();
+                }else if(res.data.check==false){
+                    if(res.data.msg){
+                        notyf.open({
+                            type: "error",
+                            message: res.data.msg,
+                          });
+                    }
+                }
+            })
+        }
+    }
     return (
         <Layout>
             <>
@@ -72,7 +119,7 @@ function Users({ users, roles }) {
                                 className="input-group-text"
                                 id="basic-addon1"
                             >
-                                @
+                                Username
                             </span>
                             <input
                                 type="text"
@@ -80,7 +127,54 @@ function Users({ users, roles }) {
                                 placeholder="Username"
                                 aria-label="Username"
                                 aria-describedby="basic-addon1"
+                                onChange={(e)=>setName(e.target.value)}
                             />
+                        </div>
+                        <div className="input-group mb-3">
+                            <span
+                                className="input-group-text"
+                                id="basic-addon2"
+                            >
+                                Email
+                            </span>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Email"
+                                aria-label="Email"
+                                aria-describedby="basic-addon2"
+                                onChange={(e)=>setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div className="input-group mb-3">
+                            <span
+                                className="input-group-text"
+                                id="basic-addon3"
+                            >
+                                Họ tên
+                            </span>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Họ tên"
+                                aria-label="Họ tên"
+                                aria-describedby="basic-addon3"
+                                onChange={(e)=>setFullName(e.target.value)}
+                            />
+                        </div>
+                        <div className="input-group mb-3">
+                            <span
+                                className="input-group-text"
+                                id="basic-addon4"
+                            >
+                                Loại tài khoản
+                            </span>
+                            <select name="" id="" defaultValue={0} onChange={(e)=>setIdRole(e.target.value)} className="form-control">
+                                <option value={0} disabled>Chọn loại tài khoản</option>
+                                {roles.length>0 && roles.map((item,index)=>(
+                                    <option key={index} value={item.id}>{item.name}</option>
+                                ))}
+                            </select>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
