@@ -33,7 +33,7 @@ function Layout({ children }) {
             <SubMenu label="Tài khoản" icon={<GroupIcon />}>
             <a href={'/admin/permissions'}> <MenuItem icon={<GroupIcon />}>Quyền tài khoản</MenuItem></a>
            <a href={'/admin/roles'}> <MenuItem icon={<GroupIcon />}>Loại tài khoản</MenuItem></a>
-           <a href={'/users'}> <MenuItem icon={<GroupIcon />}>Tài khoản</MenuItem></a>
+           <a href={'/admin/users'}> <MenuItem icon={<GroupIcon />}>Tài khoản</MenuItem></a>
             </SubMenu>
             <SubMenu label="Sản phẩm" icon={<BrandingWatermarkIcon />}>
             <a href={'/categories'}> <MenuItem icon={<CategoryIcon />}>Loại sản phẩm</MenuItem></a>
@@ -45,7 +45,7 @@ function Layout({ children }) {
            <a href={'/services'}> <MenuItem icon={<DesignServicesTwoToneIcon />}>Dịch vụ </MenuItem></a>
            <a href={'/logout'}> <MenuItem icon={<LogoutIcon />}>Log out</MenuItem></a>
 
-{/*             
+{/*
             <MenuItem icon={<ReceiptOutlinedIcon />}>Profile</MenuItem>
             <MenuItem icon={<HelpOutlineOutlinedIcon />}>FAQ</MenuItem>
             <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem> */}

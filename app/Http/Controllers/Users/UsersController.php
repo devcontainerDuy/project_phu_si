@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\Users\Create;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
@@ -28,11 +29,28 @@ class UsersController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function login()
     {
-        //
+        return Inertia::render('Login/SignIn');
     }
-
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function checkLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'=>'required|email|exists:users,email',
+            'password'=>'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check'=>false,'msg'=>$validator->errors()->first()]);
+        }
+        if(Auth::attempt(['email'=>$request->email,'password'=>$request->password,'status'=>1],true)){
+            return response()->json(['check'=>true]);
+        }else{
+            return response()->json(['check'=>false,'msg'=>'Tài khoản không hợp lệ']);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -74,9 +92,10 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function logout(User $user)
     {
-        //
+        Auth::logout();
+        return redirect('/');
     }
 
     /**
@@ -98,7 +117,7 @@ class UsersController extends Controller
             'idRole'=>'exists:roles,id',
         ],[
             'name.required' => 'Tên tài khoản là bắt buộc.',
-            'name.unique' => 'Loại tài khoản bị trùng.',
+            'name.unique' => 'Tên tài khoản bị trùng.',
             'fullName.required' => 'Họ và tên là bắt buộc.',
             'email.required' => 'Email là bắt buộc.',
             'email.email' => 'Email không đúng định dạng.',
