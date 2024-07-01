@@ -1,0 +1,9 @@
+*{
+    font-family: 'Times New Roman', Times, serif;
+}
+.modal-header{
+    font-size: 15px;
+}
+a {
+    text-decoration: none !important;
+}
