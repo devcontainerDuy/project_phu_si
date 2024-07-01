@@ -22,5 +22,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 });
 Route::get('/',[UsersController::class,'login'])->name('login');
 Route::post('/checkLogin',[UsersController::class,'checkLogin'])->middleware('web');
+Route::get('/logout',[UsersController::class,'logout'])->name('logout');
 
 

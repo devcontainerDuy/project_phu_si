@@ -92,9 +92,10 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function logout(User $user)
     {
-        //
+        Auth::logout();
+        return redirect('/');
     }
 
     /**
