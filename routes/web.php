@@ -7,7 +7,7 @@ use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\UsersController;
 
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('permissions', PermissionsController::class);
     //================================
     Route::post('/permissions/add-role-permision',[PermissionsController::class,'role_permission']);
@@ -18,5 +18,9 @@ Route::prefix('admin')->group(function () {
 
     //===========================================================
     Route::resource('users', UsersController::class);
-
+    //==========================================================
 });
+Route::get('/',[UsersController::class,'login'])->name('login');
+Route::post('/checkLogin',[UsersController::class,'checkLogin'])->middleware('web');
+
+

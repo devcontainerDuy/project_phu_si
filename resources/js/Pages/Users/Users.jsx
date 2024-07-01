@@ -149,7 +149,7 @@ function Users({ roles, users }) {
             } else if (res.data.check == true) {
                 notyf.open({
                     type: "success",
-                    message: "Switch successfully",
+                    message: "Chuyển trạng thái tài khoản thành công",
                 });
                 if (res.data.data) {
                     setData(res.data.data);
@@ -165,10 +165,9 @@ function Users({ roles, users }) {
                 type: "error",
                 message: "Data is missing",
             });
-            console.log(idRole, idUser);
         } else {
             axios
-                .put("/users/" + idUser, {
+                .put("/admin/users/" + idUser, {
                     idRole: idRole,
                 })
                 .then((res) => {
@@ -182,7 +181,7 @@ function Users({ roles, users }) {
                     } else if (res.data.check == true) {
                         notyf.open({
                             type: "success",
-                            message: "Thêm tài khoản thành công",
+                            message: "Thay đổi tài khoản thành công",
                         });
                         const updatedUsers = res.data.data.map((user) => {
                             return {
@@ -245,41 +244,35 @@ function Users({ roles, users }) {
         },
     ];
     const handleCellEditStop = (id, field, params, value) => {
-        let data = {};
-        console.log(params);
-        if (field == "email") {
-            data = {
-                id: id,
-                name: params.row.name,
-                email: value,
-            };
-        } else if (field == "name") {
-            data = {
-                id: id,
-                name: value,
-                email: params.row.email,
-            };
-        }
+        let data = { [field]: value };
+
         axios
-            .put(`/users/${id}`, data, {
+            .put(`/admin/users/${id}`, data, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                     Accept: "application/json",
                 },
             })
             .then((res) => {
-                if (res.data.check == true) {
+                if (res.data.check) {
                     notyf.open({
                         type: "success",
-                        message: "User is updated successfully",
+                        message: "Thay đổi thông tin thành công",
                     });
                     setData(res.data.data);
-                } else if (res.data.check == false) {
+                } else {
                     notyf.open({
                         type: "error",
                         message: res.data.msg,
                     });
                 }
+            })
+            .catch((error) => {
+                console.error(error);
+                notyf.open({
+                    type: "error",
+                    message: "An error occurred while updating the user.",
+                });
             });
     };
     useEffect(() => {}, []);

@@ -59,7 +59,7 @@ class PermissionsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function get_permissions($id){ 
+    public function get_permissions($id){
         $permissions = RoleHasPermission::where('role_id', $id)->pluck('permission_id');
         return response()->json(['permissions'=>$permissions]);
     }
@@ -78,7 +78,7 @@ class PermissionsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:permissions,name',
-          
+
         ], [
             'name.required' => 'Chưa nhận được quyền tài khoản',
             'name.unique' => 'Quyền tài khoản bị trùng',
