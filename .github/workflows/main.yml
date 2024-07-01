@@ -26,10 +26,13 @@ jobs:
       - name: Update Composer dependencies
         run: |
           composer update --no-scripts --no-progress --no-suggest
-          
+
       - name: Install Node Modules
         run: npm update
-        
+
+      - name: Build the frontend assets
+        run: npm run build
+
       - name: Dump autoload files
         run: composer dump-autoload --optimize
 
@@ -49,4 +52,3 @@ jobs:
           exclude: |
               .git*
               .gitignored:\htaccessfile\.HTACCESS_PHP.txt
-
