@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Users;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Roles;
+use Inertia\Inertia;
 
 class UsersController extends Controller
 {
@@ -12,7 +15,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $roles=Roles::all();
+        return Inertia::render('Users/Users',['roles'=>$roles]);
+
     }
 
     /**
