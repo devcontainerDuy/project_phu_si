@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Users\PermissionsController;
 use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\UsersController;
-
+use App\Http\Controllers\Collections\ProductCollection;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('permissions', PermissionsController::class);
@@ -18,6 +18,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     //===========================================================
     Route::resource('users', UsersController::class);
+    //==========================================================
+    Route::resource('collections', ProductCollection::class);
     //==========================================================
 });
 Route::get('/',[UsersController::class,'login'])->name('login');
