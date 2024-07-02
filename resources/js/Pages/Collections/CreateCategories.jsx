@@ -3,8 +3,8 @@ import Layout from "../../components/Layout";
 import { Notyf } from "notyf";
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-function Create({collections}) {
-    const [collection,setCollection]= useState('');
+function CreateCategories({collections}) {
+    const [category,setCategory]= useState('');
     const [position,setPosition]= useState(1);
     const [data,setData]=useState(collections);
     const notyf = new Notyf({
@@ -127,4 +127,4 @@ function Create({collections}) {
     );
 }
 
-export default Create;
+export default CreateCategories;
