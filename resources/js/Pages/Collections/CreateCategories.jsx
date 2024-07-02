@@ -48,17 +48,18 @@ function CreateCategories({collections,categories}) {
                 message: "Thiếu danh mục cha",
             });
         }else{
-            axios.post('/admin/collections',{
-                category:category,
-                position:position
+            axios.post('/admin/categories',{
+                name:category,
+                position:position,
+                id_collection:Number(id_collection),
+                id_parent:id_parent,
             }).then((res)=>{
                 if(res.data.check==true){
                     notyf.open({
                         type: "success",
                         message: "Thêm thành công",
                     });
-                    setCollection('');
-                    setPosition('');
+                    window.location.reload();
                 }else if(res.data.check==false){
                     notyf.open({
                         type: "error",

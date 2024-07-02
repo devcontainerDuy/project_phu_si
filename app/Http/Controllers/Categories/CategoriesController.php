@@ -19,7 +19,21 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Categories::with('parent')->get();
+        $parentCategories = Categories::whereNull('id_parent')->get();
+        $categories = $categories->map(function($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'status' => $category->status,
+                'id_parent' => $category->id_parent,
+                'position' => $category->position,
+                'created_at' => $category->created_at,
+                'parent_name' => $category->parent ? $category->parent->name : '',
+            ];
+        });
+        return Inertia::render('Collections/Categories',['categories'=>$categories,'parentCategories'=>$parentCategories]);
     }
 
     /**
@@ -38,19 +52,17 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'collection' => 'required',
-            'id_collection'=>'required|numeric|exists:collections,id',
-            'id_parent'=>'exists:categories,id',
+            'name' => 'required',
+            'id_collection'=>'required|exists:collections,id',
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
         $data=$request->all();
-        $data['slug']= Str::slug($request->collection);
+        $data['slug']= Str::slug($request->name);
         $data['created_at']= now();
         Categories::create($data);
-        $result = Categories::all();
-        return response()->json(['check'=>true,'data'=>$result]);
+        return response()->json(['check'=>true]);
     }
 
     /**
@@ -72,9 +84,31 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Categories $categories)
+    public function update(Request $request, Categories $categories,$id)
     {
-        //
+        $data=$request->all();
+        if($request->has('name')){
+            $data['slug']=Str::slug($request->name);
+        }
+        $collection=Categories::find($id);
+        if(!$collection){
+            return response()->json(['check'=>false,'msg'=>'Không tìm thấy danh mục sản phẩm']);
+        }
+        Categories::where('id',$id)->update($data);
+        $categories = Categories::with('parent')->get();
+        $categories = $categories->map(function($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'status' => $category->status,
+                'id_parent'=>$category->id_parent,
+                'position' => $category->position,
+                'created_at' => $category->created_at,
+                'parent_name' => $category->parent ? $category->parent->name : '',
+            ];
+        });
+        return response()->json(['check'=>true,'data'=>$categories]);
     }
 
     /**

@@ -14,10 +14,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //================================
     Route::post('/permissions/add-role-permision',[PermissionsController::class,'role_permission']);
     Route::get('/permissions/roles/{id}',[PermissionsController::class,'get_permissions']);
-
     //===========================================================
     Route::resource('roles', RolesController::class);
-
     //===========================================================
     Route::resource('users', UsersController::class);
     //==========================================================
