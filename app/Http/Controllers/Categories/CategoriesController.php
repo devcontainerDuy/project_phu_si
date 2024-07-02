@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Traits\HasCrud;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Models\Collections\ProductCollection as ProductCollectionModel;
 
 class CategoriesController extends Controller
 {
@@ -26,7 +27,9 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        //
+        $data = ProductCollectionModel::all();
+        $categories = Categories::select('id','name')->get();
+        return Inertia::render('Collections/CreateCategories',['collections'=> $data,'categories'=>$categories]);
     }
 
     /**
@@ -34,7 +37,20 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'collection' => 'required',
+            'id_collection'=>'required|numeric|exists:collections,id',
+            'id_parent'=>'exists:categories,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $data=$request->all();
+        $data['slug']= Str::slug($request->collection);
+        $data['created_at']= now();
+        Categories::create($data);
+        $result = Categories::all();
+        return response()->json(['check'=>true,'data'=>$result]);
     }
 
     /**

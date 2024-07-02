@@ -40,6 +40,7 @@ function Layout({ children }) {
             <SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
             <a href={'/admin/collections'}> <MenuItem icon={<ArrowForwardIosIcon />}>Danh mục</MenuItem></a>
             <a href={'/admin/collections/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Thêm danh mục</MenuItem></a>
+            <a href={'/admin/categories/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Tạo Danh mục con</MenuItem></a>
 
             </SubMenu>
             <a href={'/brands'}> <MenuItem icon={<BrandingWatermarkIcon />}>Thương hiệu</MenuItem></a>

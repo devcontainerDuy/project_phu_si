@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name',255);
             $table->string('slug',255);
             $table->boolean('status')->default(false);
-            $table->unsignedInteger('column')->default(1);
             $table->unsignedInteger('position')->nullable();
             $table->unsignedBigInteger('id_parent')->nullable();
             $table->unsignedBigInteger('id_collection')->nullable();

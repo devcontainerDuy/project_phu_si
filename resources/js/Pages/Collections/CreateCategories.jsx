@@ -3,10 +3,14 @@ import Layout from "../../components/Layout";
 import { Notyf } from "notyf";
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-function CreateCategories({collections}) {
+function CreateCategories({collections,categories}) {
     const [category,setCategory]= useState('');
     const [position,setPosition]= useState(1);
+    const [id_collection,setIdCollection]= useState(0);
+    const [id_parent,setIdParent]= useState(null);
     const [data,setData]=useState(collections);
+    const [dataCate,setDataCate]=useState(categories);
+
     const notyf = new Notyf({
         duration: 1000,
         position: {
@@ -32,15 +36,20 @@ function CreateCategories({collections}) {
         ],
     });
 
-    const submitCollection=()=>{
-        if(collection==''){
+    const submitCategory=()=>{
+        if(category==''){
             notyf.open({
                 type: "error",
                 message: "Thiếu tên danh mục",
             });
+        }else if(id_collection==0){
+            notyf.open({
+                type: "error",
+                message: "Thiếu danh mục cha",
+            });
         }else{
             axios.post('/admin/collections',{
-                collection:collection,
+                category:category,
                 position:position
             }).then((res)=>{
                 if(res.data.check==true){
@@ -75,21 +84,56 @@ function CreateCategories({collections}) {
                                                 className="input-group-text"
                                                 id="basic-addon1"
                                             >
-                                                Danh mục sản phẩm
+                                                Danh mục con
                                             </span>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 placeholder="Danh mục sản phẩm"
-                                                value={collection}
+                                                value={category}
                                                 aria-label="Danh mục sản phẩm"
-                                                onChange={(e)=>setCollection(e.target.value)}
+                                                onChange={(e)=>setCategory(e.target.value)}
                                                 aria-describedby="basic-addon1"
                                             />
                                         </div>
                                     </div>
                                 </div>
-
+                                <div className="row">
+                                    <div className="col-md-4">
+                                        <div className="input-group mb-3">
+                                            <span
+                                                className="input-group-text"
+                                                id="basic-addon2"
+                                            >
+                                                Chọn nhóm danh mục
+                                            </span>
+                                          <select name="" onChange={(e)=>setIdCollection(e.target.value)} className="form-control" defaultValue={0} id="">
+                                            <option disabled value={0}>Chọn nhóm mục cha</option>
+                                            {data.map((item,index)=>(
+                                                <option value={item.id}>{item.collection}</option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-4">
+                                        <div className="input-group mb-3">
+                                            <span
+                                                className="input-group-text"
+                                                id="basic-addon2"
+                                            >
+                                                Danh mục cha
+                                            </span>
+                                          <select name="" onChange={(e)=>setIdParent(e.target.value)} className="form-control" defaultValue={0} id="">
+                                            <option disabled value={0}>Chọn danh mục cha</option>
+                                            {dataCate.map((item,index)=>(
+                                                <option value={item.id}>{item.name}</option>
+                                            ))}
+                                          </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="row">
                                     <div className="col-md-4">
                                         <div className="input-group mb-3">
@@ -113,7 +157,7 @@ function CreateCategories({collections}) {
                                 </div>
                                 <div className="row">
                                     <div className="col-md-3">
-                                        <button className="btn btn-sm btn-outline-primary" onClick={(e)=>submitCollection()}>
+                                        <button className="btn btn-sm btn-outline-primary" onClick={(e)=>submitCategory()}>
                                             Thêm
                                         </button>
                                     </div>
