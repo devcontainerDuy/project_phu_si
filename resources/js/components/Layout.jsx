@@ -9,6 +9,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CardTravelIcon from '@mui/icons-material/CardTravel';
 import ShopIcon from '@mui/icons-material/Shop';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
 import "../../css/app.css";
 function Layout({ children }) {
@@ -35,8 +36,13 @@ function Layout({ children }) {
            <a href={'/admin/roles'}> <MenuItem icon={<GroupIcon />}>Loại tài khoản</MenuItem></a>
            <a href={'/admin/users'}> <MenuItem icon={<GroupIcon />}>Tài khoản</MenuItem></a>
             </SubMenu>
-            <SubMenu label="Sản phẩm" icon={<BrandingWatermarkIcon />}>
-            <a href={'/categories'}> <MenuItem icon={<CategoryIcon />}>Loại sản phẩm</MenuItem></a>
+            <SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
+            <SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
+            <a href={'/admin/collections'}> <MenuItem icon={<ArrowForwardIosIcon />}>Danh mục</MenuItem></a>
+            <a href={'/admin/collections/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Thêm danh mục</MenuItem></a>
+            <a href={'/admin/categories/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Tạo Danh mục con</MenuItem></a>
+
+            </SubMenu>
             <a href={'/brands'}> <MenuItem icon={<BrandingWatermarkIcon />}>Thương hiệu</MenuItem></a>
             <a href={'/products'}> <MenuItem icon={<InventoryIcon />}>Sản phẩm</MenuItem></a>
             </SubMenu>
