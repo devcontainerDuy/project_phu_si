@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug');
             $table->unsignedInteger('position')->nullable();
             $table->boolean('status')->default(1);
+            $table->longText('content')->nullable();
             $table->timestamps();
         });
     }

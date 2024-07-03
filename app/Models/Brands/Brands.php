@@ -10,7 +10,7 @@ class Brands extends Model
 {
     use HasFactory;
     protected $table='brands';
-    protected $fillable=['id','name','slug','position','status','created_at','updated_at'];
+    protected $fillable=['id','name','slug','content','position','status','created_at','updated_at'];
 
     public function scopeActive(Builder $query){
         return $query->where('status', 1);

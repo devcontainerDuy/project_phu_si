@@ -43,6 +43,7 @@ class BrandController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'content'=>'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
@@ -59,17 +60,18 @@ class BrandController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Brands $brands)
+    public function show(Brands $brands,$id)
     {
-        //
+        $brand = Brands::find($id);
+        return Inertia::render('Brands/Edit',['id'=>$id,'brands'=>$brand]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Brands $brands)
+    public function edit(Brands $brands,$id)
     {
-        //
+
     }
 
     /**
@@ -86,6 +88,8 @@ class BrandController extends Controller
             return response()->json(['check'=>false,'msg'=>'Không tìm thấy thương hiệu sản phẩm']);
         }
         Brands::where('id',$id)->update($data);
+        $brands=$this->getAll();
+        return response()->json(['check'=>true,'data'=>$brands]);
     }
 
     /**

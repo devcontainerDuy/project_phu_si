@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('url');
             $table->string('desktop');
             $table->string('mobile');
+            $table->string('path');
             $table->boolean('status')->default(0);
             $table->timestamps();
         });
