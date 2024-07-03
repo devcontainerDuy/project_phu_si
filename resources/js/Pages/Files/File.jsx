@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Dropzone, FileMosaic } from "@dropzone-ui/react";
 import "notyf/notyf.min.css";
 import axios from "axios";
+import Swal from 'sweetalert2'
 function File({ folders }) {
     const [folder, setFolder] = useState("");
     const [images, setImages] = useState([]);
@@ -45,14 +46,14 @@ function File({ folders }) {
             {
                 type: "success",
                 background: "green",
-                color: "white",
+                color: "black",
                 duration: 2000,
                 dismissible: true,
             },
             {
                 type: "info",
                 background: "#24b3f0",
-                color: "white",
+                color: "black",
                 duration: 1500,
                 dismissible: false,
                 icon: '<i class="bi bi-bag-check"></i>',
@@ -86,6 +87,32 @@ function File({ folders }) {
                 });
         }
     };
+    const deleteImage = (id)=>{
+        Swal.fire({
+            icon:'question',
+            text: "Xóa hình ảnh này ?",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Đúng",
+            denyButtonText: `Không`
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                axios.delete('/admin/files/'+id).then((res)=>{
+                    if(res.data.check==true){
+                        notyf.open({
+                            type: "success",
+                            message: "Đã xóa thành công",
+                        });
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1400);
+                    }
+                })
+            } else if (result.isDenied) {
+            }
+          });
+    }
     const closeCreateFolder = () => {
         setFolder("");
         setOpen(false);
@@ -279,11 +306,11 @@ function File({ folders }) {
                                             <div className="col-md-3">
                                                 <div class="card">
                                                     <div class="card-body" style={{minHeight:'210px'}}>
-                                                       <img className="img-fluid" src={image.folder?'/storage/'+image.folder.name+'/'+image.filename:'/storage/'+image.filename} alt="" />
+                                                       <img className="img-fluid" style={{height:'190px',margin:'0px auto'}} src={image.folder?'/storage/'+image.folder.name+'/'+image.filename:'/storage/'+image.filename} alt="" />
                                                     </div>
                                                     <div class="card-footer text-muted">
                                                         <button className="btn btn-primary">Chọn</button>
-                                                        <button className="btn btn-danger ms-3" >Xóa</button>
+                                                        <button className="btn btn-danger ms-3" onClick={(e)=>deleteImage(image.id)}>Xóa</button>
                                                     </div>
                                                 </div>
                                                 
