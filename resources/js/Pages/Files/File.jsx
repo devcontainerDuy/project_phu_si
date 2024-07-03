@@ -2,19 +2,24 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { styled, css } from "@mui/system";
-import { Modal as BaseModal } from "@mui/base/Modal";
 import { Notyf } from "notyf";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { Dropzone, FileMosaic } from "@dropzone-ui/react";
 import "notyf/notyf.min.css";
 import axios from "axios";
 function File({ folders }) {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const [folder, setFolder] = useState("");
     const [images, setImages] = useState([]);
     const [data, setFolders] = useState(folders);
-    const [idfolder, setIdFolder] = useState(0);
+    const [show1, setShow1] = useState(false);
+    const [show, setShow] = useState(false);
+    const handleClose1 = () => setShow(false);
+    const handleClose = () => setShow(false);
+    const [files, setFiles] = React.useState([]);
+    const handleShow = () => setShow(false);
+    const [idfolder, setIdFolder] = useState(null);
+
     const notyf = new Notyf({
         duration: 1000,
         position: {
@@ -54,6 +59,10 @@ function File({ folders }) {
             },
         ],
     });
+    const updateFiles = (incommingFiles) => {
+        setFiles(incommingFiles);
+    };
+
     const submitFolder = () => {
         if (folder == "") {
             notyf.open({
@@ -83,7 +92,7 @@ function File({ folders }) {
     };
     const resetCreateFolder = () => {
         setFolder("");
-        setOpen(true);
+        setShow1(true);
     };
     useEffect(() => {
         if (idfolder != 0) {
@@ -92,9 +101,98 @@ function File({ folders }) {
             });
         }
     }, [idfolder]);
+
+    const uploadImage= ()=>{
+        var formData = new FormData();
+        files.forEach(file => {
+            formData.append('files[]', file.file);
+        });
+        if(idfolder!=null){
+            formData.append('folder_id', idfolder);
+        }
+        axios.post('/admin/files/', formData)
+        .then((res) => {
+            if(res.data.check==true){
+                notyf.open({
+                    type: "success",
+                    message: "Tải hình ảnh thành công",
+                });
+                setGallery(res.data.result);
+                window.location.reload();
+            }else if(res.data.check==false){
+                if(res.data.msg){
+                    notyf.open({
+                        type: "error",
+                        message: res.data.msg,
+                    });
+                
+                }
+            }
+        })
+        .catch((error) => {
+
+        });
+    }
+
     return (
         <Layout>
             <>
+                <Modal
+                    show={show1}
+                    onHide={(e)=>setShow1(false)}
+                    backdrop="static"
+                    keyboard={false}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Tạo thư mục</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="input-group mb-3">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Tên thư mục ..."
+                                aria-label="Tên thư mục ..."
+                                aria-describedby="button-addon2"
+                                onChange={(e) =>
+                                    setFolder(e.target.value)
+                                }
+                            />
+                            <button
+                                className="btn btn-outline-primary"
+                                type="button"
+                                id="button-addon2"
+                                onClick={(e) => submitFolder()}
+                            >
+                                Thêm
+                            </button>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+                <Modal
+                    show={show}
+                    onHide={handleClose}
+                    backdrop="static"
+                    keyboard={false}
+                      size="xl"
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Thêm hình ảnh</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <Dropzone onChange={updateFiles} accept="image/*" value={files}>
+                                {files.map((file) => (
+                                    <FileMosaic {...file} preview />
+                                ))}
+                            </Dropzone>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Đóng
+                        </Button>
+                        <Button variant="primary" onClick={(e)=>uploadImage()}>Tải hình</Button>
+                    </Modal.Footer>
+                </Modal>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <div className="container-fluid">
                         <button
@@ -108,36 +206,6 @@ function File({ folders }) {
                         >
                             <span className="navbar-toggler-icon" />
                         </button>
-                        <Modal
-                            aria-labelledby="unstyled-modal-title"
-                            aria-describedby="unstyled-modal-description"
-                            open={open}
-                            onClose={handleClose}
-                            slots={{ backdrop: StyledBackdrop }}
-                        >
-                            <ModalContent sx={{ width: 400 }}>
-                                <div className="input-group mb-3">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Tên thư mục ..."
-                                        aria-label="Tên thư mục ..."
-                                        aria-describedby="button-addon2"
-                                        onChange={(e) =>
-                                            setFolder(e.target.value)
-                                        }
-                                    />
-                                    <button
-                                        className="btn btn-outline-primary"
-                                        type="button"
-                                        id="button-addon2"
-                                        onClick={(e) => submitFolder()}
-                                    >
-                                        Thêm
-                                    </button>
-                                </div>
-                            </ModalContent>
-                        </Modal>
                         <div
                             className="collapse navbar-collapse"
                             id="navbarSupportedContent"
@@ -153,16 +221,6 @@ function File({ folders }) {
                                         Thêm thư mục
                                     </a>
                                 </li>
-                                <li className="nav-item">
-                                    <a
-                                        className="nav-link active"
-                                        aria-current="page"
-                                        href="#"
-                                        onClick={(e) => resetCreateFolder()}
-                                    >
-                                        Up hình ảnh
-                                    </a>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -175,9 +233,9 @@ function File({ folders }) {
                                 <ul className="list-group">
                                     <li
                                         style={{ cursor: "pointer" }}
-                                        onClick={(e)=>setIdFolder(0)}
+                                        onClick={(e) => setIdFolder(null)}
                                         className={
-                                            idfolder == 0
+                                            !idfolder 
                                                 ? "list-group-item active"
                                                 : "list-group-item"
                                         }
@@ -204,12 +262,34 @@ function File({ folders }) {
                             </div>
                         </div>
                     </div>
-                    {}
                     <div className="col-md mt-3">
                         <div class="card text-start">
                             <div class="card-body">
+                                <div className="row">
+                                    <div className="col-md-3 mb-3">
+                                        <button className="btn btn-primary" onClick={(e) => setShow(true)}>Thêm</button>
+                                    </div>
+                                </div>
                                 {images.length == 0 && (
                                     <h5>Chưa có hình ảnh</h5>
+                                )}
+                                {images.length>0 && (
+                                    <div className="row">
+                                        {images.map((image)=>(
+                                            <div className="col-md-3">
+                                                <div class="card">
+                                                    <div class="card-body" style={{minHeight:'210px'}}>
+                                                       <img className="img-fluid" src={image.folder?'/storage/'+image.folder.name+'/'+image.filename:'/storage/'+image.filename} alt="" />
+                                                    </div>
+                                                    <div class="card-footer text-muted">
+                                                        <button className="btn btn-primary">Chọn</button>
+                                                        <button className="btn btn-danger ms-3" >Xóa</button>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        ))}
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -219,132 +299,4 @@ function File({ folders }) {
         </Layout>
     );
 }
-const Backdrop = React.forwardRef((props, ref) => {
-    const { open, className, ...other } = props;
-    return (
-        <div
-            className={clsx({ "base-Backdrop-open": open }, className)}
-            ref={ref}
-            {...other}
-        />
-    );
-});
-
-Backdrop.propTypes = {
-    className: PropTypes.string.isRequired,
-    open: PropTypes.bool,
-};
-
-const blue = {
-    200: "#99CCFF",
-    300: "#66B2FF",
-    400: "#3399FF",
-    500: "#007FFF",
-    600: "#0072E5",
-    700: "#0066CC",
-};
-
-const grey = {
-    50: "#F3F6F9",
-    100: "#E5EAF2",
-    200: "#DAE2ED",
-    300: "#C7D0DD",
-    400: "#B0B8C4",
-    500: "#9DA8B7",
-    600: "#6B7A90",
-    700: "#434D5B",
-    800: "#303740",
-    900: "#1C2025",
-};
-
-const Modal = styled(BaseModal)`
-    position: fixed;
-    z-index: 1300;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const StyledBackdrop = styled(Backdrop)`
-    z-index: -1;
-    position: fixed;
-    inset: 0;
-    background-color: rgb(0 0 0 / 0.5);
-    -webkit-tap-highlight-color: transparent;
-`;
-
-const ModalContent = styled("div")(
-    ({ theme }) => css`
-        font-family: "IBM Plex Sans", sans-serif;
-        font-weight: 500;
-        text-align: start;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        overflow: hidden;
-        background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-        border-radius: 8px;
-        border: 1px solid
-            ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-        box-shadow: 0 4px 12px
-            ${theme.palette.mode === "dark"
-                ? "rgb(0 0 0 / 0.5)"
-                : "rgb(0 0 0 / 0.2)"};
-        padding: 24px;
-        color: ${theme.palette.mode === "dark" ? grey[50] : grey[900]};
-
-        & .modal-title {
-            margin: 0;
-            line-height: 1.5rem;
-            margin-bottom: 8px;
-        }
-
-        & .modal-description {
-            margin: 0;
-            line-height: 1.5rem;
-            font-weight: 400;
-            color: ${theme.palette.mode === "dark" ? grey[400] : grey[800]};
-            margin-bottom: 4px;
-        }
-    `
-);
-
-const TriggerButton = styled("button")(
-    ({ theme }) => css`
-        font-family: "IBM Plex Sans", sans-serif;
-        font-weight: 600;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        padding: 8px 16px;
-        border-radius: 8px;
-        transition: all 150ms ease;
-        cursor: pointer;
-        background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-        border: 1px solid
-            ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-        color: ${theme.palette.mode === "dark" ? grey[200] : grey[900]};
-        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-
-        &:hover {
-            background: ${theme.palette.mode === "dark" ? grey[800] : grey[50]};
-            border-color: ${theme.palette.mode === "dark"
-                ? grey[600]
-                : grey[300]};
-        }
-
-        &:active {
-            background: ${theme.palette.mode === "dark"
-                ? grey[700]
-                : grey[100]};
-        }
-
-        &:focus-visible {
-            box-shadow: 0 0 0 4px
-                ${theme.palette.mode === "dark" ? blue[300] : blue[200]};
-            outline: none;
-        }
-    `
-);
 export default File;

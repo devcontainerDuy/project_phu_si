@@ -8,6 +8,8 @@ use App\Models\Files\Files;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 class FileController extends Controller
 {
@@ -36,7 +38,6 @@ class FileController extends Controller
         $validator = Validator::make($request->all(), [
             'files' => 'required|array',
             'files.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'folder_id' => 'exists:folders,id',
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
@@ -48,17 +49,15 @@ class FileController extends Controller
         }
         foreach ($request->file('files') as $file) {
             $imageName = $file->getClientOriginalName();
-            $extractTo = storage_path('app/public/'+$folder);
+            $extractTo = storage_path('app/public/'.$folder);
             $file->move($extractTo, $imageName);
             Files::create([
-                'id_parent' => $id,
-                'image' => $imageName,
-                'status' => 0,
+                'filename' => $imageName,
                 'folder_id'=>$folder_id
             ]);
             $result[] = Storage::url($folder.'/' . $imageName);
         }
-        return response()->json(['check'=>true,'data'=> $result]);
+        return response()->json(['check'=>true]);
     }
 
     /**
@@ -66,7 +65,11 @@ class FileController extends Controller
      */
     public function show(Files $files,$id)
     {
-        $files= Files::with('folder')->where('folder_id',$id)->get();
+        if($id=='null'){
+            $files= Files::where('folder_id',null)->get();
+        }else{
+            $files= Files::with('folder')->where('folder_id',$id)->get();
+        }
         return response()->json(['data'=>$files]);
     }
 
@@ -99,13 +102,22 @@ class FileController extends Controller
      */
     public function destroy(Folders $folders,$id)
     {
-        $folder=Folders::find($id);
-        if(!$folder){
-            return response()->json(['check'=>false,'msg'=>'Không tìm thấy mã thư mục']);
+        $file=Files::find($id);
+        if(!$file){
+            return response()->json(['check'=>false,'msg'=>'Không tìm thấy mã file']);
         }
-        $check=Files::where('folder_id',$id)->first();
-        if($check){
-            return response()->json(['check'=>false,'msg'=>'Còn hình trong thư mục này']);
+        $folder_id=$file->folder_id;
+        if($folder_id){
+            $folder= Folders::where('id',$folder_id)->value('name');
+            $image=$file->filename;
+            $imagePath = storage_path('app/public/' .$folder.'/'.$image);
+            Storage::delete($imagePath);
+        }else{  
+            $image=$file->filename;
+            $imagePath = storage_path('app/public/'.$image);
+            Storage::delete($imagePath);
         }
+        $file->delete();
+        return response()->json(['check'=>true]);
     }
 }
