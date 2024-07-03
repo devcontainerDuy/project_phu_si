@@ -9,6 +9,9 @@ use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Categories\CategoriesController;
 use App\Http\Controllers\Brands\BrandController;
 use App\Http\Controllers\Slide\SlidesController;
+use App\Http\Controllers\Files\FolderController;
+use App\Http\Controllers\Files\FileController;
+
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('permissions', PermissionsController::class);
@@ -28,6 +31,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //==========================================================
     Route::resource('slides', SlidesController::class);
     //==========================================================
+    Route::resource('files', FileController::class);
+
+    Route::post('folder',[FolderController::class,'store']);
+    Route::put('folder/{id}',[FolderController::class,'update']);
+    Route::delete('folder/{id}',[FolderController::class,'destroy']);
+    //==========================================================
+
 });
 Route::get('/', [UsersController::class, 'login'])->name('login');
 Route::post('/checkLogin', [UsersController::class, 'checkLogin'])->middleware('web');
