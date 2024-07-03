@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Slide;
 
 use Inertia\Inertia;
+use App\Models\Slide\Slide;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Slide\Slide;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 
 class SlidesController extends Controller
 {
@@ -35,8 +37,8 @@ class SlidesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'desktop' => 'required|image',
-            'mobile' => 'required|image',
+            'desktop' => 'required|image|file',
+            'mobile' => 'required|image|file',
         ]);
 
         if ($validator->fails()) {
@@ -48,15 +50,15 @@ class SlidesController extends Controller
             $mobile = $request->file('mobile');
             $file_desktop = $desktop->getClientOriginalName();
             $file_mobile = $mobile->getClientOriginalName();
-            $desktop->storeAs('/public/slides', $file_desktop);
-            $mobile->storeAs('/public/slides', $file_mobile);
+            $desktop->storeAs('/public/images/slides/desktop', $file_desktop);
+            $mobile->storeAs('/public/images/slides/mobile', $file_mobile);
         }
 
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'url' => $request->url,
-            'path' => `/slides/` . $request->name,
+            'path' => "/images/slides/",
             'desktop' => $file_desktop,
             'mobile' => $file_mobile,
             'status' => 0,
@@ -103,6 +105,22 @@ class SlidesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $item = Slide::findOrFail($id);
+
+        if ($item->desktop && Storage::exists('public/images/slides/desktop/' . $item->desktop)) {
+            Storage::delete('public/images/slides/desktop/' . $item->desktop);
+        }
+
+        if ($item->mobile && Storage::exists('public/images/slides/mobile/' . $item->mobile)) {
+            Storage::delete('public/images/slides/mobile/' . $item->mobile);
+        }
+
+        if ($item) {
+            $item->delete();
+            $data = Slide::all();
+            return response()->json(['check' => true, 'msg' => 'Xóa slide thành công', 'data' => $data]);
+        } else {
+            return response()->json(['check' => false, 'msg' => 'Xóa slide thất bại']);
+        }
     }
 }

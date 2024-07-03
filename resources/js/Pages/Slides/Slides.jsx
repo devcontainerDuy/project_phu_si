@@ -39,8 +39,6 @@ export default function Slides({ slides }) {
 		formData.append("mobile", fileMobile);
 		formData.append("url", url);
 
-		console.log(fileDesktop, fileMobile);
-
 		axios
 			.post("/admin/slides", formData)
 			.then((response) => {
@@ -54,6 +52,31 @@ export default function Slides({ slides }) {
 			})
 			.catch((error) => {
 				notyf.error(error.response.data.msg);
+			});
+	};
+
+	const handleDelete = (id) => {
+		axios
+			.delete(`/admin/slides/${id}`)
+			.then((response) => {
+				if (response.data.check === true) {
+					notyf.open({
+						type: "success",
+						message: response.data.msg,
+					});
+					setData(response.data.data);
+				} else {
+					notyf.open({
+						type: "error",
+						message: response.data.msg,
+					});
+				}
+			})
+			.catch((error) => {
+				notyf.open({
+					type: "error",
+					message: error.response.data.msg,
+				});
 			});
 	};
 
@@ -115,12 +138,12 @@ export default function Slides({ slides }) {
 			sortable: false,
 			width: 260,
 			type: "actions",
-			getActions: () => [
-				<Button variant="warning" onClick={handleShow}>
+			getActions: (params) => [
+				<Button variant="warning" key={params.row.id} onClick={handleShow}>
 					<i className="bi bi-pencil-square" />
 				</Button>,
 
-				<Button variant="danger">
+				<Button className="ms-2" key={params.row.id} variant="danger" onClick={() => handleDelete(params.row.id)}>
 					<i className="bi bi-trash" />
 				</Button>,
 			],
