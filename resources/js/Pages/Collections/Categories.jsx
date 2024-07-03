@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-function Categories({ categories, parentCategories }) {
+function Categories({ categories,collections, parentCategories }) {
   const [data, setData] = useState(categories)
   const api = 'http://localhost:8000/api/';
   const app = 'http://localhost:8000/';
@@ -57,6 +57,28 @@ function Categories({ categories, parentCategories }) {
       }
     ]
   });
+  const handleParentChange1 = (id,value)=>{
+    axios.put("/admin/categories/" + id, {
+        id_collection:value
+    }).then((res) => {
+        if (res.data.check == false) {
+            if (res.data.msg) {
+                notyf.open({
+                    type: "error",
+                    message: res.data.msg,
+                });
+            }
+        } else if (res.data.check == true) {
+            notyf.open({
+                type: "success",
+                message: "Chuyển nhóm danh mục thành công",
+            });
+            setData(res.data.data);
+            console.log(res.data.data);
+        }
+    });
+  }
+
   const handleParentChange =(id,value)=>{
     axios.put("/admin/categories/" + id, {
         id_parent:value
@@ -87,7 +109,21 @@ function Categories({ categories, parentCategories }) {
     { field: 'slug', headerName: "Slug", width: 200, editable: false },
     { field: 'position', headerName: "Thứ tự", width: 100, editable: true },
     {
-        field: 'id_parent', headerName: "Danh mục cha", width: 300, renderCell: (params) => (
+        field: 'id_collection', headerName: "Nhóm danh mục", width: 200, renderCell: (params) => (
+          <Select
+            value={params.value}
+            className='w-100'
+            onChange={(e) => handleParentChange1(params.id, e.target.value)}
+          >
+            <MenuItem value={null}>None</MenuItem>
+            {collections.map((parent) => (
+              <MenuItem key={parent.id} value={parent.id}>{parent.collection}</MenuItem>
+            ))}
+          </Select>
+        )
+      },
+        {
+        field: 'id_parent', headerName: "Danh mục cha", width: 200, renderCell: (params) => (
           <Select
             value={params.value}
             className='w-100'
@@ -174,7 +210,7 @@ function Categories({ categories, parentCategories }) {
     <Layout>
       <>
         <div className="row mt-3">
-          <div className="col-md-10">
+          <div className="col-md-11">
             {data && data.length > 0 && (
               <Box sx={{  width: '100%' }}>
                 <DataGrid

@@ -10,7 +10,7 @@ use Inertia\Inertia;
 use App\Traits\HasCrud;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Models\Collections\ProductCollection as ProductCollectionModel;
+use App\Models\Collections\ProductCollection ;
 
 class CategoriesController extends Controller
 {
@@ -19,7 +19,8 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Categories::with('parent')->get();
+        $categories = Categories::with(['parent','collection'])->get();
+        $collections=ProductCollection::active()->get();
         $parentCategories = Categories::whereNull('id_parent')->get();
         $categories = $categories->map(function($category) {
             return [
@@ -29,11 +30,12 @@ class CategoriesController extends Controller
                 'status' => $category->status,
                 'id_parent' => $category->id_parent,
                 'position' => $category->position,
+                'id_collection' => $category->id_collection,
                 'created_at' => $category->created_at,
                 'parent_name' => $category->parent ? $category->parent->name : '',
             ];
         });
-        return Inertia::render('Collections/Categories',['categories'=>$categories,'parentCategories'=>$parentCategories]);
+        return Inertia::render('Collections/Categories',['categories'=>$categories,'collections'=>$collections,'parentCategories'=>$parentCategories]);
     }
 
     /**
@@ -102,8 +104,9 @@ class CategoriesController extends Controller
                 'name' => $category->name,
                 'slug' => $category->slug,
                 'status' => $category->status,
-                'id_parent'=>$category->id_parent,
+                'id_parent' => $category->id_parent,
                 'position' => $category->position,
+                'id_collection' => $category->id_collection,
                 'created_at' => $category->created_at,
                 'parent_name' => $category->parent ? $category->parent->name : '',
             ];
