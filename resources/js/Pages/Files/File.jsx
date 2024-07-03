@@ -82,24 +82,26 @@ function File({ folders }) {
                             type: "success",
                             message: "Tạo thư mục thành công",
                         });
-                        closeCreateFolder();
+                        setFolder('');
+                        setShow1(false);
+
                     }
                 });
         }
     };
-    const deleteImage = (id)=>{
+    const deleteImage = (id) => {
         Swal.fire({
-            icon:'question',
+            icon: 'question',
             text: "Xóa hình ảnh này ?",
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: "Đúng",
             denyButtonText: `Không`
-          }).then((result) => {
+        }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                axios.delete('/admin/files/'+id).then((res)=>{
-                    if(res.data.check==true){
+                axios.delete('/admin/files/' + id).then((res) => {
+                    if (res.data.check == true) {
                         notyf.open({
                             type: "success",
                             message: "Đã xóa thành công",
@@ -111,7 +113,7 @@ function File({ folders }) {
                 })
             } else if (result.isDenied) {
             }
-          });
+        });
     }
     const closeCreateFolder = () => {
         setFolder("");
@@ -129,36 +131,36 @@ function File({ folders }) {
         }
     }, [idfolder]);
 
-    const uploadImage= ()=>{
+    const uploadImage = () => {
         var formData = new FormData();
         files.forEach(file => {
             formData.append('files[]', file.file);
         });
-        if(idfolder!=null){
+        if (idfolder != null) {
             formData.append('folder_id', idfolder);
         }
         axios.post('/admin/files/', formData)
-        .then((res) => {
-            if(res.data.check==true){
-                notyf.open({
-                    type: "success",
-                    message: "Tải hình ảnh thành công",
-                });
-                setGallery(res.data.result);
-                window.location.reload();
-            }else if(res.data.check==false){
-                if(res.data.msg){
+            .then((res) => {
+                if (res.data.check == true) {
                     notyf.open({
-                        type: "error",
-                        message: res.data.msg,
+                        type: "success",
+                        message: "Tải hình ảnh thành công",
                     });
-                
-                }
-            }
-        })
-        .catch((error) => {
+                    setGallery(res.data.result);
+                    window.location.reload();
+                } else if (res.data.check == false) {
+                    if (res.data.msg) {
+                        notyf.open({
+                            type: "error",
+                            message: res.data.msg,
+                        });
 
-        });
+                    }
+                }
+            })
+            .catch((error) => {
+
+            });
     }
 
     return (
@@ -166,7 +168,7 @@ function File({ folders }) {
             <>
                 <Modal
                     show={show1}
-                    onHide={(e)=>setShow1(false)}
+                    onHide={(e) => setShow1(false)}
                     backdrop="static"
                     keyboard={false}
                 >
@@ -178,12 +180,11 @@ function File({ folders }) {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Tên thư mục ..."
+                                placeholder={folder === '' ? "Tên thư mục ..." : ""}
+                                value={folder}
                                 aria-label="Tên thư mục ..."
                                 aria-describedby="button-addon2"
-                                onChange={(e) =>
-                                    setFolder(e.target.value)
-                                }
+                                onChange={(e) => setFolder(e.target.value)}
                             />
                             <button
                                 className="btn btn-outline-primary"
@@ -201,23 +202,23 @@ function File({ folders }) {
                     onHide={handleClose}
                     backdrop="static"
                     keyboard={false}
-                      size="xl"
+                    size="xl"
                 >
                     <Modal.Header closeButton>
                         <Modal.Title>Thêm hình ảnh</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <Dropzone onChange={updateFiles} accept="image/*" value={files}>
-                                {files.map((file) => (
-                                    <FileMosaic {...file} preview />
-                                ))}
-                            </Dropzone>
+                        <Dropzone onChange={updateFiles} accept="image/*" value={files}>
+                            {files.map((file) => (
+                                <FileMosaic {...file} preview />
+                            ))}
+                        </Dropzone>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
                             Đóng
                         </Button>
-                        <Button variant="primary" onClick={(e)=>uploadImage()}>Tải hình</Button>
+                        <Button variant="primary" onClick={(e) => uploadImage()}>Tải hình</Button>
                     </Modal.Footer>
                 </Modal>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -262,15 +263,15 @@ function File({ folders }) {
                                         style={{ cursor: "pointer" }}
                                         onClick={(e) => setIdFolder(null)}
                                         className={
-                                            !idfolder 
+                                            !idfolder
                                                 ? "list-group-item active"
                                                 : "list-group-item"
                                         }
                                     >
                                         public
                                     </li>
-                                    {folders.length > 0 &&
-                                        folders.map((folder, index) => (
+                                    {data.length > 0 &&
+                                        data.map((folder, index) => (
                                             <li
                                                 style={{ cursor: "pointer" }}
                                                 onClick={(e) =>
@@ -300,20 +301,20 @@ function File({ folders }) {
                                 {images.length == 0 && (
                                     <h5>Chưa có hình ảnh</h5>
                                 )}
-                                {images.length>0 && (
+                                {images.length > 0 && (
                                     <div className="row">
-                                        {images.map((image)=>(
+                                        {images.map((image) => (
                                             <div className="col-md-3">
                                                 <div class="card">
-                                                    <div class="card-body" style={{minHeight:'210px'}}>
-                                                       <img className="img-fluid" style={{height:'190px',margin:'0px auto'}} src={image.folder?'/storage/'+image.folder.name+'/'+image.filename:'/storage/'+image.filename} alt="" />
+                                                    <div class="card-body" style={{ minHeight: '210px' }}>
+                                                        <img className="img-fluid" style={{ height: '190px', margin: '0px auto' }} src={image.folder ? '/storage/' + image.folder.name + '/' + image.filename : '/storage/' + image.filename} alt="" />
                                                     </div>
                                                     <div class="card-footer text-muted">
                                                         <button className="btn btn-primary">Chọn</button>
-                                                        <button className="btn btn-danger ms-3" onClick={(e)=>deleteImage(image.id)}>Xóa</button>
+                                                        <button className="btn btn-danger ms-3" onClick={(e) => deleteImage(image.id)}>Xóa</button>
                                                     </div>
                                                 </div>
-                                                
+
                                             </div>
                                         ))}
                                     </div>
