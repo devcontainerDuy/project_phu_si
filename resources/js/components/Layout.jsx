@@ -46,7 +46,10 @@ function Layout({ children }) {
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục
 								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+									Danh mục con
+								</MenuItem>
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
 									Tạo Danh mục con
 								</MenuItem>
 							</SubMenu>

@@ -105,7 +105,6 @@ export default function Slides({ slides }) {
 		{
 			field: "status",
 			headerName: "Trạng thái",
-			type: "number",
 			width: 150,
 			editable: true,
 			type: "boolean",
