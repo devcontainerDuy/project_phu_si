@@ -18,7 +18,10 @@ class ProductCollection extends Model
     }
 
     public function scopeActive(Builder $query){
-        return $query->where('status', 1)->orderBy('id','asc');
+        return $query->where('status', 1);
     }
 
+    public function scopeSort(Builder $query,$param){
+        return $query->where('status',1)->orderBy('asc',$param);
+    }
 }
