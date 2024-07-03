@@ -7,6 +7,7 @@ use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Categories\CategoriesController;
+use App\Http\Controllers\Brands\BrandController;
 
 
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -23,7 +24,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //==========================================================
     Route::resource('categories', CategoriesController::class);
     //==========================================================
-
+    Route::resource('brands', BrandController::class);
+    //==========================================================
 });
 Route::get('/',[UsersController::class,'login'])->name('login');
 Route::post('/checkLogin',[UsersController::class,'checkLogin'])->middleware('web');

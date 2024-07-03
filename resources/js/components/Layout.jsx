@@ -3,7 +3,7 @@ import React from 'react'
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import GroupIcon from '@mui/icons-material/Group';
-import CategoryIcon from '@mui/icons-material/Category';
+import PinterestIcon from '@mui/icons-material/Pinterest';
 import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -44,7 +44,7 @@ function Layout({ children }) {
             <a href={'/admin/categories'}> <MenuItem icon={<ArrowForwardIosIcon />}>Danh mục con </MenuItem></a>
 
             </SubMenu>
-            <a href={'/brands'}> <MenuItem icon={<BrandingWatermarkIcon />}>Thương hiệu</MenuItem></a>
+            <a href={'/admin/brands'}> <MenuItem icon={<PinterestIcon />}>Thương hiệu</MenuItem></a>
             <a href={'/products'}> <MenuItem icon={<InventoryIcon />}>Sản phẩm</MenuItem></a>
             </SubMenu>
            <a href={'/slides'}> <MenuItem icon={<ShopIcon />}>Slides</MenuItem></a>

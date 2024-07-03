@@ -26,7 +26,7 @@ class BrandController extends Controller
      * Show the form for creating a new resource.
      */
     public function getAll(){
-        return Brands::all();
+        return Brands::orderBy('position','asc')->get();
     }
     /**
      * Show the form for creating a new resource.

@@ -57,30 +57,9 @@ function Brands({ brands }) {
       }
     ]
   });
-  const handleParentChange1 = (id,value)=>{
-    axios.put("/admin/categories/" + id, {
-        id_collection:value
-    }).then((res) => {
-        if (res.data.check == false) {
-            if (res.data.msg) {
-                notyf.open({
-                    type: "error",
-                    message: res.data.msg,
-                });
-            }
-        } else if (res.data.check == true) {
-            notyf.open({
-                type: "success",
-                message: "Chuyển nhóm danh mục thành công",
-            });
-            setData(res.data.data);
-            console.log(res.data.data);
-        }
-    });
-  }
 
   const handleParentChange =(id,value)=>{
-    axios.put("/admin/categories/" + id, {
+    axios.put("/admin/brands/" + id, {
         id_parent:value
     }).then((res) => {
         if (res.data.check == false) {
@@ -105,7 +84,7 @@ function Brands({ brands }) {
   }
   const columns = [
     { field: "id", headerName: "#", width: 100, renderCell: (params) => params.rowIndex },
-    { field: 'name', headerName: "Menu sản phẩm", width: 300, editable: true },
+    { field: 'name', headerName: "Thương hiệu", width: 300, editable: true },
     { field: 'slug', headerName: "Slug", width: 200, editable: false },
     { field: 'position', headerName: "Thứ tự", width: 100, editable: true },
     {
@@ -169,6 +148,11 @@ function Brands({ brands }) {
 
     <Layout>
       <>
+      <div className="row">
+    <div className="col-md-2">
+        <button className='btn btn-sm btn-primary'>Thêm</button>
+    </div>
+      </div>
         <div className="row mt-3">
           <div className="col-md-11">
             {data && data.length > 0 && (
