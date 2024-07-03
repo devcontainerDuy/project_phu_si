@@ -5,6 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import { Notyf } from 'notyf';
 import { Box, Switch, Select, MenuItem } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
 function Categories({ categories, parentCategories }) {
@@ -55,7 +57,30 @@ function Categories({ categories, parentCategories }) {
       }
     ]
   });
-
+  const handleParentChange =(id,value)=>{
+    axios.put("/admin/categories/" + id, {
+        id_parent:value
+    }).then((res) => {
+        if (res.data.check == false) {
+            if (res.data.msg) {
+                notyf.open({
+                    type: "error",
+                    message: res.data.msg,
+                });
+            }
+        } else if (res.data.check == true) {
+            notyf.open({
+                type: "success",
+                message: "Chuyển trạng thái thành công",
+            });
+            if (res.data.data) {
+                setData(res.data.data);
+            } else {
+                setData([]);
+            }
+        }
+    });
+  }
   const columns = [
     { field: "id", headerName: "#", width: 100, renderCell: (params) => params.rowIndex },
     { field: 'name', headerName: "Menu sản phẩm", width: 300, editable: true },
