@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->string('url');
+            $table->string('url')->nullable();
+            $table->string('path');
             $table->string('desktop');
             $table->string('mobile');
             $table->string('path');

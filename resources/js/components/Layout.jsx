@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react'
+import React from "react";
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import GroupIcon from '@mui/icons-material/Group';
@@ -11,60 +11,80 @@ import CardTravelIcon from '@mui/icons-material/CardTravel';
 import ShopIcon from '@mui/icons-material/Shop';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
+import GroupIcon from "@mui/icons-material/Group";
+import CategoryIcon from "@mui/icons-material/Category";
+import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import LogoutIcon from "@mui/icons-material/Logout";
+import CardTravelIcon from "@mui/icons-material/CardTravel";
+import ShopIcon from "@mui/icons-material/Shop";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import DesignServicesTwoToneIcon from "@mui/icons-material/DesignServicesTwoTone";
 import "../../css/app.css";
 function Layout({ children }) {
-  const { collapseSidebar } = useProSidebar();
-  return (
-    <>
-      <div className='row w-100'>
-      </div>
-      <div style={({ height: "90vh" }, { display: "flex" })}>
-        <Sidebar style={{ minHeight: "90vh" }}>
-          <Menu>
-            <MenuItem
-              icon={<MenuOutlinedIcon />}
-              onClick={() => {
-                collapseSidebar();
-              }}
-              style={{ textAlign: "center" }}
-            >
-              {" "}
-              <h2>Admin</h2>
-            </MenuItem>
-            <SubMenu label="Tài khoản" icon={<GroupIcon />}>
-            <a href={'/admin/permissions'}> <MenuItem icon={<GroupIcon />}>Quyền tài khoản</MenuItem></a>
-           <a href={'/admin/roles'}> <MenuItem icon={<GroupIcon />}>Loại tài khoản</MenuItem></a>
-           <a href={'/admin/users'}> <MenuItem icon={<GroupIcon />}>Tài khoản</MenuItem></a>
-            </SubMenu>
-            <SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
-            <SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
-            <a href={'/admin/collections'}> <MenuItem icon={<ArrowForwardIosIcon />}>Danh mục</MenuItem></a>
-            <a href={'/admin/collections/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Thêm danh mục</MenuItem></a>
-            <a href={'/admin/categories/create'}> <MenuItem icon={<ArrowForwardIosIcon />}>Tạo Danh mục con</MenuItem></a>
-            <a href={'/admin/categories'}> <MenuItem icon={<ArrowForwardIosIcon />}>Danh mục con </MenuItem></a>
-
-            </SubMenu>
-            <a href={'/admin/brands'}> <MenuItem icon={<PinterestIcon />}>Thương hiệu</MenuItem></a>
-            <a href={'/products'}> <MenuItem icon={<InventoryIcon />}>Sản phẩm</MenuItem></a>
-            </SubMenu>
-           <a href={'/slides'}> <MenuItem icon={<ShopIcon />}>Slides</MenuItem></a>
-           <a href={'/bills'}> <MenuItem icon={<CardTravelIcon />}>Hoá đơn</MenuItem></a>
-           <a href={'/services'}> <MenuItem icon={<DesignServicesTwoToneIcon />}>Dịch vụ </MenuItem></a>
-           <a href={'/logout'}> <MenuItem icon={<LogoutIcon />}>Log out</MenuItem></a>
-
-{/*
-            <MenuItem icon={<ReceiptOutlinedIcon />}>Profile</MenuItem>
-            <MenuItem icon={<HelpOutlineOutlinedIcon />}>FAQ</MenuItem>
-            <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem> */}
-          </Menu>
-        </Sidebar>
-        <main className='p-4 w-100'>
-          {children}
-        </main>
-      </div>
-
-    </>
-  )
+	const { collapseSidebar } = useProSidebar();
+	return (
+		<>
+			<div className="row w-100"></div>
+			<div style={({ height: "90vh" }, { display: "flex" })}>
+				<Sidebar style={{ minHeight: "90vh" }}>
+					<Menu>
+						<MenuItem
+							icon={<MenuOutlinedIcon />}
+							onClick={() => {
+								collapseSidebar();
+							}}
+							style={{ textAlign: "center" }}>
+							<h2>Admin</h2>
+						</MenuItem>
+						<SubMenu label="Tài khoản" icon={<GroupIcon />}>
+							<MenuItem icon={<GroupIcon />} component="a" href="/admin/permissions">
+								Quyền tài khoản
+							</MenuItem>
+							<MenuItem icon={<GroupIcon />} component="a" href="/admin/roles">
+								Loại tài khoản
+							</MenuItem>
+							<MenuItem icon={<GroupIcon />} component="a" href="/admin/users">
+								Tài khoản
+							</MenuItem>
+						</SubMenu>
+						<SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
+							<SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
+									Danh mục
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
+									Thêm danh mục
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
+									Tạo Danh mục con
+								</MenuItem>
+							</SubMenu>
+							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/brands">
+								Thương hiệu
+							</MenuItem>
+							<MenuItem icon={<InventoryIcon />} component="a" href="/products">
+								Sản phẩm
+							</MenuItem>
+						</SubMenu>
+						<MenuItem icon={<ShopIcon />} component="a" href="/admin/slides">
+							Slides
+						</MenuItem>
+						<MenuItem icon={<CardTravelIcon />} component="a" href="/bills">
+							Hoá đơn
+						</MenuItem>
+						<MenuItem icon={<DesignServicesTwoToneIcon />} component="a" href="/services">
+							Dịch vụ{" "}
+						</MenuItem>
+						<MenuItem icon={<LogoutIcon />} component="a" href="/logout">
+							Log out
+						</MenuItem>
+					</Menu>
+				</Sidebar>
+				<main className="p-4 w-100">{children}</main>
+			</div>
+		</>
+	);
 }
 
-export default Layout
+export default Layout;
