@@ -37,8 +37,9 @@ class SlidesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'desktop' => 'required|image|file',
-            'mobile' => 'required|image|file',
+            'desktop' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'mobile' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'url' => 'nullable|url',
         ]);
 
         if ($validator->fails()) {
@@ -81,7 +82,8 @@ class SlidesController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = Slide::findOrFail($id);
+        return response()->json(['check' => true, 'data' => $data]);
     }
 
     /**
@@ -97,7 +99,31 @@ class SlidesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|max:255|unique:slides,name',
+            'desktop' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'mobile' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'url' => 'nullable|url',
+            'status' => 'boolean|in:0,1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+
+        $data = $request->all();
+
+        if ($request->has('name')) {
+            $data['slug'] = Str::slug($request->name);
+        }
+
+        $item = Slide::findOrFail($id)->update($data);
+        if ($item) {
+            $data = Slide::all();
+            return response()->json(['check' => true, 'msg' => 'Cập nhật thành công', 'data' => $data]);
+        } else {
+            return response()->json(['check' => false, 'msg' => 'Cập nhật thất bại']);
+        }
     }
 
     /**

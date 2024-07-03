@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
-import Box from "@mui/material/Box";
+import { Box, Select, Switch, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
@@ -12,7 +12,19 @@ export default function Slides({ slides }) {
 	const [show, setShow] = useState(false);
 
 	const handleClose = () => setShow(false);
-	const handleShow = () => setShow(true);
+	const handleShow = (id) => {
+		setShow(true);
+		axios.get(`/admin/slides/${id}`).then((response) => {
+			if (response.data.check === true) {
+				setName(response.data.data.name);
+				setFileDesktop(response.data.data.desktop);
+				setFileMobile(response.data.data.mobile);
+				setUrl(response.data.data.url);
+			} else {
+				notyf.error(response.data.msg);
+			}
+		});
+	};
 
 	useEffect(() => {
 		setData(slides);
@@ -53,6 +65,23 @@ export default function Slides({ slides }) {
 			.catch((error) => {
 				notyf.error(error.response.data.msg);
 			});
+	};
+
+	const handleCellEditStop = (id, field, value) => {
+		axios.put(`/admin/slides/${id}`, { [field]: value }).then((response) => {
+			if (response.data.check === true) {
+				notyf.open({
+					type: "success",
+					message: response.data.msg,
+				});
+				setData(response.data.data);
+			} else {
+				notyf.open({
+					type: "error",
+					message: response.data.msg,
+				});
+			}
+		});
 	};
 
 	const handleDelete = (id) => {
@@ -131,7 +160,9 @@ export default function Slides({ slides }) {
 			type: "number",
 			width: 150,
 			editable: true,
-			type: "boolean",
+			renderCell: (params) => (
+				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />
+			),
 		},
 		{
 			field: "actions",
@@ -140,11 +171,11 @@ export default function Slides({ slides }) {
 			width: 260,
 			type: "actions",
 			getActions: (params) => [
-				<Button variant="warning" key={params.row.id} onClick={handleShow}>
+				<Button variant="warning" onClick={() => handleShow(params.row.id)}>
 					<i className="bi bi-pencil-square" />
 				</Button>,
 
-				<Button className="ms-2" key={params.row.id} variant="danger" onClick={() => handleDelete(params.row.id)}>
+				<Button className="ms-2" variant="danger" onClick={() => handleDelete(params.row.id)}>
 					<i className="bi bi-trash" />
 				</Button>,
 			],
@@ -155,7 +186,7 @@ export default function Slides({ slides }) {
 		<Layout>
 			<>
 				<h1>Slides</h1>
-				<Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+				<Modal show={show} onHide={resetCreate} backdrop="static" keyboard={false}>
 					<Modal.Header closeButton>
 						<Modal.Title>Chi tiết slide</Modal.Title>
 					</Modal.Header>
@@ -163,10 +194,11 @@ export default function Slides({ slides }) {
 						<Form encType="multipart/form-data">
 							<Form.Group className="mb-3" controlId="ControlInput1">
 								<Form.Label>Tên slide</Form.Label>
-								<Form.Control type="text" placeholder="Nhập tên slide" autoFocus />
+								<Form.Control type="text" placeholder="Nhập tên slide" value={name} autoFocus />
 							</Form.Group>
 							<Form.Group className="mb-3" controlId="ControlInput2">
 								<Form.Label>Desktop</Form.Label>
+
 								<Form.Control type="file" placeholder="Nhập mẫu desktop" multiple />
 							</Form.Group>
 							<Form.Group className="mb-3" controlId="ControlInput3">
@@ -237,6 +269,7 @@ export default function Slides({ slides }) {
 									pageSizeOptions={[5]}
 									checkboxSelection
 									disableRowSelectionOnClick
+									onCellEditStop={(params, e) => handleCellEditStop(params.row.id, params.field, e.target.value)}
 								/>
 							</Box>
 						)}
