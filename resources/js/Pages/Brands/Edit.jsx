@@ -12,7 +12,6 @@ import "notyf/notyf.min.css";
 import axios from "axios";
 function Edit({ brands,id }) {
     const [data, setData] = useState(brands);
-    console.log(data);
     const [content, setContent] = useState(data.content);
     const [brand, setBrand] = useState(data.name);
     const api = "http://localhost:8000/api/";
