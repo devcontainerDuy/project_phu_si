@@ -90,8 +90,17 @@ class ProductCollection extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(ProductCollectionModel $ProductCollectionModel)
     {
         //
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+     public function api_collections(){
+        $result = ProductCollectionModel::active()->get();
+        return response()->json($result);
+     }
 }

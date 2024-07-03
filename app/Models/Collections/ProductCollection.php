@@ -5,6 +5,7 @@ namespace App\Models\Collections;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Categories\Categories;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductCollection extends Model
 {
@@ -15,4 +16,9 @@ class ProductCollection extends Model
     public function category(){
         return $this->hasMany(Categories::class,'id_collection');
     }
+
+    public function scopeActive(Builder $query){
+        return $query->where('status', 1)->orderBy('id','asc');
+    }
+
 }
