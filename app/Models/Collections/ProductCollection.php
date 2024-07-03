@@ -22,6 +22,6 @@ class ProductCollection extends Model
     }
 
     public function scopeSort(Builder $query,$param){
-        return $query->where('status',1)->orderBy('asc',$param);
+        return $query->where('status',1)->orderBy('position',$param);
     }
 }
