@@ -175,6 +175,7 @@ function File({ folders }) {
                                 <ul className="list-group">
                                     <li
                                         style={{ cursor: "pointer" }}
+                                        onClick={(e)=>setIdFolder(0)}
                                         className={
                                             idfolder == 0
                                                 ? "list-group-item active"
