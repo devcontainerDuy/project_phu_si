@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Models\Collections;
+namespace App\Models\Brands;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Categories\Categories;
 use Illuminate\Database\Eloquent\Builder;
 
-class ProductCollection extends Model
+class Brands extends Model
 {
     use HasFactory;
-    protected $table='collections';
-    protected $fillable=['id','collection','slug','model','position','status','created_at','updated_at'];
-
-    public function category(){
-        return $this->hasMany(Categories::class,'id_collection');
-    }
+    protected $table='brands';
+    protected $fillable=['id','name','slug','content','position','status','created_at','updated_at'];
 
     public function scopeActive(Builder $query){
         return $query->where('status', 1);

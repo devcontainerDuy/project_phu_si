@@ -10,7 +10,7 @@ use Inertia\Inertia;
 use App\Traits\HasCrud;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Models\Collections\ProductCollection ;
+use App\Models\Collections\ProductCollection;
 
 class CategoriesController extends Controller
 {
@@ -43,7 +43,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $data = ProductCollectionModel::all();
+        $data = ProductCollection::all();
         $categories = Categories::select('id','name')->get();
         return Inertia::render('Collections/CreateCategories',['collections'=> $data,'categories'=>$categories]);
     }

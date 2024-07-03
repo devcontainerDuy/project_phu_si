@@ -2,6 +2,15 @@
 import React from "react";
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import GroupIcon from '@mui/icons-material/Group';
+import PinterestIcon from '@mui/icons-material/Pinterest';
+import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import LogoutIcon from '@mui/icons-material/Logout';
+import CardTravelIcon from '@mui/icons-material/CardTravel';
+import ShopIcon from '@mui/icons-material/Shop';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
 import GroupIcon from "@mui/icons-material/Group";
 import CategoryIcon from "@mui/icons-material/Category";
 import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
@@ -12,7 +21,6 @@ import ShopIcon from "@mui/icons-material/Shop";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DesignServicesTwoToneIcon from "@mui/icons-material/DesignServicesTwoTone";
 import "../../css/app.css";
-
 function Layout({ children }) {
 	const { collapseSidebar } = useProSidebar();
 	return (
