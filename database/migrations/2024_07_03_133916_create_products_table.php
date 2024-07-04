@@ -26,14 +26,14 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('id_brand')->references('id')->on('brands');
         });
-        // Schema::create('gallery', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('model');
-        //     $table->string('image');
-        //     $table->unsignedBigInteger('id_parent');
-        //     $table->boolean('status')->default(0);
-        //     $table->timestamps();
-        // });
+        Schema::create('gallery', function (Blueprint $table) {
+            $table->id();
+            $table->string('model');
+            $table->string('image');
+            $table->unsignedBigInteger('id_parent');
+            $table->boolean('status')->default(0);
+            $table->timestamps();
+        });
 
         // Schema::create('links', function (Blueprint $table) {
         //     $table->bigIncrements('id');
