@@ -59,9 +59,14 @@ function Layout({ children }) {
 							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/admin/brands">
 								Thương hiệu
 							</MenuItem>
-							<MenuItem icon={<InventoryIcon />} component="a" href="/products">
-								Sản phẩm
-							</MenuItem>
+							<SubMenu label="Sản phẩm" icon={<ArrowForwardIosIcon />}>
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products/create">
+									Thêm sản phẩm
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+									Danh sách sản phẩm
+								</MenuItem>
+							</SubMenu>
 						</SubMenu>
 						<MenuItem icon={<ShopIcon />} component="a" href="/admin/slides">
 							Slides
