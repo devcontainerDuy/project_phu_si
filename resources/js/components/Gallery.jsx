@@ -5,11 +5,34 @@ import { Dropzone, FileMosaic } from "@dropzone-ui/react";
 import { Notyf } from "notyf";
 import axios from "axios";
 import "notyf/notyf.min.css";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 function Gallery(props) {
-
-    const {id}=props.id;
+    const [folder, setFolder] = useState("");
+    const submitFolder = () => {
+        if (folder == "") {
+            notyf.open({
+                type: "error",
+                message: "Vui lòng nhập tên thư mục",
+            });
+        } else {
+            axios
+                .post("/admin/folder", {
+                    name: folder,
+                })
+                .then((res) => {
+                    if (res.data.check == true) {
+                        setFolders(res.data.data);
+                        notyf.open({
+                            type: "success",
+                            message: "Tạo thư mục thành công",
+                        });
+                        setFolder("");
+                        setShow1(false);
+                    }
+                });
+        }
+    };
     const notyf = new Notyf({
         duration: 1000,
         position: {
@@ -51,6 +74,7 @@ function Gallery(props) {
     });
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [show1, setShow1] = useState(false);
     const [filesUpload, setFilesUpload] = React.useState([]);
     const handleClose = () => setShow(false);
     const [folders, setFolders] = useState([]);
@@ -71,30 +95,46 @@ function Gallery(props) {
     const updateFiles = (incommingFiles) => {
         setFilesUpload(incommingFiles);
     };
-    const [filePath,setFilePath]= useState([]);
+    const [filePath, setFilePath] = useState([]);
 
     const toggleFilePath = (filePathToAdd) => {
-        if (filePath.includes(filePathToAdd)) {
-            setFilePath((prevFilePath) =>
-                prevFilePath.filter((path) => path !== filePathToAdd)
-            );
-        } else {
-            setFilePath((prevFilePath) => [...prevFilePath, filePathToAdd]);
-        }
-        onFilepathsUpdate(filePath)
+        props.onSelectImages(filePathToAdd);
     };
-
+    const deleteFolder = (id) => {
+        Swal.fire({
+            icon: "question",
+            text: "Xóa folder ảnh này ?",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Đúng",
+            denyButtonText: `Không`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete("/admin/folder/" + id).then((res) => {
+                    if (res.data.check == true) {
+                        notyf.open({
+                            type: "success",
+                            message: "Đã xóa thành công",
+                        });
+                        setFolders(res.data.data);
+                        setFiles([]);
+                    }
+                });
+            } else if (result.isDenied) {
+            }
+        });
+    };
     const deleteImage = (id) => {
         Swal.fire({
-            icon: 'question',
+            icon: "question",
             text: "Xóa hình ảnh này ?",
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: "Đúng",
-            denyButtonText: `Không`
+            denyButtonText: `Không`,
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete('/admin/files/' + id).then((res) => {
+                axios.delete("/admin/files/" + id).then((res) => {
                     if (res.data.check == true) {
                         notyf.open({
                             type: "success",
@@ -102,11 +142,11 @@ function Gallery(props) {
                         });
                         setFiles(res.data.data);
                     }
-                })
+                });
             } else if (result.isDenied) {
             }
         });
-    }
+    };
     useEffect(() => {
         setLoading(true);
         if (idFolder != null) {
@@ -122,6 +162,10 @@ function Gallery(props) {
     const setUploadFiles = () => {
         setFilesUpload([]);
         setShow(true);
+    };
+    const resetCreateFolder = () => {
+        setFolder("");
+        setShow1(true);
     };
     const uploadImage = () => {
         var formData = new FormData();
@@ -160,6 +204,37 @@ function Gallery(props) {
     };
     return (
         <>
+            <Modal
+                show={show1}
+                onHide={(e) => setShow1(false)}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Tạo thư mục</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="input-group mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder={folder === "" ? "Tên thư mục ..." : ""}
+                            value={folder}
+                            aria-label="Tên thư mục ..."
+                            aria-describedby="button-addon2"
+                            onChange={(e) => setFolder(e.target.value)}
+                        />
+                        <button
+                            className="btn btn-outline-primary"
+                            type="button"
+                            id="button-addon2"
+                            onClick={(e) => submitFolder()}
+                        >
+                            Thêm
+                        </button>
+                    </div>
+                </Modal.Body>
+            </Modal>
             <Modal
                 show={show}
                 onHide={handleClose}
@@ -212,6 +287,14 @@ function Gallery(props) {
                                 onDoubleClick={(e) => setIdFolder(0)}
                             >
                                 <div className="card">
+                                    <div className="card-header text-end">
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            disabled
+                                        >
+                                            Xoá
+                                        </button>
+                                    </div>
                                     <div className="card-body">
                                         <img
                                             className="w-100"
@@ -233,6 +316,16 @@ function Gallery(props) {
                                     }
                                 >
                                     <div className="card">
+                                        <div className="card-header text-end">
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={(e) =>
+                                                    deleteFolder(folder.id)
+                                                }
+                                            >
+                                                Xoá
+                                            </button>
+                                        </div>
                                         <div className="card-body">
                                             <img
                                                 className="w-100"
@@ -309,12 +402,19 @@ function Gallery(props) {
                                     >
                                         <div className="card">
                                             <div className="card-header text-center">
-                                                <button className="btn btn-sm btn-danger"onClick={(e) => deleteImage(file.id)}>x</button>
+                                                <button
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={(e) =>
+                                                        deleteImage(file.id)
+                                                    }
+                                                >
+                                                    x
+                                                </button>
                                             </div>
                                             <div className="card-body">
                                                 <img
                                                     className="w-100"
-                                                    onClick={() =>
+                                                    onDoubleClick={() =>
                                                         toggleFilePath(
                                                             file.folder
                                                                 ? `/storage/${file.folder.name}/${file.filename}`
@@ -341,6 +441,15 @@ function Gallery(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
+                    {!idFolder && (
+                        <button
+                            className="btn btn-success"
+                            onClick={(e) => resetCreateFolder()}
+                        >
+                            <i class="bi bi-folder-plus"></i>
+                        </button>
+                    )}
+
                     <button
                         onClick={(e) => setUploadFiles()}
                         className="btn btn-warning"

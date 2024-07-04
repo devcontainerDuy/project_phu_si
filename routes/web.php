@@ -11,6 +11,7 @@ use App\Http\Controllers\Brands\BrandController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Files\FolderController;
 use App\Http\Controllers\Files\FileController;
+use App\Http\Controllers\Products\ProductsController;
 
 
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -37,13 +38,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/slides/image/{id}', [SlidesController::class, 'changeImage']);
     //==========================================================
     Route::resource('files', FileController::class);
-
     Route::post('folder',[FolderController::class,'store']);
     Route::put('folder/{id}',[FolderController::class,'update']);
     Route::delete('folder/{id}',[FolderController::class,'destroy']);
     //==========================================================
+    Route::resource('products', ProductsController::class);
 
 });
 Route::get('/', [UsersController::class, 'login'])->name('login');
 Route::post('/checkLogin', [UsersController::class, 'checkLogin'])->middleware('web');
 Route::get('/logout', [UsersController::class, 'logout'])->name('logout');
+Route::group(['prefix' => 'laravel-filemanager'], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});

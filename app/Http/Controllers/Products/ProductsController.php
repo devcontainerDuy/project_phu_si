@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Products;
 use App\Http\Controllers\Controller;
 use App\Models\Products\Products;
 use Illuminate\Http\Request;
+use App\Models\Collections\ProductCollection;
+use Inertia\Inertia;
+use App\Models\Categories\Categories;
+use App\Models\Brands\Brands;
 
 class ProductsController extends Controller
 {
@@ -21,7 +25,12 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        //
+        $brands=Brands::active()->select('id','name')->get();
+        $categories=Categories::active()->select('id','name')->get();
+        $collections=ProductCollection::active()->where('model','ProductCollection')->select('id','collection')->get();
+        $allCollecions=ProductCollection::active()->select('id','collection')->get();
+        return Inertia::render('Products/Create',['categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions]);
+
     }
 
     /**
