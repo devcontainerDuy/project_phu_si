@@ -6,8 +6,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 import axios from "axios";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
 
 export default function PostCategory({ categories }) {
 	const [data, setData] = useState([]);
