@@ -10,7 +10,7 @@ import axios from "axios";
 export default function Slides({ slides }) {
 	const [data, setData] = useState([]);
 	const [show, setShow] = useState(false);
-
+    const [modalShow, setModalShow] = React.useState(false);
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
 
@@ -23,7 +23,6 @@ export default function Slides({ slides }) {
 	const [fileDesktop, setFileDesktop] = useState(null);
 	const [fileMobile, setFileMobile] = useState(null);
 	const [url, setUrl] = useState("");
-
 	const resetCreate = () => {
 		setName("");
 		setFileDesktop(null);
@@ -150,10 +149,12 @@ export default function Slides({ slides }) {
 		},
 	];
 
+
 	return (
 		<Layout>
 			<>
 				<h1>Slides</h1>
+                {/* ======================================================= */}
 				<Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
 					<Modal.Header closeButton>
 						<Modal.Title>Chi tiết slide</Modal.Title>
