@@ -77,14 +77,6 @@ function Create({ allCollecions, brands, collections }) {
         const newAttributes = attributes.filter((_, i) => i !== index);
         setAttributes(newAttributes);
     };
-    function getStyles(name, personName, theme) {
-        return {
-            fontWeight:
-                personName.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
     const handleChange = (event) => {
         const {
             target: { value },
@@ -185,7 +177,8 @@ function Create({ allCollecions, brands, collections }) {
                                                         <input
                                                             type="text"
                                                             className="form-control"
-                                                            placeholder="SKU ..."
+                                                            placeholder={sku==''?"SKU ...":''}
+                                                            value={sku}
                                                             onChange={(e) =>
                                                                 setSku(
                                                                     e.target
@@ -208,7 +201,8 @@ function Create({ allCollecions, brands, collections }) {
                                                         <input
                                                             type="text"
                                                             className="form-control"
-                                                            placeholder="Tên sản phẩm ..."
+                                                            placeholder={name==''?"Tên sản phẩm ...":''}
+                                                            value={name}
                                                             aria-label="Tên sản phẩm"
                                                             onChange={(e) =>
                                                                 setName(
@@ -232,6 +226,7 @@ function Create({ allCollecions, brands, collections }) {
                                                             type="number"
                                                             className="form-control"
                                                             placeholder="Giá ..."
+                                                            value={price}
                                                             aria-label=""
                                                             onChange={(e) =>
                                                                 setPrice(
@@ -255,6 +250,7 @@ function Create({ allCollecions, brands, collections }) {
                                                             type="number"
                                                             className="form-control"
                                                             placeholder="Giá so sánh ..."
+                                                            value={compare_price}
                                                             onChange={(e) =>
                                                                 setComparePrice(
                                                                     e.target
@@ -277,6 +273,7 @@ function Create({ allCollecions, brands, collections }) {
                                                         <input
                                                             type="number"
                                                             className="form-control"
+                                                            value={discount}
                                                             placeholder="Giảm giá ..."
                                                             aria-label=""
                                                             onChange={(e) =>
