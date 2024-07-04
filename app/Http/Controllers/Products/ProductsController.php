@@ -9,6 +9,7 @@ use App\Models\Collections\ProductCollection;
 use Inertia\Inertia;
 use App\Models\Categories\Categories;
 use App\Models\Brands\Brands;
+use Illuminate\Support\Facades\DB;
 
 class ProductsController extends Controller
 {

@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\Files\FileController;
 use App\Http\Controllers\Posts\PostController;
 use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\UsersController;
