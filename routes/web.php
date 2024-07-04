@@ -24,6 +24,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('users', UsersController::class);
     //==========================================================
     Route::resource('collections', ProductCollection::class);
+    Route::post('collections/home', [ProductCollection::class,'storeHomeCollection']);
+    Route::post('collections/home', [ProductCollection::class,'storeHomeCollection']);
+    Route::get('collections-trang-chu', [ProductCollection::class,'indexHomeCollection']);
+    Route::put('collectionsHome/{id}',[ProductCollection::class,'updateHomeCollection']);
     //==========================================================
     Route::resource('categories', CategoriesController::class);
     //==========================================================

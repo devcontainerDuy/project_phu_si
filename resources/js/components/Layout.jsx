@@ -40,8 +40,11 @@ function Layout({ children }) {
 						</SubMenu>
 						<SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
 							<SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
 									Danh mục
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
+									Danh mục Trang chủ
 								</MenuItem>
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục

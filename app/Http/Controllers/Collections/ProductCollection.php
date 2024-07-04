@@ -18,19 +18,47 @@ class ProductCollection extends Controller
      */
     public function index()
     {
-        $data = ProductCollectionModel::all();
+        $data = ProductCollectionModel::where('model','ProductCollection')->get();
         return Inertia::render('Collections/Index',['collection'=>$data]);
     }
 
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexHomeCollection()
+    {
+        $data = ProductCollectionModel::where('model','HomeCollection')->get();
+        return Inertia::render('Collections/IndexHome',['collection'=>$data]);
+    }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $data = ProductCollectionModel::all();
+        $data = ProductCollectionModel::where('model','ProductCollection')->get();
         return Inertia::render('Collections/Create',['collections'=> $data]);
     }
-
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeHomeCollection(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'collection' => 'required|unique:collections,collection',
+            'position'=>'numeric'
+        ], [
+            'collection.required'=>'Nhóm loại sản phẩm bắt buộc',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $data= $request->all();
+        $data['slug']=Str::slug($request->collection);
+        $data['model']='HomeCollection';
+        $data['created_at']=now();
+        ProductCollectionModel::create($data);
+        return response()->json(['check'=>true]);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -68,7 +96,23 @@ class ProductCollection extends Controller
     {
 
     }
-
+        /**
+     * Update the specified resource in storage.
+     */
+    public function updateHomeCollection(Request $request, ProductCollectionModel $ProductCollectionModel,$id)
+    {
+        $data=$request->all();
+        if($request->has('collection')){
+            $data['slug']=Str::slug($request->collection);
+        }
+        $collection=ProductCollectionModel::find($id);
+        if(!$collection){
+            return response()->json(['check'=>false,'msg'=>'Không tìm thấy collection']);
+        }
+        ProductCollectionModel::where('id',$id)->update($data);
+        $data = ProductCollectionModel::where('model','HomeCollection')->get();
+        return response()->json(['check'=>true,'data'=>$data]);
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -83,8 +127,8 @@ class ProductCollection extends Controller
             return response()->json(['check'=>false,'msg'=>'Không tìm thấy collection']);
         }
         ProductCollectionModel::where('id',$id)->update($data);
-        $result = ProductCollectionModel::all();
-        return response()->json(['check'=>true,'data'=>$result]);
+        $data = ProductCollectionModel::where('model','ProductCollection')->get();
+        return response()->json(['check'=>true,'data'=>$data]);
     }
 
     /**
