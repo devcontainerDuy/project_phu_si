@@ -42,8 +42,11 @@ function Layout({ children }) {
 						</SubMenu>
 						<SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
 							<SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
 									Danh mục
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
+									Danh mục Trang chủ
 								</MenuItem>
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục
@@ -58,9 +61,14 @@ function Layout({ children }) {
 							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/admin/brands">
 								Thương hiệu
 							</MenuItem>
-							<MenuItem icon={<InventoryIcon />} component="a" href="/products">
-								Sản phẩm
-							</MenuItem>
+							<SubMenu label="Sản phẩm" icon={<ArrowForwardIosIcon />}>
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products/create">
+									Thêm sản phẩm
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+									Danh sách sản phẩm
+								</MenuItem>
+							</SubMenu>
 						</SubMenu>
 						<SubMenu label="Quản lý Bài viết" icon={<PostAddRoundedIcon />}>
 							<MenuItem icon={<PostAddRoundedIcon />} component="a" href="/admin/posts">

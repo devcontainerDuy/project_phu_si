@@ -28,7 +28,7 @@ return new class extends Migration
         });
         Schema::create('gallery', function (Blueprint $table) {
             $table->id();
-            $table->string('model');
+            $table->string('model')->nullable();
             $table->string('image');
             $table->unsignedBigInteger('id_parent');
             $table->boolean('status')->default(0);

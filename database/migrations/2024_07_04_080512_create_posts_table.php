@@ -19,6 +19,9 @@ return new class extends Migration
             $table->longText('content');
             $table->boolean('status')->default(0);
             $table->boolean('highlighted')->default(0);
+            $table->unsignedBigInteger('id_collection')->nullable();
+            $table->unsignedBigInteger('view')->default(0);
+            $table->unsignedBigInteger('id_category')->nullable();
             $table->unsignedInteger('position')->nullable();
             $table->timestamps();
         });

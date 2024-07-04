@@ -92,5 +92,8 @@ class FolderController extends Controller
         if($check){
             return response()->json(['check'=>false,'msg'=>'Còn hình trong thư mục này']);
         }
+        Folders::where('id',$id)->delete();
+        $folders= Folders::all();
+        return response()->json(['check'=>true,'data'=>$folders]);
     }
 }
