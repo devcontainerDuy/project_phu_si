@@ -167,6 +167,9 @@ function Gallery(props) {
         setFolder("");
         setShow1(true);
     };
+    useEffect(()=>{
+        setIdFolder(null);
+    },[])
     const uploadImage = () => {
         var formData = new FormData();
         filesUpload.forEach((file) => {

@@ -7,16 +7,18 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
+import "notyf/notyf.min.css";
+import axios from "axios";
+import { Notyf } from "notyf";
 function Create({ allCollecions, brands, collections }) {
     const theme = useTheme();
     const [idBrand, setIdBrand] = useState(0);
     const [idCategories, setidCategories] = useState(0);
-    const [attribute, setAttribute] = useState("");
     const [sku, setSku] = useState("");
     const [name, setName] = useState("");
     const [price, setPrice] = useState(0);
     const [compare_price, setComparePrice] = useState(0);
+    const [instock, setInstock] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [content, setContent] = useState("");
     const [attributes, setAttributes] = useState([{ name: "", value: "" }]);
@@ -77,6 +79,45 @@ function Create({ allCollecions, brands, collections }) {
         const newAttributes = attributes.filter((_, i) => i !== index);
         setAttributes(newAttributes);
     };
+    const notyf = new Notyf({
+        duration: 1000,
+        position: {
+            x: "right",
+            y: "top",
+        },
+        types: [
+            {
+                type: "warning",
+                background: "orange",
+                icon: {
+                    className: "material-icons",
+                    tagName: "i",
+                    text: "warning",
+                },
+            },
+            {
+                type: "error",
+                background: "indianred",
+                duration: 2000,
+                dismissible: true,
+            },
+            {
+                type: "success",
+                background: "green",
+                color: "black",
+                duration: 2000,
+                dismissible: true,
+            },
+            {
+                type: "info",
+                background: "#24b3f0",
+                color: "black",
+                duration: 1500,
+                dismissible: false,
+                icon: '<i class="bi bi-bag-check"></i>',
+            },
+        ],
+    });
     const handleChange = (event) => {
         const {
             target: { value },
@@ -86,7 +127,42 @@ function Create({ allCollecions, brands, collections }) {
             typeof value === "string" ? value.split(",") : value
         );
     };
-
+    const submitCreate=()=>{
+        var formData= new FormData();
+        var thuoc_tinh= JSON.stringify(attributes)
+        formData.append('id_category',idCategories);
+        formData.append('name',name);
+        formData.append('sku',sku);
+        formData.append('price',price);
+        formData.append('compare_price',compare_price);
+        formData.append('attributes',thuoc_tinh);
+        formData.append('discount',discount);
+        formData.append('description',CKEDITOR.instances['editor1'].getData());
+        formData.append('content',CKEDITOR.instances['editor'].getData());
+        formData.append('id_brand',idBrand);
+        formData.append('instock',instock);
+        images.forEach(el => {
+            formData.append('images[]',el);
+        });
+        axios.post('/admin/products',formData).then((res)=>{
+            if(res.data.check==true){
+                notyf.open({
+                    type: "success",
+                    message: "Thêm thành công",
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 2000);
+            }else if(res.data.check==false){
+                if(res.data.msg){
+                    notyf.open({
+                        type: "error",
+                        message: res.data.msg,
+                    });
+                }
+            }
+        })
+    }
     return (
         <Layout>
             <>
@@ -286,6 +362,30 @@ function Create({ allCollecions, brands, collections }) {
                                                         />
                                                     </div>
                                                 </div>
+                                                <div className="col-md-4">
+                                                    <div className="input-group mb-3">
+                                                        <span
+                                                            className="input-group-text"
+                                                            id="basic-addon1"
+                                                        >
+                                                            Tồn kho
+                                                        </span>
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            value={instock}
+                                                            placeholder="Giảm giá ..."
+                                                            aria-label=""
+                                                            onChange={(e) =>
+                                                                setInstock(
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                            aria-describedby="basic-addon1"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-md">
@@ -294,12 +394,6 @@ function Create({ allCollecions, brands, collections }) {
                                                     </label>
                                                     <textarea
                                                         id="editor1"
-                                                        value={description}
-                                                        onChange={(e) =>
-                                                            setDescription(
-                                                                e.target.value
-                                                            )
-                                                        }
                                                     ></textarea>
                                                 </div>
                                             </div>
@@ -314,11 +408,6 @@ function Create({ allCollecions, brands, collections }) {
                                                     <textarea
                                                         id="editor"
                                                         value={content}
-                                                        onChange={(e) =>
-                                                            setContent(
-                                                                e.target.value
-                                                            )
-                                                        }
                                                     ></textarea>
                                                 </div>
                                             </div>
@@ -603,7 +692,7 @@ function Create({ allCollecions, brands, collections }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-muted">Footer</div>
+                                <div class="card-footer text-muted"><button className="btn btn-sm btn-primary" onClick={(e)=>submitCreate()}>Thêm</button></div>
                             </div>
                         </div>
                     </div>

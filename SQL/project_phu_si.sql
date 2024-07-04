@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 03, 2024 at 10:52 AM
+-- Generation Time: Jul 04, 2024 at 10:49 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.8
 
@@ -43,7 +43,7 @@ CREATE TABLE `brands` (
 --
 
 INSERT INTO `brands` (`id`, `name`, `position`, `slug`, `content`, `status`, `created_at`, `updated_at`) VALUES
-(2, 'HIKVISION', 1, 'hikvision', '<p><img src=\"https://vuhoangtelecom.vn/wp-content/uploads/2019/06/LOGO-HIKVISION.png\" style=\"height:67px; width:200px\" /></p>\n\n<p><strong>HIKVISION</strong>&nbsp;- nh&agrave; cung cấp lớn nhất&nbsp;<strong>camera gi&aacute;m s&aacute;t</strong>&nbsp;v&agrave; c&aacute;c giải ph&aacute;p camera. Cũng như c&aacute;c d&ograve;ng sản phẩm&nbsp;chu&ocirc;ng cửa m&agrave;n h&igrave;nh,&nbsp;ổ cứng SSD, b&aacute;o trộm ...</p>\n\n<p>Được th&agrave;nh lập v&agrave;o năm 2001,&nbsp;<strong>Camera quan s&aacute;t HIKVISION</strong>&nbsp;đ&atilde; nhanh ch&oacute;ng đạt top đầu thế giới. Trụ sở ch&iacute;nh tại Thẩm Quyến - Trung Quốc, cho đến nay đ&atilde; c&oacute; hơn 30 chi nh&aacute;nh trong khắp đất nước Trung Quốc. V&agrave; hơn 16 c&aacute;c c&ocirc;ng ty con ở tr&ecirc;n to&agrave;n thế giới trong đ&oacute; c&oacute; Việt Nam.</p>', 1, '2024-07-03 04:34:23', '2024-07-03 06:24:46');
+(2, 'HIKVISION', 1, 'hikvision', '<p><img src=\"https://vuhoangtelecom.vn/wp-content/uploads/2019/06/LOGO-HIKVISION.png\" style=\"height:67px; width:200px\" /></p>\n\n<p><strong>HIKVISION</strong>&nbsp;- nh&agrave; cung cấp lớn nhất&nbsp;<strong>camera gi&aacute;m s&aacute;t</strong>&nbsp;v&agrave; c&aacute;c giải ph&aacute;p camera. Cũng như c&aacute;c d&ograve;ng sản phẩm&nbsp;chu&ocirc;ng cửa m&agrave;n h&igrave;nh,&nbsp;ổ cứng SSD, b&aacute;o trộm ...</p>\n\n<p>Được th&agrave;nh lập v&agrave;o năm 2001,&nbsp;<strong>Camera quan s&aacute;t HIKVISION</strong>&nbsp;đ&atilde; nhanh ch&oacute;ng đạt top đầu thế giới. Trụ sở ch&iacute;nh tại Thẩm Quyến - Trung Quốc, cho đến nay đ&atilde; c&oacute; hơn 30 chi nh&aacute;nh trong khắp đất nước Trung Quốc. V&agrave; hơn 16 c&aacute;c c&ocirc;ng ty con ở tr&ecirc;n to&agrave;n thế giới trong đ&oacute; c&oacute; Việt Nam.</p>', 1, '2024-07-03 04:34:23', '2024-07-04 03:28:52');
 
 -- --------------------------------------------------------
 
@@ -122,11 +122,13 @@ CREATE TABLE `collections` (
 --
 
 INSERT INTO `collections` (`id`, `collection`, `slug`, `model`, `position`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Sản phẩm khuyến mãi', 'san-pham-khuyen-mai', 'ProductCollection', 1, 1, '2024-07-02 06:30:17', '2024-07-03 06:22:58'),
+(1, 'Sản phẩm khuyến mãi', 'san-pham-khuyen-mai', 'ProductCollection', 1, 1, '2024-07-02 06:30:17', '2024-07-04 04:04:26'),
 (2, 'Dịch vụ trọn gói', 'dich-vu-tron-goi', 'ProductCollection', 2, 1, '2024-07-02 06:46:45', '2024-07-02 06:46:45'),
 (3, 'Thiết bị camera an ninh', 'thiet-bi-camera-an-ninh', 'ProductCollection', 3, 1, '2024-07-02 06:47:02', '2024-07-02 06:47:02'),
 (4, 'Thiết bị kiểm soát cửa', 'thiet-bi-kiem-soat-cua', 'ProductCollection', 4, 1, '2024-07-02 06:47:14', '2024-07-03 02:26:12'),
-(5, 'Thiết bị báo động báo cháy', 'thiet-bi-bao-dong-bao-chay', 'ProductCollection', 5, 1, '2024-07-02 06:47:28', '2024-07-02 06:47:42');
+(5, 'Thiết bị báo động báo cháy', 'thiet-bi-bao-dong-bao-chay', 'ProductCollection', 5, 1, '2024-07-02 06:47:28', '2024-07-02 06:47:42'),
+(9, 'Sản phẩm hot', 'san-pham-hot', 'HomeCollection', 1, 1, '2024-07-04 03:56:38', '2024-07-04 04:08:29'),
+(10, 'Sản phẩm dành riêng cho bạn', 'san-pham-danh-rieng-cho-ban', 'HomeCollection', 2, 1, '2024-07-04 03:57:21', '2024-07-04 04:02:45');
 
 -- --------------------------------------------------------
 
@@ -168,6 +170,22 @@ INSERT INTO `folders` (`id`, `name`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `gallery`
+--
+
+CREATE TABLE `gallery` (
+  `id` bigint UNSIGNED NOT NULL,
+  `model` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_parent` bigint UNSIGNED NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `images`
 --
 
@@ -178,6 +196,19 @@ CREATE TABLE `images` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `folder_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `images`
+--
+
+INSERT INTO `images` (`id`, `filename`, `created_at`, `updated_at`, `folder_id`) VALUES
+(1, 'kem-duong-la-roche-posay-giam-mun-hieu-qua-75ml-4-1716605510_img_358x358_843626_fit_center.png', '2024-07-04 01:34:03', '2024-07-04 01:34:03', NULL),
+(2, 'kem-duong-la-roche-posay-giam-mun-hieu-qua-75ml-5-1716605501_img_358x358_843626_fit_center.jpg', '2024-07-04 01:34:04', '2024-07-04 01:34:04', NULL),
+(3, 'kem-duong-la-roche-posay-giam-mun-hieu-qua-75ml-6-1716605504_img_358x358_843626_fit_center.jpg', '2024-07-04 01:34:04', '2024-07-04 01:34:04', NULL),
+(4, 'phien-ban-moi-nuoc-duong-toc-cocoon-tinh-dau-buoi-140ml-1-1689843806_img_358x358_843626_fit_center.jpg', '2024-07-04 01:35:11', '2024-07-04 01:35:11', 1),
+(8, '30SEPRSW-2.jpg', '2024-07-04 02:16:27', '2024-07-04 02:16:27', 2),
+(9, '30S2DQIY-GLANZEN MAGIC SPRAY-9.jpg', '2024-07-04 02:16:27', '2024-07-04 02:16:27', 2),
+(10, '30SNXG0L-3.jpg', '2024-07-04 02:16:27', '2024-07-04 02:16:27', 2);
 
 -- --------------------------------------------------------
 
@@ -212,6 +243,21 @@ CREATE TABLE `job_batches` (
   `cancelled_at` int DEFAULT NULL,
   `created_at` int NOT NULL,
   `finished_at` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `links`
+--
+
+CREATE TABLE `links` (
+  `id` bigint UNSIGNED NOT NULL,
+  `id_link` bigint UNSIGNED NOT NULL,
+  `id_parent` bigint UNSIGNED NOT NULL,
+  `model` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -263,7 +309,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (24, '2024_07_03_080918_create_slides_table', 10),
 (25, '2024_07_03_101119_create_brands_table', 11),
 (26, '2024_07_03_142147_create_folders_table', 12),
-(27, '2024_07_03_142201_create_images_table', 13);
+(27, '2024_07_03_142201_create_images_table', 13),
+(28, '2024_07_03_133916_create_products_table', 14),
+(29, '2024_07_04_103205_create_links_table', 15),
+(30, '2024_07_04_131353_update_products_table', 16);
 
 -- --------------------------------------------------------
 
@@ -362,6 +411,30 @@ CREATE TABLE `post_categories` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sku` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `price` bigint UNSIGNED NOT NULL,
+  `compare_price` bigint UNSIGNED NOT NULL,
+  `discount` int UNSIGNED NOT NULL DEFAULT '0',
+  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attributes` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_brand` bigint UNSIGNED NOT NULL,
+  `id_category` bigint UNSIGNED NOT NULL,
+  `in_stock` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roles`
 --
 
@@ -424,7 +497,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('gHDufdXBeEcy3NjoFxFW5vbXDKdLP3X4EBhFjAmM', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiT0VSV1ZEWnVDSVVYakZDOXo4ODRUWkxGdlRhQ2pLRUN4MGd3eDlDYiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hZG1pbi9maWxlcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjg7fQ==', 1720000672);
+('5B0FXRGUbgmRGNAdjNzHi6TJxmjhrPshYgLtUYdy', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMDRVeEc0YmlyQ0U3Z0pSUnlCeFJvdjd2RXBZbllUODdYV2tTcWdMdCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvZm9sZGVyIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6ODt9', 1720087367),
+('fQam4hRmE8TlWlmQ1X8ywPKPD7UJ9ZorgHQJWg55', 8, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoieEQzV3RqUUZCdkxZNHB0MUlGSWc1SjJHUlpoTkVMT2dSNWNPdlN3NSI7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6ODtzOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozMzoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2FwaS9maWxlcy8wIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1720082711);
 
 -- --------------------------------------------------------
 
@@ -450,7 +524,7 @@ CREATE TABLE `slides` (
 --
 
 INSERT INTO `slides` (`id`, `name`, `slug`, `url`, `desktop`, `path`, `mobile`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Slide 1', 'slide-1', NULL, 'facebook-dynamic-kem-duong-la-roche-posay-giam-mun-hieu-qua-75ml-1716605489_img_358x358_843626_fit_center.jpg', 'Slide 1', 'phien-ban-moi-nuoc-duong-toc-cocoon-tinh-dau-buoi-140ml-1-1689843806_img_358x358_843626_fit_center.jpg', 0, '2024-07-03 06:17:51', '2024-07-03 06:17:51');
+(1, 'Slide 1', 'slide-1', NULL, 'facebook-dynamic-kem-duong-la-roche-posay-giam-mun-hieu-qua-75ml-1716605489_img_358x358_843626_fit_center.jpg', 'Slide 1', 'phien-ban-moi-nuoc-duong-toc-cocoon-tinh-dau-buoi-140ml-1-1689843806_img_358x358_843626_fit_center.jpg', 0, '2024-07-03 06:17:51', '2024-07-04 04:34:16');
 
 -- --------------------------------------------------------
 
@@ -528,6 +602,12 @@ ALTER TABLE `folders`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `gallery`
+--
+ALTER TABLE `gallery`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `images`
 --
 ALTER TABLE `images`
@@ -545,6 +625,12 @@ ALTER TABLE `jobs`
 -- Indexes for table `job_batches`
 --
 ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `links`
+--
+ALTER TABLE `links`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -599,6 +685,14 @@ ALTER TABLE `personal_access_tokens`
 --
 ALTER TABLE `post_categories`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `products_id_brand_foreign` (`id_brand`),
+  ADD KEY `id_category` (`id_category`);
 
 --
 -- Indexes for table `roles`
@@ -656,7 +750,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `collections`
 --
 ALTER TABLE `collections`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -668,18 +762,30 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `folders`
 --
 ALTER TABLE `folders`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `gallery`
+--
+ALTER TABLE `gallery`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `images`
 --
 ALTER TABLE `images`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `links`
+--
+ALTER TABLE `links`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -692,7 +798,7 @@ ALTER TABLE `medias`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -710,6 +816,12 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `post_categories`
 --
 ALTER TABLE `post_categories`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -757,6 +869,13 @@ ALTER TABLE `model_has_permissions`
 --
 ALTER TABLE `model_has_roles`
   ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`id_category`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `products_id_brand_foreign` FOREIGN KEY (`id_brand`) REFERENCES `brands` (`id`);
 
 --
 -- Constraints for table `role_has_permissions`
