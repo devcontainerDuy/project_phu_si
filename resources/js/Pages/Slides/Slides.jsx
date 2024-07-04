@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
-import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Modal, Form, Image } from "react-bootstrap";
 import { Box, Select, Switch, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Notyf } from "notyf";
@@ -16,10 +16,11 @@ export default function Slides({ slides }) {
 		setShow(true);
 		axios.get(`/admin/slides/${id}`).then((response) => {
 			if (response.data.check === true) {
-				setName(response.data.data.name);
-				setFileDesktop(response.data.data.desktop);
-				setFileMobile(response.data.data.mobile);
-				setUrl(response.data.data.url);
+				setIdDetail(response.data.data.id);
+				setNameDetail(response.data.data.name);
+				setFileDesktopDetail(response.data.data.desktop);
+				setFileMobileDetail(response.data.data.mobile);
+				setPathDetail(response.data.data.path);
 			} else {
 				notyf.error(response.data.msg);
 			}
@@ -41,6 +42,21 @@ export default function Slides({ slides }) {
 		setFileDesktop(null);
 		setFileMobile(null);
 		setUrl("");
+		handleClose();
+	};
+	//=================={Update}=======================
+	const [idDetail, setIdDetail] = useState(null);
+	const [nameDetail, setNameDetail] = useState("");
+	const [fileDesktopDetail, setFileDesktopDetail] = useState(null);
+	const [fileMobileDetail, setFileMobileDetail] = useState(null);
+	const [pathDetail, setPathDetail] = useState("");
+
+	const resetDetail = () => {
+		setIdDetail(null);
+		setNameDetail("");
+		setFileDesktopDetail(null);
+		setFileMobileDetail(null);
+		setPathDetail("");
 		handleClose();
 	};
 
@@ -82,6 +98,39 @@ export default function Slides({ slides }) {
 				});
 			}
 		});
+	};
+
+	const handleChangeImage = (id) => {
+		const formData = new FormData();
+		if (fileDesktopDetail) {
+			formData.append("desktop", fileDesktopDetail);
+		}
+		if (fileMobileDetail) {
+			formData.append("mobile", fileMobileDetail);
+		}
+
+		axios
+			.post(`/admin/slides/image/${id}`, formData)
+			.then((response) => {
+				if (response.data.check === true) {
+					notyf.open({
+						type: "success",
+						message: response.data.msg,
+					});
+					resetDetail();
+				} else {
+					notyf.open({
+						type: "error",
+						message: response.data.msg,
+					});
+				}
+			})
+			.catch((error) => {
+				notyf.open({
+					type: "error",
+					message: error.response.data.msg,
+				});
+			});
 	};
 
 	const handleDelete = (id) => {
@@ -141,7 +190,7 @@ export default function Slides({ slides }) {
 	});
 
 	const columns = [
-		{ field: "id", headerName: "#", width: 90 },
+		{ field: "id", headerName: "#", width: 30 },
 		{
 			field: "name",
 			headerName: "Tên slide",
@@ -155,10 +204,24 @@ export default function Slides({ slides }) {
 			editable: true,
 		},
 		{
+			field: "url",
+			headerName: "Đường dẫn",
+			width: 150,
+			editable: true,
+			renderCell: (params) =>
+				params.value ? (
+					<a href={params.value} target="_blank" rel="noreferrer">
+						{params.value}
+					</a>
+				) : (
+					<span>Null</span>
+				),
+		},
+		{
 			field: "status",
 			headerName: "Trạng thái",
 			type: "number",
-			width: 150,
+			width: 80,
 			editable: true,
 			renderCell: (params) => (
 				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />
@@ -186,39 +249,41 @@ export default function Slides({ slides }) {
 		<Layout>
 			<>
 				<h1>Slides</h1>
-				<Modal show={show} onHide={resetCreate} backdrop="static" keyboard={false}>
-					<Modal.Header closeButton>
-						<Modal.Title>Chi tiết slide</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form encType="multipart/form-data">
-							<Form.Group className="mb-3" controlId="ControlInput1">
-								<Form.Label>Tên slide</Form.Label>
-								<Form.Control type="text" placeholder="Nhập tên slide" value={name} autoFocus />
-							</Form.Group>
+				<Modal show={show} onHide={resetDetail} backdrop="static" keyboard={false}>
+					<Form
+						encType="multipart/form-data"
+						onSubmit={(e) => {
+							e.preventDefault();
+							handleChangeImage(idDetail);
+						}}>
+						<Modal.Header closeButton>
+							<Modal.Title>Chi tiết slide: {nameDetail}</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
 							<Form.Group className="mb-3" controlId="ControlInput2">
-								<Form.Label>Desktop</Form.Label>
-
-								<Form.Control type="file" placeholder="Nhập mẫu desktop" multiple />
+								<Form.Label>
+									<strong>Desktop</strong>
+								</Form.Label>
+								<Form.Control type="file" placeholder="Nhập mẫu desktop" onChange={(e) => setFileDesktopDetail(e.target.files[0])} />
+								<Image className="mt-2" src={"/storage" + pathDetail + "desktop/" + fileDesktopDetail} rounded alt={nameDetail} style={{ width: "40%" }} />
 							</Form.Group>
 							<Form.Group className="mb-3" controlId="ControlInput3">
-								<Form.Label>Mobile</Form.Label>
-								<Form.Control type="file" placeholder="Nhập mẫu mobile" multiple />
+								<Form.Label>
+									<strong>Mobile</strong>
+								</Form.Label>
+								<Form.Control type="file" placeholder="Nhập mẫu mobile" onChange={(e) => setFileMobileDetail(e.target.files[0])} />
+								<Image className="mt-2" src={"/storage" + pathDetail + "desktop/" + fileMobileDetail} rounded alt={nameDetail} style={{ width: "40%" }} />
 							</Form.Group>
-							<Form.Group className="mb-3" controlId="ControlInput4">
-								<Form.Label>URL</Form.Label>
-								<Form.Control type="text" placeholder="Nhập đường dẫn slide" autoFocus />
-							</Form.Group>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={handleClose}>
-							Thoát
-						</Button>
-						<Button variant="primary" onClick={handleClose}>
-							Lưu lại
-						</Button>
-					</Modal.Footer>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button variant="secondary" onClick={resetDetail}>
+								Thoát
+							</Button>
+							<Button variant="primary" type="submit">
+								Lưu lại
+							</Button>
+						</Modal.Footer>
+					</Form>
 				</Modal>
 
 				<Row>

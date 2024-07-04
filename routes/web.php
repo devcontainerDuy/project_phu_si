@@ -24,6 +24,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('categories', CategoriesController::class);
     //==========================================================
     Route::resource('slides', SlidesController::class);
+    Route::post('/slides/image/{id}', [SlidesController::class, 'changeImage']);
     //==========================================================
 
 });

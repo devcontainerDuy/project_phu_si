@@ -126,6 +126,53 @@ class SlidesController extends Controller
         }
     }
 
+    public function changeImage(Request $request, string $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'desktop' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'mobile' => 'image|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+
+        $data = $request->all();
+        $item = Slide::findOrFail($id);
+
+        // dd($data);
+
+        if ($request->hasFile('desktop')) {
+
+            if ($item->desktop && Storage::exists('public/images/slides/desktop/' . $item->desktop)) {
+                Storage::delete('public/images/slides/desktop/' . $item->desktop);
+            }
+            $desktop = $request->file('desktop');
+            $file_desktop = $desktop->getClientOriginalName();
+            $desktop->storeAs('/public/images/slides/desktop', $file_desktop);
+            $data['desktop'] = $file_desktop;
+        }
+
+        if ($request->hasFile('mobile')) {
+            if ($item->mobile && Storage::exists('public/images/slides/mobile/' . $item->mobile)) {
+                Storage::delete('public/images/slides/mobile/' . $item->mobile);
+            }
+            $mobile = $request->file('mobile');
+            $file_mobile = $mobile->getClientOriginalName();
+            $mobile->storeAs('/public/images/slides/mobile', $file_mobile);
+            $data['mobile'] = $file_mobile;
+        }
+
+        $update = $item->update($data);
+
+        if ($update) {
+            $data = Slide::all();
+            return response()->json(['check' => true, 'msg' => 'Cập nhật thành công', 'data' => $data]);
+        } else {
+            return response()->json(['check' => false, 'msg' => 'Cập nhật thất bại']);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */
