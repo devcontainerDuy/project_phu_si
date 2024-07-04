@@ -8,6 +8,8 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import ShopIcon from "@mui/icons-material/Shop";
+import PostAddRoundedIcon from "@mui/icons-material/PostAddRounded";
+import ClassIcon from "@mui/icons-material/Class";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DesignServicesTwoToneIcon from "@mui/icons-material/DesignServicesTwoTone";
 import "../../css/app.css";
@@ -49,7 +51,7 @@ function Layout({ children }) {
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
 									Danh mục con
 								</MenuItem>
-                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
 									Tạo Danh mục con
 								</MenuItem>
 							</SubMenu>
@@ -58,6 +60,14 @@ function Layout({ children }) {
 							</MenuItem>
 							<MenuItem icon={<InventoryIcon />} component="a" href="/products">
 								Sản phẩm
+							</MenuItem>
+						</SubMenu>
+						<SubMenu label="Quản lý Bài viết" icon={<PostAddRoundedIcon />}>
+							<MenuItem icon={<PostAddRoundedIcon />} component="a" href="/admin/posts">
+								Bài viết
+							</MenuItem>
+							<MenuItem icon={<ClassIcon />} component="a" href="/admin/post/categories">
+								Doanh mục{" "}
 							</MenuItem>
 						</SubMenu>
 						<MenuItem icon={<ShopIcon />} component="a" href="/admin/slides">
