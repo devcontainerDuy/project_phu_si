@@ -8,7 +8,6 @@ use App\Http\Controllers\Users\RolesController;
 use App\Http\Controllers\Users\UsersController;
 use App\Http\Controllers\Brands\BrandController;
 use App\Http\Controllers\Files\FolderController;
-use App\Http\Controllers\Files\FileController;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Users\PermissionsController;
