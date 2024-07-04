@@ -200,7 +200,7 @@ export default function Slides({ slides }) {
 		{
 			field: "slug",
 			headerName: "Slug",
-			width: 230,
+			width: 200,
 			editable: true,
 		},
 		{
@@ -220,7 +220,7 @@ export default function Slides({ slides }) {
 		{
 			field: "status",
 			headerName: "Trạng thái",
-			width: 150,
+			width: 120,
 
 			editable: true,
 			renderCell: (params) => (
@@ -234,11 +234,11 @@ export default function Slides({ slides }) {
 			width: 260,
 			type: "actions",
 			getActions: (params) => [
-				<Button variant="warning" onClick={() => handleShow(params.row.id)}>
-					<i className="bi bi-pencil-square" />
+				<Button variant="warning" onClick={() => handleShow(params.row.id)} title="Xem hình ảnh">
+					<i className="bi bi-images" />
 				</Button>,
 
-				<Button className="ms-2" variant="danger" onClick={() => handleDelete(params.row.id)}>
+				<Button className="ms-2" variant="danger" onClick={() => handleDelete(params.row.id)} title="Xóa slide">
 					<i className="bi bi-trash" />
 				</Button>,
 			],
