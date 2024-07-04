@@ -220,8 +220,8 @@ export default function Slides({ slides }) {
 		{
 			field: "status",
 			headerName: "Trạng thái",
-			type: "number",
-			width: 80,
+			width: 150,
+
 			editable: true,
 			renderCell: (params) => (
 				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />

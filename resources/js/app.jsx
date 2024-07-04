@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import "../css/app.css";
 createInertiaApp({
 	resolve: (name) => {

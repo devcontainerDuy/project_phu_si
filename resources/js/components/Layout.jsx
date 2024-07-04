@@ -3,7 +3,6 @@ import React from "react";
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import GroupIcon from "@mui/icons-material/Group";
-import CategoryIcon from "@mui/icons-material/Category";
 import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -12,7 +11,6 @@ import ShopIcon from "@mui/icons-material/Shop";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DesignServicesTwoToneIcon from "@mui/icons-material/DesignServicesTwoTone";
 import "../../css/app.css";
-
 function Layout({ children }) {
 	const { collapseSidebar } = useProSidebar();
 	return (
@@ -48,11 +46,14 @@ function Layout({ children }) {
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục
 								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+									Danh mục con
+								</MenuItem>
+                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
 									Tạo Danh mục con
 								</MenuItem>
 							</SubMenu>
-							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/brands">
+							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/admin/brands">
 								Thương hiệu
 							</MenuItem>
 							<MenuItem icon={<InventoryIcon />} component="a" href="/products">
@@ -62,8 +63,8 @@ function Layout({ children }) {
 						<MenuItem icon={<ShopIcon />} component="a" href="/admin/slides">
 							Slides
 						</MenuItem>
-						<MenuItem icon={<CardTravelIcon />} component="a" href="/bills">
-							Hoá đơn
+						<MenuItem icon={<CardTravelIcon />} component="a" href="/admin/files">
+							Hình ảnh
 						</MenuItem>
 						<MenuItem icon={<DesignServicesTwoToneIcon />} component="a" href="/services">
 							Dịch vụ{" "}

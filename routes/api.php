@@ -10,3 +10,6 @@ use App\Http\Controllers\Collections\ProductCollection;
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
 
+Route::middleware(['web'])->group(function () {
+
+});
