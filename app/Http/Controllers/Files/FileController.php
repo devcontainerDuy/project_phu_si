@@ -25,11 +25,38 @@ class FileController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function get_folder()
     {
-        //
+        $folders= Folders::all();
+        return response()->json(['data'=>$folders]);
     }
-
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function rename_folder($id){
+        $validator = Validator::make($request->all(), [
+            'name'=>'required|unique:folders,name'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $folder= Folders::find($id);
+        $data = $request->all();
+        Folders::where('id',$id)->update($data);
+        $folders= Folders::all();
+        return response()->json(['check'=>true,'data'=>$folders]);
+    }
+         /**
+     * Store a newly created resource in storage.
+     */
+    public function get_files($id){
+        if($id=='null'||$id==0){
+            $files= Files::where('folder_id',null)->get();
+        }else{
+            $files= Files::with('folder')->where('folder_id',$id)->get();
+        }
+        return response()->json(['data'=>$files]);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -112,12 +139,13 @@ class FileController extends Controller
             $image=$file->filename;
             $imagePath = storage_path('app/public/' .$folder.'/'.$image);
             Storage::delete($imagePath);
-        }else{  
+        }else{
             $image=$file->filename;
             $imagePath = storage_path('app/public/'.$image);
             Storage::delete($imagePath);
         }
         $file->delete();
-        return response()->json(['check'=>true]);
+        $files= Files::with('folder')->where('folder_id',$folder_id)->get();
+        return response()->json(['check'=>true,'data'=>$files]);
     }
 }
