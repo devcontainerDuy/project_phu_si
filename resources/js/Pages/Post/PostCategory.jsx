@@ -15,13 +15,13 @@ export default function PostCategory({ categories }) {
 	const handleShow = () => setShow(true);
 
 	useEffect(() => {
-		const formattedCategories = categories.map((item) => ({
-			...item,
-			created_at: format(new Date(item.created_at), "HH:mm:ss dd/MM/yyyy", { locale: vi }),
-			updated_at: format(new Date(item.updated_at), "HH:mm:ss dd/MM/yyyy", { locale: vi }),
-		}));
-		setData(formattedCategories);
+		setData(categories);
 	}, [categories]);
+
+	const formatCreatedAt = (dateString) => {
+		const date = new Date(dateString);
+		return date.toLocaleString();
+	};
 
 	//=================={Create}=======================
 	const [title, setTitle] = useState("");
@@ -48,18 +48,6 @@ export default function PostCategory({ categories }) {
 					notyf.open({ type: "error", message: response.data.msg });
 				}
 			});
-	};
-
-	//=================={Update}=======================
-	const [idDetail, setIdDetail] = useState(null);
-	const [titleDetail, setTitleDetail] = useState("");
-	const [summaryDetail, setSummaryDetail] = useState("");
-
-	const resetDetail = () => {
-		setIdDetail(null);
-		setTitleDetail("");
-		setSummaryDetail("");
-		handleClose();
 	};
 
 	const handleCellEditStop = (id, field, value) => {
@@ -129,8 +117,8 @@ export default function PostCategory({ categories }) {
 		{ field: "title", headerName: "Tiêu đề", width: 120, editable: true },
 		{ field: "slug", headerName: "Slug", width: 120, editable: true },
 		{ field: "summary", headerName: "Tóm tắc", width: 220, editable: true },
-		{ field: "created_at", headerName: "Ngày tạo", width: 160 },
-		{ field: "updated_at", headerName: "Ngày cập nhật", width: 160 },
+		{ field: "created_at", headerName: "Ngày tạo", width: 160, valueGetter: (params) => formatCreatedAt(params) },
+		{ field: "updated_at", headerName: "Ngày cập nhật", width: 160, valueGetter: (params) => formatCreatedAt(params) },
 		{
 			field: "status",
 			headerName: "Trạng thái",
@@ -184,7 +172,7 @@ export default function PostCategory({ categories }) {
 										<Form.Label>
 											<strong>Tóm tắc</strong>
 										</Form.Label>
-										<Form.Control as="textarea" rows={3} placeholder="Vui không nhập tóm tác..." value={summary} onChange={(e) => setSummary(e.target.value)} />
+										<Form.Control as="textarea" rows={3} placeholder="Vui không nhập tóm tắt..." value={summary} onChange={(e) => setSummary(e.target.value)} />
 									</Form.Group>
 								</Modal.Body>
 								<Modal.Footer>
