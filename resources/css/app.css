@@ -11,3 +11,6 @@ a {
 .notyf{
     color: black !important;
 }
+.cke_notifications_area{
+    display: none !important;
+}
