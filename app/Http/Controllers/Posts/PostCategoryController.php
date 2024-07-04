@@ -88,7 +88,7 @@ class PostCategoryController extends Controller
         }
 
         $data = $request->all();
-        $data['slug'] = Str::slug($request->title);
+        $request->has('title') ? $data['slug'] = Str::slug($request->title) : '';
         $data['updated_at'] = now();
         $updated = PostsCategory::find($id)->update($data);
 
