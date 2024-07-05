@@ -11,9 +11,9 @@ use App\Http\Controllers\Files\FolderController;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Users\PermissionsController;
-use App\Http\Controllers\Posts\PostCategoryController;
 use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Categories\CategoriesController;
+use App\Http\Controllers\Posts\PostCategoryController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('permissions', PermissionsController::class);

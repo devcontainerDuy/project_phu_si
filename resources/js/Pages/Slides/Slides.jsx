@@ -213,7 +213,7 @@ export default function Slides({ slides }) {
 						{params.value}
 					</a>
 				) : (
-					<span>Null</span>
+					<span>Chưa có đường dẫn</span>
 				),
 		},
 		{
@@ -318,7 +318,7 @@ export default function Slides({ slides }) {
 							</Col>
 						</Form>
 					</Col>
-					<Col>
+					<Col xs lg={8}>
 						{data && (
 							<Box sx={{ height: 400, width: "100%" }}>
 								<DataGrid

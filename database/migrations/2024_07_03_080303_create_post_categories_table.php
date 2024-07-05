@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('post_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug',255);
-            $table->string('summary',255)->nullable();
+            $table->string('slug', 255);
+            $table->string('summary', 255)->nullable();
             $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('id_collection')->nullable();
+            $table->unsignedInteger('position')->nullable();
             $table->timestamps();
         });
     }
