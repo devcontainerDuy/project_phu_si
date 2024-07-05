@@ -160,7 +160,7 @@ function Index({ brands,products }) {
             var newStatus = 1;
         }
         axios
-            .put("/admin/brands/" + params.id, {
+            .put("/admin/products/" + params.id, {
                 status: newStatus,
             })
             .then((res) => {
@@ -210,12 +210,11 @@ function Index({ brands,products }) {
             <>
                 <div className="row">
                     <div className="col-md-2">
-                        <button
+                        <a href="/admin/products/create"
                             className="btn btn-sm btn-primary"
-                            onClick={(e) => resetCreate()}
                         >
                             Thêm
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <div className="row mt-3">

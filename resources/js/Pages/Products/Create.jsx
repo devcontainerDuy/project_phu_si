@@ -532,6 +532,7 @@ function Create({ allCollecions, brands, collections,categories }) {
 
                                             <Gallery
                                                 show={modalShow}
+                                                       backdrop="static"
                                                 onHide={() =>
                                                     setModalShow(false)
                                                 }

@@ -73,7 +73,7 @@ function Gallery(props) {
         ],
     });
     const [show, setShow] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [show1, setShow1] = useState(false);
     const [filesUpload, setFilesUpload] = React.useState([]);
     const handleClose = () => setShow(false);
@@ -169,6 +169,7 @@ function Gallery(props) {
     };
     useEffect(()=>{
         setIdFolder(null);
+        setLoading(false);
     },[])
     const uploadImage = () => {
         var formData = new FormData();
@@ -291,12 +292,7 @@ function Gallery(props) {
                             >
                                 <div className="card">
                                     <div className="card-header text-end">
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            disabled
-                                        >
-                                            Xoá
-                                        </button>
+
                                     </div>
                                     <div className="card-body">
                                         <img
@@ -320,14 +316,7 @@ function Gallery(props) {
                                 >
                                     <div className="card">
                                         <div className="card-header text-end">
-                                            <button
-                                                className="btn btn-sm btn-danger"
-                                                onClick={(e) =>
-                                                    deleteFolder(folder.id)
-                                                }
-                                            >
-                                                Xoá
-                                            </button>
+
                                         </div>
                                         <div className="card-body">
                                             <img
@@ -337,7 +326,22 @@ function Gallery(props) {
                                             />
                                         </div>
                                         <div className="card-footer text-muted">
+                                            <div className="row">
+                                            <div className="col-md-8">
                                             {folder.name}
+
+                                            </div>
+                                            <div className="col-md">
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={(e) =>
+                                                    deleteFolder(folder.id)
+                                                }
+                                            >
+                                                X
+                                            </button>
+                                            </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -345,7 +349,7 @@ function Gallery(props) {
                         </div>
                     )}
                     <div className="row mb-3">
-                        {loading && (
+                        {loading && (files.length==0||folders.length==0) &&  (
                             <img
                                 style={{ width: "100px", margin: "0px auto" }}
                                 src="https://www.icegif.com/wp-content/uploads/2023/07/icegif-1263.gif"
