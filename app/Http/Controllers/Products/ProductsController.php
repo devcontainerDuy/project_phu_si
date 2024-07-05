@@ -20,6 +20,18 @@ use App\Imports\ProductsImport;
 
 class ProductsController extends Controller
 {
+
+
+    /**
+     * Display a listing of the resource.
+     */
+
+     public function index (){
+        $products = Products::all();
+        $brands = Brands::select('id','name')->get();
+        return Inertia::render('Products/Index',['products'=>$products,'brands'=>$brands]);
+
+     }
     /**
      * Display a listing of the resource.
      */
@@ -33,6 +45,7 @@ class ProductsController extends Controller
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
         Excel::import(new ProductsImport, $request->file);
+        return response()->json(['check'=>true]);
     }
 
     /**

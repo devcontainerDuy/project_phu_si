@@ -48,8 +48,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //==========================================================
     Route::resource('products', ProductsController::class);
     Route::get('/products-export', [ProductsController::class,'exportExample']);
-
-
+    Route::get('/products', [ProductsController::class,'index']);
 });
 Route::get('/', [UsersController::class, 'login'])->name('login');
 Route::post('/checkLogin', [UsersController::class, 'checkLogin'])->middleware('web');
