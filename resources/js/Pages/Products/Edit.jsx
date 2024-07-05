@@ -10,7 +10,7 @@ import Select from "@mui/material/Select";
 import "notyf/notyf.min.css";
 import axios from "axios";
 import { Notyf } from "notyf";
-function Edit({ allCollecions, brands, datacontent,product,dataidCollections,datadescription,gallery, id }) {
+function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataidCollections,datadescription,gallery, id }) {
     const theme = useTheme();
     const [idBrand, setIdBrand] = useState(product.id_brand);
     const [idCategories, setidCategories] = useState(0);
@@ -21,19 +21,11 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
     const [instock, setInstock] = useState(product.in_stock);
     const [discount, setDiscount] = useState(product.discount);
     const [content, setContent] = useState("");
-    const [attributes, setAttributes] = useState(JSON.parse(product.attributes));
+    const [attributes, setAttributes] = useState(dataattributes);
     const [description, setDescription] = useState("");
     const [modalShow, setModalShow] = React.useState(false);
     const [images, setImages] = useState(gallery);
     const handleSelectImages = (selectedImages) => {
-        // var arr = images;
-        // arr.push(selectedImages);
-        // setImages(arr);
-        // var formData = new FormData();
-        // images.forEach(el => {
-        //     formData.append('images[]',el.image);
-        // });
-        // console.log(images);
         axios.post('/admin/update-product-images/'+id,{
             images:selectedImages
         })
@@ -161,7 +153,7 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
         formData.append('description',CKEDITOR.instances['editor1'].getData());
         formData.append('content',CKEDITOR.instances['editor'].getData());
         formData.append('id_brand',idBrand);
-        formData.append('instock',instock);
+        formData.append('in_stock',instock);
         idCollections.forEach(el => {
             formData.append('collections[]',el);
         });
@@ -441,7 +433,7 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
                                             role="tabpanel"
                                             aria-labelledby="nav-attribute-tab"
                                         >
-                                            {attributes.map((attr, index) => (
+                                            {attributes &&attributes.length>0 &&attributes.map((attr, index) => (
                                                 <div
                                                     className="row mb-3"
                                                     key={index}

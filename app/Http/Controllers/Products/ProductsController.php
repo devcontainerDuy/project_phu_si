@@ -145,9 +145,10 @@ class ProductsController extends Controller
             ->where('model2', 'COLLECTIONS')
             ->where('id_link', $id)
             ->pluck('id_parent');
+        $attributes =json_decode($product->attributes);
 
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
-        return Inertia::render('Products/Edit',['dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
+        return Inertia::render('Products/Edit',['dataattributes'=>$attributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
     /**
      * Display the specified resource.
@@ -169,37 +170,15 @@ class ProductsController extends Controller
      */
     public function update(Request $request, Products $products,$id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'sku' => 'required',
-            'price' => 'required',
-            'compare_price' => 'required',
-            'attributes' => 'required',
-            'discount' => 'required',
-            'description'=>'required',
-            'content'=>'required',
-            'id_brand'=>'required|exists:brands,id',
-            'instock'=>'required|numeric',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
-        }
-
         $product=Products::find($id)->first();
         if(!$product){
             return response()->json(['check'=>false,'msg'=>'Không tim thấy mã sản phẩm']);
         }
-        $data['name']=$request->name;
+        $data=$request->all();
+        unset($data['collections']);
+        if($request->has('name')){
         $data['slug']=Str::slug($request->name);
-        $data['sku']=$request->sku;
-        $data['price']=$request->price;
-        $data['compare_price']=$request->compare_price;
-        $data['attributes']=$request->get('attributes');
-        $data['discount']=$request->discount;
-        $data['description']=$request->description;
-        $data['content']=$request->content;
-        $data['id_brand']=$request->id_brand;
-        $data['in_stock']=$request->instock;
+        }
         $data['updated_at']=now();
         Products::where('id',$id)->update($data);
         if($request->has('collections')){
@@ -208,7 +187,8 @@ class ProductsController extends Controller
                 Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
             }
         }
-        return response()->json(['check'=>true]);
+        $products = Products::all();
+        return response()->json(['check'=>true,'data'=>$products]);
     }
 
     /**
