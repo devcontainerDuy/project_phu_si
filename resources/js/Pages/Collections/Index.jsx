@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { Notyf } from "notyf";
-import { Box, Select, Switch, Typography } from "@mui/material";
+import { Box, Switch, Select, MenuItem } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import "notyf/notyf.min.css";
 import axios from "axios";
@@ -54,12 +54,54 @@ function Index({ collection }) {
 			},
 		],
 	});
+    const handleParentChange1= (id, value)=>{
+		axios
+			.put("/admin/collections/" + id, {
+				id_parent: value,
+			})
+			.then((res) => {
+				if (res.data.check == false) {
+					if (res.data.msg) {
+						notyf.open({
+							type: "error",
+							message: res.data.msg,
+						});
+					}
+				} else if (res.data.check == true) {
+					notyf.open({
+						type: "success",
+						message: "Chuyển nhóm danh mục thành công",
+					});
+					if (res.data.data) {
+						setData(res.data.data);
+					} else {
+						setData([]);
+					}
+				}
+			});
+
+    }
+
 
 	const columns = [
 		{ field: "id", headerName: "#", width: 100, renderCell: (params) => params.rowIndex },
 		{ field: "collection", headerName: "Danh mục sản phẩm", width: 200, editable: true },
 		{ field: "slug", headerName: "Slug", width: 200, editable: true },
 		{ field: "position", headerName: "Thứ tự", width: 100, editable: true },
+        {
+            field: 'id_parent', headerName: "Nhóm danh mục", width: 200, renderCell: (params) => (
+              <Select
+                value={params.value}
+                className='w-100'
+                onChange={(e) => handleParentChange1(params.id, e.target.value)}
+              >
+                <MenuItem value={null}>None</MenuItem>
+                {collection.map((parent) => (
+                  <MenuItem key={parent.id} value={parent.id}>{parent.collection}</MenuItem>
+                ))}
+              </Select>
+            )
+          },
 		{
 			field: "status",
 			headerName: "Status",
