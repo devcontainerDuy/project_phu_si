@@ -16,15 +16,23 @@ use App\Models\Products\Gallery;
 use App\Models\Links;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductExample;
+use App\Imports\ProductsImport;
 
 class ProductsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function import(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        Excel::import(new ProductsImport, $request->file);
     }
 
     /**

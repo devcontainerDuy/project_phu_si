@@ -26,7 +26,7 @@ class ProductExample implements FromView, WithEvents
                 $brands = Brands::pluck('name')->toArray();
                 $brandsList = '"' . implode(',', $brands) . '"';
 
-                $cellRange = 'I2:I100';
+                $cellRange = 'I2:I1';
 
                 foreach (range(2, 100) as $row) {
                     $event->sheet->getDelegate()->getCell('I' . $row)->setDataValidation(
@@ -62,7 +62,7 @@ class ProductExample implements FromView, WithEvents
                     $event->sheet->getColumnDimension($columnID)->setWidth(30);
                 }
 
-                $event->sheet->getStyle('A1:I100')->applyFromArray([
+                $event->sheet->getStyle('A1:I1')->applyFromArray([
                     'alignment' => [
                         'wrapText' => true,
                     ],
