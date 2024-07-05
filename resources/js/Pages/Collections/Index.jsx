@@ -66,6 +66,12 @@ function Index({ collection }) {
 			width: 70,
 			renderCell: (params) => <Switch checked={params.value == 1} onChange={(e) => switchCollection(params, e.target.value)} inputProps={{ "aria-label": "controlled" }} />,
 		},
+        {
+			field: "highlighted",
+			headerName: "Hiển thị ở trang chủ",
+			width: 150,
+			renderCell: (params) => <Switch checked={params.value == 1} onChange={(e) => switchHomeCollection(params, e.target.value)} inputProps={{ "aria-label": "controlled" }} />,
+		},
 		{
 			field: "created_at",
 			headerName: "Created at",
@@ -73,6 +79,37 @@ function Index({ collection }) {
 			valueGetter: (params) => formatCreatedAt(params),
 		},
 	];
+    function switchHomeCollection(params, value) {
+		if (params.row.highlighted == 1) {
+			var newStatus = 0;
+		} else {
+			var newStatus = 1;
+		}
+		axios
+			.put("/admin/collections/" + params.id, {
+				highlighted: newStatus,
+			})
+			.then((res) => {
+				if (res.data.check == false) {
+					if (res.data.msg) {
+						notyf.open({
+							type: "error",
+							message: res.data.msg,
+						});
+					}
+				} else if (res.data.check == true) {
+					notyf.open({
+						type: "success",
+						message: "Chuyển trạng thái thành công",
+					});
+					if (res.data.data) {
+						setData(res.data.data);
+					} else {
+						setData([]);
+					}
+				}
+			});
+	}
 	function switchCollection(params, value) {
 		if (params.row.status == 1) {
 			var newStatus = 0;
@@ -128,7 +165,7 @@ function Index({ collection }) {
 		<Layout>
 			<>
 				<div className="row mt-3">
-					<div className="col-md-7">
+					<div className="col-md-9">
 						{data && data.length > 0 && (
 							<Box sx={{ width: "100%" }}>
 								<DataGrid
