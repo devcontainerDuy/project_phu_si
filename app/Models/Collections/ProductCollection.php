@@ -11,11 +11,7 @@ class ProductCollection extends Model
 {
     use HasFactory;
     protected $table='collections';
-    protected $fillable=['id','collection','slug','model','position','status','created_at','updated_at'];
-
-    public function category(){
-        return $this->hasMany(Categories::class,'id_collection');
-    }
+    protected $fillable=['id','collection','slug','model','position','status','highlighted','created_at','updated_at'];
 
     public function scopeActive(Builder $query){
         return $query->where('status', 1);

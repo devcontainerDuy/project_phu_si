@@ -47,6 +47,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('folder/{id}', [FolderController::class, 'destroy']);
     //==========================================================
     Route::resource('products', ProductsController::class);
+    Route::get('/products-export', [ProductsController::class,'exportExample']);
+
 
 });
 Route::get('/', [UsersController::class, 'login'])->name('login');

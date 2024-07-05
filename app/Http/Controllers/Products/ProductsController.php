@@ -13,15 +13,26 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Products\Gallery;
+use App\Models\Links;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductExample;
+use App\Imports\ProductsImport;
 
 class ProductsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function import(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        Excel::import(new ProductsImport, $request->file);
     }
 
     /**
@@ -53,7 +64,8 @@ class ProductsController extends Controller
             'content'=>'required',
             'id_brand'=>'required|exists:brands,id',
             'instock'=>'required|numeric',
-            'id_category'=>'required|exists:categories,id',
+            'images'=>'required|array',
+            'collections'=>'required|array'
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
@@ -69,12 +81,15 @@ class ProductsController extends Controller
         $data['content']=$request->content;
         $data['id_brand']=$request->id_brand;
         $data['in_stock']=$request->instock;
-        $data['id_category']=$request->id_category;
         $data['created_at']=now();
         $id=Products::insertGetId($data);
         $images=$request->images;
+        $collections = $request->collections;
         foreach ($images as $key => $value) {
             Gallery::create(['model'=>'PRODUCT','image'=>$value,'id_parent'=>$id,'status'=>0,'created_at'=>now()]);
+        }
+        foreach ($collections as $value) {
+            Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
         }
         return response()->json(['check'=>true]);
     }
@@ -86,7 +101,13 @@ class ProductsController extends Controller
     {
         //
     }
-
+    /**
+     * Display the specified resource.
+     */
+    public function exportExample(Products $products)
+    {
+        return Excel::download(new ProductExample, 'products.xlsx');
+    }
     /**
      * Show the form for editing the specified resource.
      */

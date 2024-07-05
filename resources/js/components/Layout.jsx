@@ -45,18 +45,18 @@ function Layout({ children }) {
                                 <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
 									Danh mục
 								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
+								{/* <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
 									Danh mục Trang chủ
-								</MenuItem>
+								</MenuItem> */}
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục
 								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+								{/* <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
 									Danh mục con
 								</MenuItem>
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
 									Tạo Danh mục con
-								</MenuItem>
+								</MenuItem> */}
 							</SubMenu>
 							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/admin/brands">
 								Thương hiệu

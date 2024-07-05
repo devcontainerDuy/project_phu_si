@@ -3,9 +3,11 @@ import Layout from "../../components/Layout";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 import axios from "axios";
+import { idID } from "@mui/material/locale";
 function Create({ collections }) {
     const [collection, setCollection] = useState("");
     const [position, setPosition] = useState(1);
+    const [id_parent,setIdParent]= useState(0);
     const [HomeCollection, setHomeCollection] = useState("");
     const [HomeCollectionPosition, setHomeCollectionPosition] = useState(1);
     const [data, setData] = useState(collections);
@@ -45,6 +47,7 @@ function Create({ collections }) {
                 .post("/admin/collections", {
                     collection: collection,
                     position: position,
+                    id_parent:id_parent
                 })
                 .then((res) => {
                     if (res.data.check == true) {
@@ -54,6 +57,7 @@ function Create({ collections }) {
                         });
                         setCollection("");
                         setPosition("");
+                        setIdParent(0);
                     } else if (res.data.check == false) {
                         notyf.open({
                             type: "error",
@@ -119,7 +123,7 @@ function Create({ collections }) {
                                             >
                                                 Danh mục menu
                                             </button>
-                                            <button
+                                            {/* <button
                                                 className="nav-link"
                                                 id="nav-profile-tab"
                                                 data-bs-toggle="tab"
@@ -130,7 +134,7 @@ function Create({ collections }) {
                                                 aria-selected="false"
                                             >
                                                 Danh mục trang chủ
-                                            </button>
+                                            </button> */}
                                             {/* <button
                                                 className="nav-link"
                                                 id="nav-contact-tab"
@@ -193,6 +197,24 @@ function Create({ collections }) {
                                                             className="input-group-text"
                                                             id="basic-addon2"
                                                         >
+                                                            Danh mục cha
+                                                        </span>
+                                                        <select name="" className="form-control" value={id_parent} onChange={(e)=>setIdParent(e.target.value)} id="">
+                                                            <option value={0}>Chọn danh mục cha</option>
+                                                            {collections.map((item,index)=>(
+                                                                <option value={item.id}>{item.collection}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="row ps-3">
+                                                <div className="col-md-4">
+                                                    <div className="input-group mb-3">
+                                                        <span
+                                                            className="input-group-text"
+                                                            id="basic-addon2"
+                                                        >
                                                             Thứ tự
                                                         </span>
                                                         <input
@@ -225,7 +247,7 @@ function Create({ collections }) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div
+                                        {/* <div
                                             className="tab-pane fade"
                                             id="nav-profile"
                                             role="tabpanel"
@@ -244,7 +266,9 @@ function Create({ collections }) {
                                                             type="text"
                                                             className="form-control"
                                                             placeholder="Danh mục sản phẩm ..."
-                                                            value={HomeCollection}
+                                                            value={
+                                                                HomeCollection
+                                                            }
                                                             aria-label="Danh mục sản phẩm"
                                                             onChange={(e) =>
                                                                 setHomeCollection(
@@ -255,6 +279,18 @@ function Create({ collections }) {
                                                             aria-describedby="basic-addon1"
                                                         />
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div className="row ps-3">
+                                                <div className="col-md-4">
+                                                <div className="input-group mb-3">
+                                                        <span
+                                                            className="input-group-text"
+                                                            id="basic-addon2"
+                                                        >
+                                                            Thứ tự
+                                                        </span>
+                                                        </div>
                                                 </div>
                                             </div>
                                             <div className="row ps-3">
@@ -270,7 +306,9 @@ function Create({ collections }) {
                                                             type="number"
                                                             className="form-control"
                                                             placeholder="Thứ tự"
-                                                            value={HomeCollectionPosition}
+                                                            value={
+                                                                HomeCollectionPosition
+                                                            }
                                                             onChange={(e) =>
                                                                 setHomeCollectionPosition(
                                                                     e.target
@@ -303,7 +341,7 @@ function Create({ collections }) {
                                             aria-labelledby="nav-contact-tab"
                                         >
                                             ...
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </>
                             </div>

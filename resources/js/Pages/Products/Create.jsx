@@ -10,7 +10,7 @@ import Select from "@mui/material/Select";
 import "notyf/notyf.min.css";
 import axios from "axios";
 import { Notyf } from "notyf";
-function Create({ allCollecions, brands, collections }) {
+function Create({ allCollecions, brands, collections,categories }) {
     const theme = useTheme();
     const [idBrand, setIdBrand] = useState(0);
     const [idCategories, setidCategories] = useState(0);
@@ -130,7 +130,6 @@ function Create({ allCollecions, brands, collections }) {
     const submitCreate=()=>{
         var formData= new FormData();
         var thuoc_tinh= JSON.stringify(attributes)
-        formData.append('id_category',idCategories);
         formData.append('name',name);
         formData.append('sku',sku);
         formData.append('price',price);
@@ -141,6 +140,9 @@ function Create({ allCollecions, brands, collections }) {
         formData.append('content',CKEDITOR.instances['editor'].getData());
         formData.append('id_brand',idBrand);
         formData.append('instock',instock);
+        idCollections.forEach(el => {
+            formData.append('collections[]',el);
+        });
         images.forEach(el => {
             formData.append('images[]',el);
         });
@@ -547,98 +549,50 @@ function Create({ allCollecions, brands, collections }) {
                                             <div className="row">
                                                 <div className="col-md-4">
                                                     <div className="input-group mb-3">
-                                                        <span
-                                                            className="input-group-text"
-                                                            id="basic-addon1"
+                                                    <FormControl
+                                                            sx={{
+                                                                m: 1,
+                                                                width: 300,
+                                                            }}
                                                         >
-                                                            Thương hiệu
-                                                        </span>
-                                                        <select
-                                                            name=""
-                                                            id=""
-                                                            value={idBrand}
-                                                            onChange={(e) =>
-                                                                setIdBrand(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            className="form-control"
-                                                        >
-                                                            <option
-                                                                value={0}
-                                                                disabled
+                                                            <InputLabel id="demo-multiple-name-label">
+                                                               Thương hiệu sản phẩm
+                                                            </InputLabel>
+                                                            <Select
+                                                                labelId="demo-multiple-name-label"
+                                                                value={
+                                                                    idBrand
+                                                                }
+                                                                onChange={
+                                                                    (e)=>setIdBrand(e.target.value)
+                                                                }
+                                                                input={
+                                                                    <OutlinedInput label="Name" />
+                                                                }
+                                                                MenuProps={
+                                                                    MenuProps
+                                                                }
                                                             >
-                                                                Chọn thương hiệu
-                                                                sản phẩm
-                                                            </option>
-                                                            {brands.map(
-                                                                (
-                                                                    brand,
-                                                                    index
-                                                                ) => (
-                                                                    <option
-                                                                        value={
-                                                                            brand.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            brand.name
-                                                                        }
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </select>
+                                                                {brands.map(
+                                                                    (item) => (
+                                                                        <MenuItem
+                                                                            key={
+                                                                                item.id
+                                                                            }
+                                                                            value={
+                                                                                item.id
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                item.name
+                                                                            }
+                                                                        </MenuItem>
+                                                                    )
+                                                                )}
+                                                            </Select>
+                                                        </FormControl>
                                                     </div>
                                                 </div>
-                                                <div className="col-md-4">
-                                                    <div className="input-group mb-3">
-                                                        <span
-                                                            className="input-group-text"
-                                                            id="basic-addon1"
-                                                        >
-                                                            Loại sản phẩm
-                                                        </span>
-                                                        <select
-                                                            name=""
-                                                            id=""
-                                                            value={idCategories}
-                                                            onChange={(e) =>
-                                                                setidCategories(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            className="form-control"
-                                                        >
-                                                            <option
-                                                                value={0}
-                                                                disabled
-                                                            >
-                                                                Chọn loại sản
-                                                                phẩm
-                                                            </option>
-                                                            {collections.map(
-                                                                (
-                                                                    item,
-                                                                    index
-                                                                ) => (
-                                                                    <option
-                                                                        value={
-                                                                            item.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            item.collection
-                                                                        }
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="row">
                                                 <div className="col-md">
                                                     <div className="input-group mb-3">
                                                         <FormControl
@@ -688,6 +642,9 @@ function Create({ allCollecions, brands, collections }) {
                                                         </FormControl>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div className="row">
+
                                             </div>
                                         </div>
                                     </div>
