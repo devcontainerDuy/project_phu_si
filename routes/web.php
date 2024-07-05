@@ -48,6 +48,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //==========================================================
     Route::resource('products', ProductsController::class);
     Route::post('/update-products/{id}', [ProductsController::class,'update']);
+    Route::post('/update-product-images/{id}', [ProductsController::class,'Update_Images']);
+    Route::post('/delete-product-image/{id}', [ProductsController::class,'Delete_Image']);
     Route::get('/products-export', [ProductsController::class,'exportExample']);
     Route::get('/products', [ProductsController::class,'index']);
 });
