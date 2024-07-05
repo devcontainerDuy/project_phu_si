@@ -20,6 +20,18 @@ use App\Imports\ProductsImport;
 
 class ProductsController extends Controller
 {
+
+
+    /**
+     * Display a listing of the resource.
+     */
+
+     public function index (){
+        $products = Products::all();
+        $brands = Brands::select('id','name')->get();
+        return Inertia::render('Products/Index',['products'=>$products,'brands'=>$brands]);
+
+     }
     /**
      * Display a listing of the resource.
      */
@@ -33,6 +45,7 @@ class ProductsController extends Controller
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
         Excel::import(new ProductsImport, $request->file);
+        return response()->json(['check'=>true]);
     }
 
     /**
@@ -97,9 +110,19 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Products $products)
+    public function show(Products $products,$id)
     {
-        //
+        $brands=Brands::active()->select('id','name')->get();
+        $categories=Categories::active()->select('id','name')->get();
+        $product=Products::find($id)->first();
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('id','image')->get();
+        $collections=ProductCollection::active()->where('model','ProductCollection')->select('id','collection')->get();
+        $idCollections = Links::where('model1', 'PRODUCTS')
+            ->where('model2', 'COLLECTIONS')
+            ->where('id_link', $id)
+            ->pluck('id_parent');
+        $allCollecions=ProductCollection::active()->select('id','collection')->get();
+        return Inertia::render('Products/Edit',['dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
     /**
      * Display the specified resource.
@@ -111,17 +134,57 @@ class ProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Products $products)
+    public function edit(Products $products,$id)
     {
-        //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, Products $products,$id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'sku' => 'required',
+            'price' => 'required',
+            'compare_price' => 'required',
+            'attributes' => 'required',
+            'discount' => 'required',
+            'description'=>'required',
+            'content'=>'required',
+            'id_brand'=>'required|exists:brands,id',
+            'instock'=>'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+
+        $product=Products::find($id)->first();
+        if(!$product){
+            return response()->json(['check'=>false,'msg'=>'Không tim thấy mã sản phẩm']);
+        }
+        $data['name']=$request->name;
+        $data['slug']=Str::slug($request->name);
+        $data['sku']=$request->sku;
+        $data['price']=$request->price;
+        $data['compare_price']=$request->compare_price;
+        $data['attributes']=$request->get('attributes');
+        $data['discount']=$request->discount;
+        $data['description']=$request->description;
+        $data['content']=$request->content;
+        $data['id_brand']=$request->id_brand;
+        $data['in_stock']=$request->instock;
+        $data['updated_at']=now();
+        Products::where('id',$id)->update($data);
+        if($request->has('collections')){
+            $collections = $request->collections;
+            Links::where('id_link',$id)->delete();
+            foreach ($collections as $value) {
+                Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
+            }
+        }
+        return response()->json(['check'=>true]);
     }
 
     /**

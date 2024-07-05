@@ -10,16 +10,16 @@ import Select from "@mui/material/Select";
 import "notyf/notyf.min.css";
 import axios from "axios";
 import { Notyf } from "notyf";
-function Create({ allCollecions, brands, collections,categories }) {
+function Edit({ allCollecions, brands, datacontent,product,dataidCollections,datadescription, id }) {
     const theme = useTheme();
-    const [idBrand, setIdBrand] = useState(0);
+    const [idBrand, setIdBrand] = useState(product.id_brand);
     const [idCategories, setidCategories] = useState(0);
-    const [sku, setSku] = useState("");
-    const [name, setName] = useState("");
-    const [price, setPrice] = useState(0);
-    const [compare_price, setComparePrice] = useState(0);
-    const [instock, setInstock] = useState(0);
-    const [discount, setDiscount] = useState(0);
+    const [sku, setSku] = useState(product.sku);
+    const [name, setName] = useState(product.name);
+    const [price, setPrice] = useState(product.price);
+    const [compare_price, setComparePrice] = useState(product.compare_price);
+    const [instock, setInstock] = useState(product.in_stock);
+    const [discount, setDiscount] = useState(product.discount);
     const [content, setContent] = useState("");
     const [attributes, setAttributes] = useState([{ name: "", value: "" }]);
     const [description, setDescription] = useState("");
@@ -41,7 +41,7 @@ function Create({ allCollecions, brands, collections,categories }) {
     window.CKEDITOR.replace("editor1", options);
     window.CKEDITOR.replace("editor", options);
 
-    const [idCollections, setIdCollections] = useState([]);
+    const [idCollections, setIdCollections] = useState(dataidCollections);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const MenuProps = {
@@ -127,7 +127,7 @@ function Create({ allCollecions, brands, collections,categories }) {
             typeof value === "string" ? value.split(",") : value
         );
     };
-    const submitCreate=()=>{
+    const submitEdit=()=>{
         var formData= new FormData();
         var thuoc_tinh= JSON.stringify(attributes)
         formData.append('name',name);
@@ -143,14 +143,11 @@ function Create({ allCollecions, brands, collections,categories }) {
         idCollections.forEach(el => {
             formData.append('collections[]',el);
         });
-        images.forEach(el => {
-            formData.append('images[]',el);
-        });
-        axios.post('/admin/products',formData).then((res)=>{
+        axios.post('/admin/update-products/'+id,formData).then((res)=>{
             if(res.data.check==true){
                 notyf.open({
                     type: "success",
-                    message: "Thêm thành công",
+                    message: "Sửa thành công",
                 });
                 setTimeout(() => {
                     window.location.reload()
@@ -396,6 +393,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                                     </label>
                                                     <textarea
                                                         id="editor1"
+                                                        value={datadescription}
                                                     ></textarea>
                                                 </div>
                                             </div>
@@ -409,7 +407,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                                     </label>
                                                     <textarea
                                                         id="editor"
-                                                        value={content}
+                                                        value={datacontent}
                                                     ></textarea>
                                                 </div>
                                             </div>
@@ -564,6 +562,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                                                 value={
                                                                     idBrand
                                                                 }
+                                                                defaultValue={idCollections}
                                                                 onChange={
                                                                     (e)=>setIdBrand(e.target.value)
                                                                 }
@@ -650,7 +649,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-muted"><button className="btn btn-sm btn-primary" onClick={(e)=>submitCreate()}>Thêm</button></div>
+                                <div class="card-footer text-muted"><button className="btn btn-sm btn-primary" onClick={(e)=>submitEdit()}>Sửa</button></div>
                             </div>
                         </div>
                     </div>
@@ -660,4 +659,4 @@ function Create({ allCollecions, brands, collections,categories }) {
     );
 }
 
-export default Create;
+export default Edit;
