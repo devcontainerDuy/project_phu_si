@@ -65,7 +65,7 @@ function Layout({ children }) {
                                 <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products/create">
 									Thêm sản phẩm
 								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products">
 									Danh sách sản phẩm
 								</MenuItem>
 							</SubMenu>

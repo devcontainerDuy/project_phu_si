@@ -376,7 +376,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                                             type="number"
                                                             className="form-control"
                                                             value={instock}
-                                                            placeholder="Giảm giá ..."
+                                                            placeholder="Tồn kho ..."
                                                             aria-label=""
                                                             onChange={(e) =>
                                                                 setInstock(

@@ -139,7 +139,7 @@ function Index({ brands,products }) {
             headerName: "Edit",
             width: 70,
             renderCell: (params) => (
-                <a href={'/admin/brands/'+params.id} className="btn btn-sm btn-warning">Edit</a>
+                <a href={'/admin/products/'+params.id} className="btn btn-sm btn-warning">Edit</a>
             ),
         },
         {
