@@ -47,7 +47,7 @@ class PostController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['check' => false, 'data' => $validator->errors()->first()]);
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
 
         $data = $request->all();
@@ -73,7 +73,8 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = Posts::with('category')->findOrFail($id);
+        return response()->json(['check' => true, 'data' => $data]);
     }
 
     /**
@@ -95,13 +96,13 @@ class PostController extends Controller
             // 'id_collection' => 'required',
             'id_category' => 'exists:post_categories,id|numeric',
             'position' => 'min:0|numeric|max:255',
-            'content' => 'min:10|string|max:255|nullable',
+            'content' => 'min:10|string|nullable',
             'status' => 'boolean|in:0,1',
             'highlighted' => 'boolean|in:0,1',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['check' => false, 'data' => $validator->errors()->first()]);
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
 
         $data = $request->all();
@@ -125,6 +126,12 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $deleted = Posts::findOrFail($id)->delete();
+        if ($deleted) {
+            $posts = Posts::with('category')->get();
+            return response()->json(['check' => true, 'msg' => 'Xóa thanh công', 'data' => $posts]);
+        } else {
+            return response()->json(['check' => false, 'msg' => 'Xóa thất bại']);
+        }
     }
 }

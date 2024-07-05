@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import { Container, Row, Col, Button, Modal, Form, Image } from "react-bootstrap";
 import { Box, Select, Switch, Typography, MenuItem, InputLabel, FormControl } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 import axios from "axios";
@@ -12,9 +12,24 @@ export default function Post({ posts, categorys }) {
 	const [data, setData] = useState("");
 	const [categories, setCategories] = useState("");
 	const [show, setShow] = useState(false);
+	const [showDetail, setShowDetail] = useState(false);
 
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
+	const handledDetail = (id) => {
+		setShowDetail(true);
+		axios.get(`/admin/posts/${id}`).then((response) => {
+			if (response.data.check === true) {
+				setId(response.data.data.id);
+				setTitle(response.data.data.title);
+				setSummary(response.data.data.summary);
+				setPosition(response.data.data.position);
+				setContent(response.data.data.content);
+			} else {
+				notyf.error(response.data.msg);
+			}
+		});
+	};
 
 	useEffect(() => {
 		setData(posts);
@@ -27,6 +42,7 @@ export default function Post({ posts, categorys }) {
 	};
 
 	// =================={Create}=======================
+	const [id, setId] = useState(0);
 	const [title, setTitle] = useState("");
 	const [summary, setSummary] = useState("");
 	const [collection, setCollection] = useState("");
@@ -45,6 +61,14 @@ export default function Post({ posts, categorys }) {
 		setStatus(false);
 		setHighlighted(false);
 		handleClose();
+	};
+
+	const handleCloseDetail = () => {
+		setId(0);
+		setTitle("");
+		setSummary("");
+		setContent("");
+		setShowDetail(false);
 	};
 
 	const handleCreate = () => {
@@ -86,7 +110,26 @@ export default function Post({ posts, categorys }) {
 			});
 	};
 
-	const deletePost = (id) => {
+	const handleUpdate = (id) => {
+		console.log(id + " " + summary + " " + position + " " + content);
+		axios
+			.put(`/admin/posts/${id}`, {
+				summary: summary,
+				position: position,
+				content: content,
+			})
+			.then((response) => {
+				if (response.data.check === true) {
+					notyf.open({ type: "success", message: response.data.msg });
+					setData(response.data.data);
+					resetCreate();
+				} else {
+					notyf.open({ type: "error", message: response.data.msg });
+				}
+			});
+	};
+
+	const handleDelete = (id) => {
 		axios
 			.delete(`/admin/posts/${id}`)
 			.then((response) => {
@@ -136,12 +179,12 @@ export default function Post({ posts, categorys }) {
 	const columns = [
 		{ field: "id", headerName: "#", width: 30 },
 		{ field: "title", headerName: "Tiêu đề bài viết", width: 240, editable: true },
-		{ field: "slug", headerName: "Slug", width: 160 },
-		{ field: "id_collection", headerName: "Danh mục", width: 140, editable: true },
+		{ field: "slug", headerName: "Slug", width: 180 },
+		{ field: "id_collection", headerName: "Danh mục", width: 160, editable: true },
 		{
 			field: "id_category",
 			headerName: "Chuyên mục",
-			width: 140,
+			width: 160,
 			editable: true,
 			renderCell: (params) => (
 				<Select variant="standard" value={params.value} className="w-100" onChange={(e) => handleCellEditStop(params.id, params.field, e.target.value)}>
@@ -175,24 +218,24 @@ export default function Post({ posts, categorys }) {
 				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />
 			),
 		},
-		{ field: "view", headerName: "Lượt xem", width: 100 },
+		{ field: "view", headerName: "Lượt xem", width: 80 },
 		{ field: "created_at", headerName: "Ngày tạo", width: 140, valueGetter: (params) => formatCreatedAt(params) },
 		{ field: "updated_at", headerName: "Ngày cập nhật", width: 140, valueGetter: (params) => formatCreatedAt(params) },
 		{
 			field: "action",
 			headerName: "Thao tác",
-			renderCell: (params) => {
-				return (
-					<Button
-						variant="danger"
-						onClick={() => {
-							deletePost(params.row.id);
-						}}>
-						Xóa
-					</Button>
-				);
-			},
-			width: 200,
+			width: 180,
+			type: "actions",
+			hideSortIcons: true,
+			getActions: (params) => [
+				<Button variant="warning" onClick={() => handledDetail(params.row.id)} title="Chỉnh sửa content">
+					<i className="bi bi-pencil-square" />
+				</Button>,
+
+				<Button className="ms-2" variant="danger" onClick={() => handleDelete(params.row.id)} title="Xóa slide">
+					<i className="bi bi-trash" />
+				</Button>,
+			],
 		},
 	];
 
@@ -311,6 +354,12 @@ export default function Post({ posts, categorys }) {
 										},
 									}}
 									pageSizeOptions={[5]}
+									slots={{ toolbar: GridToolbar }}
+									slotProps={{
+										toolbar: {
+											showQuickFilter: true,
+										},
+									}}
 									checkboxSelection
 									disableRowSelectionOnClick
 									onCellEditStop={(params, e) => handleCellEditStop(params.row.id, params.field, e.target.value)}
@@ -318,6 +367,57 @@ export default function Post({ posts, categorys }) {
 							</Box>
 						</Col>
 					)}
+					<Modal show={showDetail} onHide={handleCloseDetail} backdrop="static" size="lg" centered keyboard={false}>
+						<Form
+							encType="multipart/form-data"
+							onSubmit={(e) => {
+								e.preventDefault();
+								handleUpdate(id);
+							}}>
+							<Modal.Header closeButton>
+								<Modal.Title>
+									{" "}
+									<small className="text-muted fs-6">Chỉnh sửa bài viết:</small> <br /> <strong>{title}</strong>
+								</Modal.Title>
+							</Modal.Header>
+							<Modal.Body aria-modal="true" role="dialog" tabIndex={-1} scroll="body">
+								<Row>
+									<Col sm={12} md={10} lg={9}>
+										<Form.Group className="mb-3" controlId="formGroupSummary">
+											<Form.Label>
+												<strong>Mô tả </strong>{" "}
+											</Form.Label>
+											<Form.Control type="text" placeholder="Nhập mô tả ngắn..." value={summary} onChange={(e) => setSummary(e.target.value)} />
+										</Form.Group>
+									</Col>
+									<Col sm={12} md={2} lg={3}>
+										<Form.Group className="mb-3" controlId="formGroupPosition">
+											<Form.Label>
+												<strong>Vị trí</strong>
+											</Form.Label>
+											<Form.Control type="number" placeholder="Nhập vị trí bài viết..." value={position} onChange={(e) => setPosition(e.target.value)} />
+										</Form.Group>
+									</Col>
+									<Col xs={12}>
+										<Form.Group className="mb-3" controlId="formGroupContent">
+											<Form.Label>
+												<strong>Nội dung</strong>{" "}
+											</Form.Label>
+											<CKEditor value={content} onBlur={setContent} />
+										</Form.Group>
+									</Col>
+								</Row>
+							</Modal.Body>
+							<Modal.Footer>
+								<Button variant="secondary" onClick={handleCloseDetail}>
+									Thoát
+								</Button>
+								<Button variant="primary" type="submit">
+									Lưu lại
+								</Button>
+							</Modal.Footer>
+						</Form>
+					</Modal>
 				</Row>
 			</>
 		</Layout>
