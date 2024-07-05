@@ -106,7 +106,31 @@ class ProductsController extends Controller
         }
         return response()->json(['check'=>true]);
     }
+    /**
+     * Display the specified resource.
+     */
+    public function Delete_Image($id,Request $request){
+        $id_parent = Gallery::where('id',$id)->value('id_parent');
+        Gallery::where('id',$id)->delete();
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id_parent)->select('image','id')->get();
 
+        return response()->json(['check'=>true,'data'=>$gallery]);
+    }
+     /**
+     * Display the specified resource.
+     */
+    public function Update_Images(Request $request,$id){
+        $validator = Validator::make($request->all(), [
+            'images'=>'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        Gallery::create(['model'=>'PRODUCT','image'=>$request->images   ,'id_parent'=>$id,'status'=>0,'created_at'=>now()]);
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('image','id')->get();
+        return response()->json(['check'=>true,'data'=>$gallery]);
+
+    }
     /**
      * Display the specified resource.
      */
@@ -115,12 +139,13 @@ class ProductsController extends Controller
         $brands=Brands::active()->select('id','name')->get();
         $categories=Categories::active()->select('id','name')->get();
         $product=Products::find($id)->first();
-        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('id','image')->get();
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('image','id')->get();
         $collections=ProductCollection::active()->where('model','ProductCollection')->select('id','collection')->get();
         $idCollections = Links::where('model1', 'PRODUCTS')
             ->where('model2', 'COLLECTIONS')
             ->where('id_link', $id)
             ->pluck('id_parent');
+
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
         return Inertia::render('Products/Edit',['dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
@@ -179,7 +204,6 @@ class ProductsController extends Controller
         Products::where('id',$id)->update($data);
         if($request->has('collections')){
             $collections = $request->collections;
-            Links::where('id_link',$id)->delete();
             foreach ($collections as $value) {
                 Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
             }

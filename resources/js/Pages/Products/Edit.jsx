@@ -10,7 +10,7 @@ import Select from "@mui/material/Select";
 import "notyf/notyf.min.css";
 import axios from "axios";
 import { Notyf } from "notyf";
-function Edit({ allCollecions, brands, datacontent,product,dataidCollections,datadescription, id }) {
+function Edit({ allCollecions, brands, datacontent,product,dataidCollections,datadescription,gallery, id }) {
     const theme = useTheme();
     const [idBrand, setIdBrand] = useState(product.id_brand);
     const [idCategories, setidCategories] = useState(0);
@@ -21,14 +21,29 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
     const [instock, setInstock] = useState(product.in_stock);
     const [discount, setDiscount] = useState(product.discount);
     const [content, setContent] = useState("");
-    const [attributes, setAttributes] = useState([{ name: "", value: "" }]);
+    const [attributes, setAttributes] = useState(JSON.parse(product.attributes));
     const [description, setDescription] = useState("");
     const [modalShow, setModalShow] = React.useState(false);
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(gallery);
     const handleSelectImages = (selectedImages) => {
-        var arr = images;
-        arr.push(selectedImages);
-        setImages(arr);
+        // var arr = images;
+        // arr.push(selectedImages);
+        // setImages(arr);
+        // var formData = new FormData();
+        // images.forEach(el => {
+        //     formData.append('images[]',el.image);
+        // });
+        // console.log(images);
+        axios.post('/admin/update-product-images/'+id,{
+            images:selectedImages
+        })
+        .then((res)=>{
+            if(res.data.check==true){
+                setImages(res.data.data);
+            }else{
+                console.log(res.data.msg);
+            }
+        })
         setModalShow(false);
     };
     const options = {
@@ -118,6 +133,13 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
             },
         ],
     });
+    const deleteImage=(item)=>{
+        axios.post('/admin/delete-product-image/'+item).then((res)=>{
+            if(res.data.check){
+                setImages(res.data.data)
+            }
+        })
+    }
     const handleChange = (event) => {
         const {
             target: { value },
@@ -143,6 +165,7 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
         idCollections.forEach(el => {
             formData.append('collections[]',el);
         });
+
         axios.post('/admin/update-products/'+id,formData).then((res)=>{
             if(res.data.check==true){
                 notyf.open({
@@ -491,20 +514,20 @@ function Edit({ allCollecions, brands, datacontent,product,dataidCollections,dat
                                                 {images.length > 0 && (
                                                     <div className="row mb-2">
                                                         {images.map(
-                                                            (item, index) => (
+                                                            (item) => (
                                                                 <div className="col-md-3 mb-2">
                                                                     <div class="card">
                                                                         <div class="card-body">
                                                                             <img
                                                                             className="w-100"
                                                                                 src={
-                                                                                    item
+                                                                                    item.image
                                                                                 }
                                                                                 alt=""
                                                                             />
                                                                         </div>
                                                                         <div class="card-footer text-muted">
-                                                                            Footer
+                                                                                <button className="btn btn-sm btn-danger" onClick={(e)=>deleteImage(item.id)}>X</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
