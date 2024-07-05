@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Products\Gallery;
 use App\Models\Links;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductExample;
+
 class ProductsController extends Controller
 {
     /**
@@ -90,7 +93,13 @@ class ProductsController extends Controller
     {
         //
     }
-
+    /**
+     * Display the specified resource.
+     */
+    public function exportExample(Products $products)
+    {
+        return Excel::download(new ProductExample, 'products.xlsx');
+    }
     /**
      * Show the form for editing the specified resource.
      */
