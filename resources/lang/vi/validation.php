@@ -17,7 +17,7 @@ return [
         'string' => 'Trường :attribute phải có ít nhất :min ký tự.',
     ],
     'regex' => 'Trường :attribute không hợp lệ.',
-    'exists' => ':attribute đã tồn tại',
+    'exists' => ':attribute không tồn tại',
     'attributes' => [
         'username' => 'tên người dùng',
         'email' => 'địa chỉ email',

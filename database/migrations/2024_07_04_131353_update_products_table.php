@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('links', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_link');
-            $table->unsignedBigInteger('id_parent');
-            $table->string('model1');
-            $table->string('model2');
-            $table->timestamps();
-        });
+        Schema::table('products', function (Blueprint $table) {
+            $table->longText('attributes')->after('description');
+         });
     }
 
     /**
@@ -26,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('links');
+        //
     }
 };
