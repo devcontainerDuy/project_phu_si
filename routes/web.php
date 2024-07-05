@@ -10,9 +10,9 @@ use App\Http\Controllers\Brands\BrandController;
 use App\Http\Controllers\Files\FolderController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Users\PermissionsController;
-use App\Http\Controllers\Posts\PostCategoryController;
 use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Categories\CategoriesController;
+use App\Http\Controllers\Posts\PostCategoryController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('permissions', PermissionsController::class);

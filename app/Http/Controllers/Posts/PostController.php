@@ -18,7 +18,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Posts::with('category')->get();
-        $categorys = PostsCategory::all();
+        $categorys = PostsCategory::where('status', 1)->get();
         return Inertia::render('Post/Post', ['posts' => $posts, 'categorys' => $categorys]);
     }
 
@@ -38,8 +38,8 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'summary' => 'required',
-            // 'collection' => 'required',
-            'category' => 'required',
+            // 'id_collection' => 'required',
+            'id_category' => 'required',
             'position' => 'required',
             'content' => 'required',
             'status' => 'boolean',
@@ -55,13 +55,16 @@ class PostController extends Controller
         $data['view'] = 0;
         $data['created_at'] = now();
         $data['updated_at'] = now();
-
-        $created = Posts::create($data);
-        if ($created) {
-            $posts = Posts::with('category')->get();
-            return response()->json(['check' => true, 'msg' => 'Tạo bài viết thành công', 'data' => $posts]);
-        } else {
-            return response()->json(['check' => false, 'msg' => 'Tạo bài viết thất bại']);
+        try {
+            $created = Posts::create($data);
+            if ($created) {
+                $posts = Posts::with('category')->get();
+                return response()->json(['check' => true, 'msg' => 'Tạo bài viết thành công', 'data' => $posts]);
+            } else {
+                return response()->json(['check' => false, 'msg' => 'Tạo bài viết thất bại']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['check' => false, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -86,7 +89,35 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'min:3|string|max:255|unique:posts,title',
+            'summary' => 'min:10|string|max:255',
+            // 'id_collection' => 'required',
+            'id_category' => 'exists:post_categories,id|numeric',
+            'position' => 'min:0|numeric|max:255',
+            'content' => 'min:10|string|max:255|nullable',
+            'status' => 'boolean|in:0,1',
+            'highlighted' => 'boolean|in:0,1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'data' => $validator->errors()->first()]);
+        }
+
+        $data = $request->all();
+        $request->has('title') ? $data['slug'] = Str::slug($request->title) : '';
+        $data['updated_at'] = now();
+        try {
+            $updated = Posts::findOrFail($id)->update($data);
+            if ($updated) {
+                $posts = Posts::with('category')->get();
+                return response()->json(['check' => true, 'msg' => 'Cập nhật bài viết thành công', 'data' => $posts]);
+            } else {
+                return response()->json(['check' => false, 'msg' => 'Cập nhật thất bại']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['check' => false, 'msg' => $e->getMessage()]);
+        }
     }
 
     /**

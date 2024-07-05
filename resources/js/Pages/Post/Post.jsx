@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import { Container, Row, Col, Button, Modal, Form, Image } from "react-bootstrap";
-import { Box, Select, Switch, Typography } from "@mui/material";
+import { Box, Select, Switch, Typography, MenuItem, InputLabel, FormControl } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
@@ -20,6 +20,11 @@ export default function Post({ posts, categorys }) {
 		setData(posts);
 		setCategories(categorys);
 	}, [posts, categorys]);
+
+	const formatCreatedAt = (dateString) => {
+		const date = new Date(dateString);
+		return date.toLocaleString();
+	};
 
 	// =================={Create}=======================
 	const [title, setTitle] = useState("");
@@ -43,13 +48,12 @@ export default function Post({ posts, categorys }) {
 	};
 
 	const handleCreate = () => {
-		console.log(title, summary, collection, category, position, content, status, highlighted);
 		axios
 			.post("/admin/posts", {
 				title: title,
 				summary: summary,
-				collection: collection,
-				category: category,
+				id_collection: collection,
+				id_category: Number(category),
 				position: position,
 				content: content,
 				status: status,
@@ -67,8 +71,9 @@ export default function Post({ posts, categorys }) {
 	};
 
 	const handleCellEditStop = (id, field, value) => {
+		console.log(id, field, value);
 		axios
-			.put(`/admin/post/${id}`, {
+			.put(`/admin/posts/${id}`, {
 				[field]: value,
 			})
 			.then((response) => {
@@ -83,7 +88,7 @@ export default function Post({ posts, categorys }) {
 
 	const deletePost = (id) => {
 		axios
-			.delete(`/admin/post/${id}`)
+			.delete(`/admin/posts/${id}`)
 			.then((response) => {
 				if (response.data.check === true) {
 					notyf.open({ type: "success", message: response.data.msg });
@@ -130,13 +135,49 @@ export default function Post({ posts, categorys }) {
 
 	const columns = [
 		{ field: "id", headerName: "#", width: 30 },
-		{ field: "title", headerName: "Tiêu đề bài viết", width: 240 },
+		{ field: "title", headerName: "Tiêu đề bài viết", width: 240, editable: true },
 		{ field: "slug", headerName: "Slug", width: 160 },
-		{ field: "id_collection", headerName: "Danh mục", width: 140 },
-		{ field: "id_category", headerName: "Chuyên mục", width: 140 },
-		{ field: "status", headerName: "Trang thái", width: 120 },
-		{ field: "highlighted", headerName: "Highlighted", width: 120 },
+		{ field: "id_collection", headerName: "Danh mục", width: 140, editable: true },
+		{
+			field: "id_category",
+			headerName: "Chuyên mục",
+			width: 140,
+			editable: true,
+			renderCell: (params) => (
+				<Select variant="standard" value={params.value} className="w-100" onChange={(e) => handleCellEditStop(params.id, params.field, e.target.value)}>
+					{categories && categories.length > 0 ? (
+						categories.map((item) => (
+							<MenuItem key={item.id} value={item.id}>
+								{item.title}
+							</MenuItem>
+						))
+					) : (
+						<MenuItem disabled>Không có chuyên mục</MenuItem>
+					)}
+				</Select>
+			),
+		},
+		{
+			field: "status",
+			headerName: "Trạng thái",
+			width: 100,
+			editable: true,
+			renderCell: (params) => (
+				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />
+			),
+		},
+		{
+			field: "highlighted",
+			headerName: "Highlighted",
+			width: 100,
+			editable: true,
+			renderCell: (params) => (
+				<Switch checked={params.value == 1} onChange={(e) => handleCellEditStop(params.id, params.field, e.target.checked ? 1 : 0)} inputProps={{ "aria-label": "controlled" }} />
+			),
+		},
 		{ field: "view", headerName: "Lượt xem", width: 100 },
+		{ field: "created_at", headerName: "Ngày tạo", width: 140, valueGetter: (params) => formatCreatedAt(params) },
+		{ field: "updated_at", headerName: "Ngày cập nhật", width: 140, valueGetter: (params) => formatCreatedAt(params) },
 		{
 			field: "action",
 			headerName: "Thao tác",
@@ -207,9 +248,14 @@ export default function Post({ posts, categorys }) {
 												<Form.Label>
 													<strong>Chuyên mục</strong>
 												</Form.Label>
-												<Form.Select value={category} onChange={(e) => setCategory(e.target.id)}>
-													<option>Chọn 1 chuyên mục</option>
-													{categories.length > 0 && categories.map((category) => <option key={category.id}>{category.title}</option>)}
+												<Form.Select value={category} onChange={(e) => setCategory(e.target.value)}>
+													<option value="">Chọn 1 chuyên mục</option>
+													{categories.length > 0 &&
+														categories.map((category) => (
+															<option key={category.id} value={category.id}>
+																{category.title}
+															</option>
+														))}
 												</Form.Select>
 											</Form.Group>
 										</Col>
