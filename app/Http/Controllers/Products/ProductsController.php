@@ -191,7 +191,11 @@ class ProductsController extends Controller
                 Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
             }
         }
-        $products = Products::all();
+        $products = Products::with(['image' => function($query) {
+            $query->where('status', 1);
+        }])
+        ->select('products.*')
+        ->get();
         return response()->json(['check'=>true,'data'=>$products]);
     }
 

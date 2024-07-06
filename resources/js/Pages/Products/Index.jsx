@@ -8,6 +8,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import TextField from "@mui/material/TextField";
 import CKEditor from "../../components/CKEditor";
 import Autocomplete from "@mui/material/Autocomplete";
+import "./datagrid.css";
 import "notyf/notyf.min.css";
 import axios from "axios";
 function Index({ brands,products }) {
@@ -69,6 +70,16 @@ function Index({ brands,products }) {
             headerName: "#",
             width: 100,
             renderCell: (params) => params.rowIndex,
+        },
+        {
+            field: 'image',
+            headerName: 'Hình ảnh',
+            width: 120,
+            renderCell: (params) => (
+                <div style={{ height: 60 }}>
+                <img className="img-fluid" src={params.row.image.image} alt={params.row.image.image} style={{ height: '100%' }} />
+            </div>
+            ),
         },
         {
             field: "name",
