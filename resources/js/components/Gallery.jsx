@@ -150,7 +150,7 @@ function Gallery(props) {
     useEffect(() => {
         setLoading(true);
         if (idFolder != null) {
-            fetch("/api/files/" + idFolder)
+            fetch("/admin/files/" + idFolder)
                 .then((res) => res.json())
                 .then((res) => {
                     setFiles(res.data);
@@ -180,7 +180,7 @@ function Gallery(props) {
             formData.append("folder_id", idFolder);
         }
         axios
-            .post("/admin/files/", formData)
+            .post("/admin/files", formData)
             .then((res) => {
                 if (res.data.check == true) {
                     notyf.open({

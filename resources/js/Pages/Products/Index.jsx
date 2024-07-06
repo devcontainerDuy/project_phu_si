@@ -60,7 +60,9 @@ function Index({ brands,products }) {
                 icon: '<i class="bi bi-bag-check"></i>',
             },
         ],
+
     });
+    console.log(data);
     const formatPrice = (params) => {
         return new Intl.NumberFormat("en-US").format(params);
     };
@@ -77,7 +79,7 @@ function Index({ brands,products }) {
             width: 120,
             renderCell: (params) => (
                 <div style={{ height: 60 }}>
-                <img className="img-fluid" src={params.row.image.image} alt={params.row.image.image} style={{ height: '100%' }} />
+                <img className="img-fluid" src={params.row.image?params.row.image.image:''}  style={{ height: '100%' }} />
             </div>
             ),
         },

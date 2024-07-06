@@ -42,6 +42,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('post/categories', PostCategoryController::class);
     //==========================================================
     Route::resource('files', FileController::class);
+    Route::resource('files', FileController::class);
     Route::post('folder', [FolderController::class, 'store']);
     Route::put('folder/{id}', [FolderController::class, 'update']);
     Route::delete('folder/{id}', [FolderController::class, 'destroy']);
