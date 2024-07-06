@@ -212,12 +212,14 @@ class ProductsController extends Controller
         }
         $id_brand=Brands::where('name',$request->brand)->value('id');
         $data=$request->all();
+        $data['slug']=Str::slug($request->name);
         unset($data['brand']);
         unset($data['image']);
         $data['id_brand']=$id_brand;
         $data['created_at']= now();
         $id=Products::insertGetId($data);
         Gallery::create(['model'=>'PRODUCT','image'=>$request->image,'id_parent'=>$id,'status'=>1,'created_at'=>now()]);
+        return response()->json(['check'=>true]);
     }
     /**
      * Remove the specified resource from storage.
