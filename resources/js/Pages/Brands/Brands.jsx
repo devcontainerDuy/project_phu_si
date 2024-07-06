@@ -128,6 +128,7 @@ function Brands({ brands }) {
     ];
     const resetCreate = () => {
         setBrand("");
+        setContent("")
         setCreate(true);
     };
     function switchCollection(params, value) {
