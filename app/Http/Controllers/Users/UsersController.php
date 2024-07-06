@@ -95,7 +95,7 @@ class UsersController extends Controller
     public function logout(User $user)
     {
         Auth::logout();
-        return redirect('/');
+        return redirect('/admin');
     }
 
     /**

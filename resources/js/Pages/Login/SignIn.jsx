@@ -72,7 +72,7 @@ export default function SignInSide() {
                         message: "Đăng nhập thành công",
                     });
                     setTimeout(() => {
-                        window.location.replace('/admin/users');
+                        window.location.replace('/admin/products');
                     }, 2000);
                 } else if (res.data.check === false) {
                     if (res.data.msg) {
