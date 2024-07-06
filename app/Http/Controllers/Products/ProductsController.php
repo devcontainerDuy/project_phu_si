@@ -27,7 +27,11 @@ class ProductsController extends Controller
      */
 
      public function index (){
-        $products = Products::all();
+        $products = Products::with(['image' => function($query) {
+            $query->where('status', 1);
+        }])
+        ->select('products.*')
+        ->get();
         $brands = Brands::select('id','name')->get();
         return Inertia::render('Products/Index',['products'=>$products,'brands'=>$brands]);
 
