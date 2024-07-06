@@ -184,7 +184,27 @@ function Index({ collection }) {
 			});
 	}
 	const handleCellEditStop = (id, field, value) => {
-		axios
+		if(field=='position'){
+            axios
+			.put(`/admin/collections/${id}`, {
+				'position': value,
+			})
+			.then((res) => {
+				if (res.data.check == true) {
+					notyf.open({
+						type: "success",
+						message: "Chỉnh sửa thành công",
+					});
+					setData(res.data.data);
+				} else if (res.data.check == false) {
+					notyf.open({
+						type: "error",
+						message: res.data.msg,
+					});
+				}
+			});
+        }else{
+            axios
 			.put(`/admin/collections/${id}`, {
 				[field]: value,
 			})
@@ -202,6 +222,7 @@ function Index({ collection }) {
 					});
 				}
 			});
+        }
 	};
 	return (
 		<Layout>
