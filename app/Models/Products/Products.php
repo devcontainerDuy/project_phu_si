@@ -14,4 +14,5 @@ class Products extends Model
     {
         return $this->hasOne(Gallery::class, 'id_parent')->where('status', 1);
     }
+    
 }

@@ -11,6 +11,10 @@ use App\Http\Controllers\Slide\SlidesController;
 Route::get('collections',[ProductCollection::class,'api_collections']);
 Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
 
+//======================================================================
+Route::get('products',[ProductsController::class,'api_products']);
+
+//======================================================================
 Route::get('slides/{id}',[SlidesController::class,'api_slides']);
 
 Route::middleware(['web'])->group(function () {

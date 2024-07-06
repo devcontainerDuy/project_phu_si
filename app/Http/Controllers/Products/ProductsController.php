@@ -239,6 +239,12 @@ class ProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    public function api_products(Request $request){
+        $products= ;
+    }
+      /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Products $products)
     {
         //
