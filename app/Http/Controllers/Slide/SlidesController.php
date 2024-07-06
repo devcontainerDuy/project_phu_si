@@ -196,4 +196,12 @@ class SlidesController extends Controller
             return response()->json(['check' => false, 'msg' => 'Xóa slide thất bại']);
         }
     }
+    // =================================================
+    public function api_slides($id){
+        $slides= Slide::where('status',1)
+        ->where('slug','like','%'.$id.'%')
+        ->select('path','desktop','mobile')
+        ->get();
+        return response()->json($slides);
+    }
 }

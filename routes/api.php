@@ -6,9 +6,12 @@ use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Files\FolderController;
 use App\Http\Controllers\Files\FileController;
 use App\Http\Controllers\Products\ProductsController;
-
+use App\Http\Controllers\Slide\SlidesController;
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
+Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
+
+Route::get('slides/{id}',[SlidesController::class,'api_slides']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/folder',[FileController::class,'get_folder']);

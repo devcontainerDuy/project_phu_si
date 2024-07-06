@@ -272,7 +272,7 @@ export default function Slides({ slides }) {
 									<strong>Mobile</strong>
 								</Form.Label>
 								<Form.Control type="file" placeholder="Nhập mẫu mobile" onChange={(e) => setFileMobileDetail(e.target.files[0])} />
-								<Image className="mt-2" src={"/storage" + pathDetail + "desktop/" + fileMobileDetail} rounded alt={nameDetail} style={{ width: "40%" }} />
+								<Image className="mt-2" src={"/storage" + pathDetail + "mobile/" + fileMobileDetail} rounded alt={nameDetail} style={{ width: "40%" }} />
 							</Form.Group>
 						</Modal.Body>
 						<Modal.Footer>
