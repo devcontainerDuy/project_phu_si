@@ -17,3 +17,5 @@ Route::middleware(['web'])->group(function () {
 });
 
 Route::post('/products-import', [ProductsController::class,'Import']);
+
+Route::post('/product-crawler',[ProductsController::class,'api_import']);

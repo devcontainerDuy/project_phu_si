@@ -195,6 +195,30 @@ class ProductsController extends Controller
         return response()->json(['check'=>true,'data'=>$products]);
     }
 
+
+    //================================================================
+    public function api_import(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'sku' => 'required',
+            'price' => 'required',
+            'compare_price' => 'required',
+            'discount' => 'required',
+            'brand'=>'required',
+            'image'=>'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()]);
+        }
+        $id_brand=Brands::where('name',$request->brand)->value('id');
+        $data=$request->all();
+        unset($data['brand']);
+        unset($data['image']);
+        $data['id_brand']=$id_brand;
+        $data['created_at']= now();
+        $id=Products::insertGetId($data);
+        Gallery::create(['model'=>'PRODUCT','image'=>$request->image,'id_parent'=>$id,'status'=>1,'created_at'=>now()]);
+    }
     /**
      * Remove the specified resource from storage.
      */

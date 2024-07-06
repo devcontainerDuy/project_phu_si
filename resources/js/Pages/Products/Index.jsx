@@ -60,31 +60,6 @@ function Index({ brands,products }) {
             },
         ],
     });
-    const submitCreate = () => {
-        if (brand == "") {
-            notyf.open({
-                type: "error",
-                message: "Vui lòng nhập thương hiệu",
-            });
-        } else {
-            axios
-                .post("/admin/brands", {
-                    name: brand,
-                    content:content,
-                })
-                .then((res) => {
-                    if (res.data.check == true) {
-                        notyf.open({
-                            type: "success",
-                            message: "Đã thêm thương hiệu",
-                        });
-                        setData(res.data.data);
-                        resetCreate();
-                        setCreate(false)
-                    }
-                });
-        }
-    };
     const formatPrice = (params) => {
         return new Intl.NumberFormat("en-US").format(params);
     };
@@ -187,7 +162,7 @@ function Index({ brands,products }) {
 
     const handleCellEditStop = (id, field, value) => {
         axios
-            .put(`/admin/brands/${id}`, {
+            .put(`/admin/products/${id}`, {
                 [field]: value,
             })
             .then((res) => {
