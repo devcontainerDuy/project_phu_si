@@ -116,7 +116,18 @@ class ProductsController extends Controller
     public function Delete_Image($id,Request $request){
         $id_parent = Gallery::where('id',$id)->value('id_parent');
         Gallery::where('id',$id)->delete();
-        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id_parent)->select('image','id')->get();
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id_parent)->select('image','id','status')->get();
+
+        return response()->json(['check'=>true,'data'=>$gallery]);
+    }
+        /**
+     * Display the specified resource.
+     */
+    public function Set_Default($id,Request $request){
+        $id_parent = Gallery::where('id',$id)->value('id_parent');
+        Gallery::where('id_parent',$id_parent)->where('id','!=',$id)->update(['status'=>0,'updated_at'=>now()]);
+        Gallery::where('id',$id)->update(['status'=>1,'updated_at'=>now()]);
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id_parent)->select('image','id','status')->get();
 
         return response()->json(['check'=>true,'data'=>$gallery]);
     }
@@ -143,7 +154,7 @@ class ProductsController extends Controller
         $brands=Brands::active()->select('id','name')->get();
         $categories=Categories::active()->select('id','name')->get();
         $product=Products::find($id)->first();
-        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('image','id')->get();
+        $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('image','id','status')->get();
         $collections=ProductCollection::active()->where('model','ProductCollection')->select('id','collection')->get();
         $idCollections = Links::where('model1', 'PRODUCTS')
             ->where('model2', 'COLLECTIONS')

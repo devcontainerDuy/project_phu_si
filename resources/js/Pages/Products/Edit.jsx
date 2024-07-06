@@ -125,6 +125,13 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
             },
         ],
     });
+    const setImage = (item)=>{
+        axios.post('/admin/set-default-product-image/'+item).then((res)=>{
+            if(res.data.check){
+                setImages(res.data.data)
+            }
+        })
+    }
     const deleteImage=(item)=>{
         axios.post('/admin/delete-product-image/'+item).then((res)=>{
             if(res.data.check){
@@ -508,7 +515,7 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
                                                         {images.map(
                                                             (item) => (
                                                                 <div className="col-md-3 mb-2">
-                                                                    <div class="card">
+                                                                    <div class={item.status==1?"card border-success":"card"}>
                                                                         <div class="card-body">
                                                                             <img
                                                                             className="w-100"
@@ -520,6 +527,8 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
                                                                         </div>
                                                                         <div class="card-footer text-muted">
                                                                                 <button className="btn btn-sm btn-danger" onClick={(e)=>deleteImage(item.id)}>X</button>
+                                                                                <button className="btn btn-sm btn-success ms-2" onClick={(e)=>setImage(item.id)}>V</button>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
