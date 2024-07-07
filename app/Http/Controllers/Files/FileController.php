@@ -33,7 +33,7 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function rename_folder($id){
+    public function rename_folder(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'name'=>'required|unique:folders,name'
         ]);
