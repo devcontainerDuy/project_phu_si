@@ -193,7 +193,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                             >
                                                 Thông tin sản phẩm
                                             </button>
-                                            <button
+                                            {/* <button
                                                 className="nav-link"
                                                 id="nav-attribute-tab"
                                                 data-bs-toggle="tab"
@@ -204,7 +204,7 @@ function Create({ allCollecions, brands, collections,categories }) {
                                                 aria-selected="false"
                                             >
                                                 Thuộc tính sản phẩm
-                                            </button>
+                                            </button> */}
                                             <button
                                                 className="nav-link"
                                                 id="nav-profile-tab"

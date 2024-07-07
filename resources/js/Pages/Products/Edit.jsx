@@ -223,7 +223,7 @@ function Edit({ idProducts,allCollecions, brands,dataattributes, datacontent,pro
                                             >
                                                 Thông tin sản phẩm
                                             </button>
-                                            <button
+                                            {/* <button
                                                 className="nav-link"
                                                 id="nav-attribute-tab"
                                                 data-bs-toggle="tab"
@@ -234,7 +234,7 @@ function Edit({ idProducts,allCollecions, brands,dataattributes, datacontent,pro
                                                 aria-selected="false"
                                             >
                                                 Thuộc tính sản phẩm
-                                            </button>
+                                            </button> */}
                                             <button
                                                 className="nav-link"
                                                 id="nav-profile-tab"
