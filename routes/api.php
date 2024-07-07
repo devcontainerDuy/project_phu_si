@@ -30,16 +30,20 @@ Route::post('/products-import', [ProductsController::class,'Import']);
 
 Route::post('/product-crawler',[ProductsController::class,'api_import']);
 
-Route::post('/loadCart',[ProductsController::class,'api_load_cart_product']);
+Route::post('/products/loadCart',[ProductsController::class,'api_load_cart_product']);
 
 Route::post('/',[BillsController::class,'store']);
 //===================================================
 
-Route::prefix('api')->group(function () {
-    Route::prefix('customers')->group(function () {
-        Route::post('/auth/register',[CustomersController::class,'store']);
-        Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
-        Route::post('/auth/login-email',[CustomersController::class,'CheckLogin']);
-        Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
-    });
+Route::prefix('customers')->group(function () {
+    Route::post('/auth/register',[CustomersController::class,'store']);
+    Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
+    Route::post('/auth/login-email',[CustomersController::class,'CheckLogin']);
+    Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
+});
+
+Route::prefix('bills')->group(function () {
+    Route::post('/',[BillsController::class,'store']);
+    Route::post('/login',[BillsController::class,'store2']);
+
 });
