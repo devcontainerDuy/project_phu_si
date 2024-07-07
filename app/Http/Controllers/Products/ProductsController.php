@@ -161,8 +161,8 @@ class ProductsController extends Controller
             ->pluck('id_parent');
         $id_products = Links::where('model1', 'PRODUCTS')
         ->where('model2', 'PRODUCTS')
-        ->where('id_parent', $id)
-        ->pluck('id_link');
+        ->where('id_link', $id)
+        ->pluck('id_parent');
         $attributes =json_decode($product->attributes);
         $products=Products::where('id','!=',$id)->select('name','id')->get();
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
@@ -200,8 +200,9 @@ class ProductsController extends Controller
         Products::where('id',$id)->update($data);
         if($request->has('collections')){
             $collections = $request->collections;
+            Links::where('id_parent',$id)->delete();
             foreach ($collections as $value) {
-                Links::create(['id_link'=>$value,'id_parent'=>$id,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
+                Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
             }
         }
         if($request->has('links')){

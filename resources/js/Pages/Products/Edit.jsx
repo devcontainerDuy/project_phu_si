@@ -146,7 +146,6 @@ function Edit({ idProducts,allCollecions, brands,dataattributes, datacontent,pro
             target: { value },
         } = event;
         setIdCollections(
-            // On autofill we get a stringified value.
             typeof value === "string" ? value.split(",") : value
         );
     };
@@ -155,7 +154,6 @@ function Edit({ idProducts,allCollecions, brands,dataattributes, datacontent,pro
             target: { value },
         } = event;
         setLinks(
-            // On autofill we get a stringified value.
             typeof value === "string" ? value.split(",") : value
         );
     };
