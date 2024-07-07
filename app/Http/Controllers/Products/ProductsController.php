@@ -117,7 +117,6 @@ class ProductsController extends Controller
         $id_parent = Gallery::where('id',$id)->value('id_parent');
         Gallery::where('id',$id)->delete();
         $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id_parent)->select('image','id','status')->get();
-
         return response()->json(['check'=>true,'data'=>$gallery]);
     }
         /**
@@ -141,7 +140,7 @@ class ProductsController extends Controller
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
-        Gallery::create(['model'=>'PRODUCT','image'=>$request->images   ,'id_parent'=>$id,'status'=>0,'created_at'=>now()]);
+        Gallery::create(['model'=>'PRODUCT','image'=>$request->images,'id_parent'=>$id,'status'=>0,'created_at'=>now()]);
         $gallery=Gallery::where('model','PRODUCT')->where('id_parent',$id)->select('image','id')->get();
         return response()->json(['check'=>true,'data'=>$gallery]);
 
@@ -169,9 +168,7 @@ class ProductsController extends Controller
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
         return Inertia::render('Products/Edit',['idProducts'=>$id_products,'products'=>$products,'dataattributes'=>$attributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
-    /**
-     * Display the specified resource.
-     */
+   
     public function exportExample(Products $products)
     {
         return Excel::download(new ProductExample, 'products.xlsx');
@@ -266,6 +263,37 @@ class ProductsController extends Controller
         ->get();
         return response()->json($collections);
      }
+     public function api_single($id){
+        $product=Products::find($id)->first();
+        $storage_img=Gallery::where('model','PRODUCT')->where('image','like','/storage%')->where('id_parent',$id)->select('image')->get();
+        foreach ($storage_img as $key => $value) {
+            $value->image = url($value->image);
+        }
+        $images=[];
+        $link_img = Gallery::where('model', 'PRODUCT')
+        ->where('image', 'not like', '/storage%')
+        ->where('id_parent', $id)
+        ->select('image')
+        ->get();
+        $link_img_array = $link_img->toArray();
+        $storage_img_array = $storage_img->toArray();
+        $images = array_merge($storage_img_array, $link_img_array);
+        $links = Links::join('products','links.id_link','=','products.id')
+        ->join('gallery','products.id','=','gallery.id_parent')
+        ->where('gallery.status',1)
+        ->where('links.id_parent',$id)
+        ->where('products.status',1)
+        ->select('products.name','products.slug','gallery.image','products.price','products.discount','products.compare_price')
+        ->get();
+        return response()->json(['data'=>[
+            'product'=>$product,
+            'images'=>$images,
+            'links'=>$links 
+        ]]);
+    }
+    /**
+     * Display the specified resource.
+     */
       /**
      * Remove the specified resource from storage.
      */
