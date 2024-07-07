@@ -221,6 +221,7 @@ class ProductsController extends Controller
             'discount' => 'required',
             'brand'=>'required',
             'image'=>'required',
+            'collection'=>'required'
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()]);
@@ -230,9 +231,12 @@ class ProductsController extends Controller
         $data['slug']=Str::slug($request->name);
         unset($data['brand']);
         unset($data['image']);
+        unset($data['collection']);
         $data['id_brand']=$id_brand;
         $data['created_at']= now();
         $id=Products::insertGetId($data);
+        $id_collection= ProductCollection::where('slug','like','%'.$request->collection.'%')->value('id');
+        Links::create(['id_link'=>$id,'id_parent'=>$id_collection,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
         Gallery::create(['model'=>'PRODUCT','image'=>$request->image,'id_parent'=>$id,'status'=>1,'created_at'=>now()]);
         return response()->json(['check'=>true]);
     }
@@ -241,12 +245,14 @@ class ProductsController extends Controller
      */
     public function api_products(Request $request){
         $collections = ProductCollection::where('status', 1)
-        ->with(['products' => function($query) {
-            $query->where('status', 1);
+        ->where('highlighted',1)
+        ->with(['products'=> function($query) {
+            $query->where('products.status', 1)
+                      ->where('products.highlighted', 1)
+                      ->with('image');
         }])
         ->get();
-
-    return response()->json($collections);
+        return response()->json($collections);
      }
       /**
      * Remove the specified resource from storage.

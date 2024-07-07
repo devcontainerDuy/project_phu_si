@@ -118,7 +118,19 @@ function Index({ brands,products }) {
             renderCell: (params) => (
                 <Switch
                     checked={params.value == 1}
-                    onChange={(e) => switchCollection(params, e.target.value)}
+                    onChange={(e) => switchProduct(params, e.target.value)}
+                    inputProps={{ "aria-label": "controlled" }}
+                />
+            ),
+        },
+        {
+            field: "highlighted",
+            headerName: "Hiển thị ở trang chủ",
+            width: 70,
+            renderCell: (params) => (
+                <Switch
+                    checked={params.value == 1}
+                    onChange={(e) => switchHighlighter(params, e.target.value)}
                     inputProps={{ "aria-label": "controlled" }}
                 />
             ),
@@ -141,7 +153,7 @@ function Index({ brands,products }) {
         setBrand("");
         setCreate(true);
     };
-    function switchCollection(params, value) {
+    function switchProduct(params, value) {
         if (params.row.status == 1) {
             var newStatus = 0;
         } else {
@@ -172,7 +184,37 @@ function Index({ brands,products }) {
                 }
             });
     }
-
+    function switchHighlighter(params, value) {
+        if (params.row.highlighted == 1) {
+            var highlighted = 0;
+        } else {
+            var highlighted = 1;
+        }
+        axios
+            .put("/admin/products/" + params.id, {
+                highlighted: highlighted,
+            })
+            .then((res) => {
+                if (res.data.check == false) {
+                    if (res.data.msg) {
+                        notyf.open({
+                            type: "error",
+                            message: res.data.msg,
+                        });
+                    }
+                } else if (res.data.check == true) {
+                    notyf.open({
+                        type: "success",
+                        message: "Chuyển trạng thái thành công",
+                    });
+                    if (res.data.data) {
+                        setData(res.data.data);
+                    } else {
+                        setData([]);
+                    }
+                }
+            });
+    }
     const handleCellEditStop = (id, field, value) => {
         axios
             .put(`/admin/products/${id}`, {
