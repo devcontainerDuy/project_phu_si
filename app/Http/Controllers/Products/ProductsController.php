@@ -240,8 +240,14 @@ class ProductsController extends Controller
      * Remove the specified resource from storage.
      */
     public function api_products(Request $request){
-        $products= ;
-    }
+        $collections = ProductCollection::where('status', 1)
+        ->with(['products' => function($query) {
+            $query->where('status', 1);
+        }])
+        ->get();
+
+    return response()->json($collections);
+     }
       /**
      * Remove the specified resource from storage.
      */

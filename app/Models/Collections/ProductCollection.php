@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Categories\Categories;
 use Illuminate\Database\Eloquent\Builder;
-
+use App\Models\Products\Products;
 class ProductCollection extends Model
 {
     use HasFactory;
@@ -19,5 +19,10 @@ class ProductCollection extends Model
 
     public function scopeSort(Builder $query,$param){
         return $query->where('status',1)->orderBy('position',$param);
+    }
+    
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'links', 'id_parent', 'id_link');
     }
 }

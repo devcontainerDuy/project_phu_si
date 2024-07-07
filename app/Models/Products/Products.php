@@ -4,7 +4,7 @@ namespace App\Models\Products;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Collections\ProductCollection;
 class Products extends Model
 {
     use HasFactory;
@@ -14,5 +14,8 @@ class Products extends Model
     {
         return $this->hasOne(Gallery::class, 'id_parent')->where('status', 1);
     }
-    
+    public function collections()
+    {
+        return $this->belongsToMany(ProductCollection::class, 'links', 'id_link', 'id_parent');
+    }
 }
