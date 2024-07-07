@@ -160,10 +160,14 @@ class ProductsController extends Controller
             ->where('model2', 'COLLECTIONS')
             ->where('id_link', $id)
             ->pluck('id_parent');
+        $id_products = Links::where('model1', 'PRODUCTS')
+        ->where('model2', 'PRODUCTS')
+        ->where('id_parent', $id)
+        ->pluck('id_link');
         $attributes =json_decode($product->attributes);
-
+        $products=Products::where('id','!=',$id)->select('name','id')->get();
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
-        return Inertia::render('Products/Edit',['dataattributes'=>$attributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
+        return Inertia::render('Products/Edit',['idProducts'=>$id_products,'products'=>$products,'dataattributes'=>$attributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
     /**
      * Display the specified resource.
@@ -191,6 +195,7 @@ class ProductsController extends Controller
         }
         $data=$request->all();
         unset($data['collections']);
+        unset($data['links']);
         if($request->has('name')){
         $data['slug']=Str::slug($request->name);
         }
@@ -199,7 +204,14 @@ class ProductsController extends Controller
         if($request->has('collections')){
             $collections = $request->collections;
             foreach ($collections as $value) {
-                Links::create(['id_link'=>$id,'id_parent'=>$value,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
+                Links::create(['id_link'=>$value,'id_parent'=>$id,'model1'=>'PRODUCTS','model2'=>'COLLECTIONS','created_at'=>now()]);
+            }
+        }
+        if($request->has('links')){
+            Links::where('id_parent',$id)->where('model2','PRODUCTS')->delete();
+            $links = $request->links;
+            foreach ($links as $value) {
+                Links::create(['id_link'=>$value,'id_parent'=>$id,'model1'=>'PRODUCTS','model2'=>'PRODUCTS','created_at'=>now()]);
             }
         }
         $products = Products::with(['image' => function($query) {

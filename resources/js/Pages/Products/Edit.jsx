@@ -10,7 +10,7 @@ import Select from "@mui/material/Select";
 import "notyf/notyf.min.css";
 import axios from "axios";
 import { Notyf } from "notyf";
-function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataidCollections,datadescription,gallery, id }) {
+function Edit({ idProducts,allCollecions, brands,dataattributes, datacontent,product,dataidCollections,datadescription,gallery, id,products }) {
     const theme = useTheme();
     const [idBrand, setIdBrand] = useState(product.id_brand);
     const [idCategories, setidCategories] = useState(0);
@@ -24,6 +24,7 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
     const [attributes, setAttributes] = useState(dataattributes);
     const [description, setDescription] = useState("");
     const [modalShow, setModalShow] = React.useState(false);
+    const [links,setLinks]= useState(idProducts);
     const [images, setImages] = useState(gallery);
     const handleSelectImages = (selectedImages) => {
         axios.post('/admin/update-product-images/'+id,{
@@ -71,6 +72,7 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
         "Virginia Andrews",
         "Kelly Snyder",
     ];
+    
     const handleAttributeChange = (index, event) => {
         const { name, value } = event.target;
         const newAttributes = [...attributes];
@@ -148,6 +150,15 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
             typeof value === "string" ? value.split(",") : value
         );
     };
+    const handleChange1 = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setLinks(
+            // On autofill we get a stringified value.
+            typeof value === "string" ? value.split(",") : value
+        );
+    };
     const submitEdit=()=>{
         var formData= new FormData();
         var thuoc_tinh= JSON.stringify(attributes)
@@ -164,7 +175,9 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
         idCollections.forEach(el => {
             formData.append('collections[]',el);
         });
-
+        links.forEach(el => {
+            formData.append('links[]',el);
+        });
         axios.post('/admin/update-products/'+id,formData).then((res)=>{
             if(res.data.check==true){
                 notyf.open({
@@ -617,7 +630,7 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
                                                         </FormControl>
                                                     </div>
                                                 </div>
-                                                <div className="col-md">
+                                                <div className="col-md-4">
                                                     <div className="input-group mb-3">
                                                         <FormControl
                                                             sx={{
@@ -658,6 +671,54 @@ function Edit({ allCollecions, brands,dataattributes, datacontent,product,dataid
                                                                         >
                                                                             {
                                                                                 item.collection
+                                                                            }
+                                                                        </MenuItem>
+                                                                    )
+                                                                )}
+                                                            </Select>
+                                                        </FormControl>
+                                                    </div>
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <div className="input-group mb-3">
+                                                        <FormControl
+                                                            sx={{
+                                                                m: 1,
+                                                                width: 300,
+                                                            }}
+                                                        >
+                                                            <InputLabel id="demo-multiple-name-label">
+                                                               Sản phẩm liên kết
+                                                            </InputLabel>
+                                                            <Select
+                                                                labelId="demo-multiple-name-label"
+                                                                id="demo-multiple-name"
+                                                                multiple
+                                                                value={
+                                                                    links
+                                                                }
+                                                                onChange={
+                                                                    handleChange1
+                                                                }
+                                                                input={
+                                                                    <OutlinedInput label="Name" />
+                                                                }
+                                                                MenuProps={
+                                                                    MenuProps
+                                                                }
+                                                            >
+                                                                {products.map(
+                                                                    (item) => (
+                                                                        <MenuItem
+                                                                            key={
+                                                                                item.id
+                                                                            }
+                                                                            value={
+                                                                                item.id
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                item.name
                                                                             }
                                                                         </MenuItem>
                                                                     )
