@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Bills\BillsController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Files\FileController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Categories\CategoriesController;
 use App\Http\Controllers\Posts\PostCategoryController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::resource('bills', BillsController::class);
     Route::resource('permissions', PermissionsController::class);
     //================================
     Route::post('/permissions/add-role-permision', [PermissionsController::class, 'role_permission']);

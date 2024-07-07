@@ -84,8 +84,8 @@ function Layout({ children }) {
 						<MenuItem icon={<CardTravelIcon />} component="a" href="/admin/files">
 							Hình ảnh
 						</MenuItem>
-						<MenuItem icon={<DesignServicesTwoToneIcon />} component="a" href="/services">
-							Dịch vụ{" "}
+						<MenuItem icon={<DesignServicesTwoToneIcon />} component="a" href="/admin/bills">
+							Hóa đơn
 						</MenuItem>
 						<MenuItem icon={<LogoutIcon />} component="a" href="/logout">
 							Log out
