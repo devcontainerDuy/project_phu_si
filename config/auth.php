@@ -70,7 +70,7 @@ return [
         ],
         'customers' => [
             'driver' => 'eloquent',
-            'model' => Leo\Customers\Models\Customers::class,
+            'model' => App\Models\Customers\Customers::class,
         ],
         // 'users' => [
         //     'driver' => 'database',

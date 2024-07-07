@@ -8,7 +8,7 @@ use App\Http\Controllers\Files\FileController;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Bills\BillsController;
-
+use App\Http\Controllers\Customers\CustomersController;
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
 Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
@@ -33,3 +33,13 @@ Route::post('/product-crawler',[ProductsController::class,'api_import']);
 Route::post('/loadCart',[ProductsController::class,'api_load_cart_product']);
 
 Route::post('/',[BillsController::class,'store']);
+//===================================================
+
+Route::prefix('api')->group(function () {
+    Route::prefix('customers')->group(function () {
+        Route::post('/auth/register',[CustomersController::class,'store']);
+        Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
+        Route::post('/auth/login-email',[CustomersController::class,'CheckLogin']);
+        Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
+    });
+});
