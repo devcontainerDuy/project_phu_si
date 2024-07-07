@@ -265,15 +265,16 @@ class ProductsController extends Controller
         return response()->json($collections);
      }
      public function api_single($id){
-        $product=Products::find($id)->first();
-        $storage_img=Gallery::where('model','PRODUCT')->where('image','like','/storage%')->where('id_parent',$id)->select('image')->get();
+        $product=Products::where('slug',$id)->first();
+        $id_product=$product->id;
+        $storage_img=Gallery::where('model','PRODUCT')->where('image','like','/storage%')->where('id_parent',$id_product)->select('image')->get();
         foreach ($storage_img as $key => $value) {
             $value->image = url($value->image);
         }
         $images=[];
         $link_img = Gallery::where('model', 'PRODUCT')
         ->where('image', 'not like', '/storage%')
-        ->where('id_parent', $id)
+        ->where('id_parent', $id_product)
         ->select('image')
         ->get();
         $link_img_array = $link_img->toArray();
@@ -282,7 +283,7 @@ class ProductsController extends Controller
         $links = Links::join('products','links.id_link','=','products.id')
         ->join('gallery','products.id','=','gallery.id_parent')
         ->where('gallery.status',1)
-        ->where('links.id_parent',$id)
+        ->where('links.id_parent',$id_product)
         ->where('products.status',1)
         ->select('products.name','products.slug','gallery.image','products.price','products.discount','products.compare_price')
         ->get();
@@ -295,6 +296,33 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
+    public function api_load_cart_product(Request $request){
+        $validator = Validator::make($request->all(), [
+            'cart' => 'required|array',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $arr=[];
+        foreach($request->cart as $item){
+            $item=json_decode($item);
+            $product=Products::join('gallery','products.id','=','gallery.id_parent')->where('gallery.status',1)->where('products.id',$item[0])->select('products.id','gallery.image','slug','name','price','discount')->get();
+            foreach($product as $item1){
+                $item2=[
+                    'id'=> $item1->id,
+                    'name'=>$item1->name,
+                    'slug'=>$item1->slug,
+                    'quantity'=>$item[1],
+                    'discount'=>(int)$item1->discount,
+                    'price'=>(int)$item1->price,
+                    'image'=>$item1->image,
+                    'total'=>(int)$item1->discount*$item[1],
+                ];
+               array_push($arr,$item2);
+            }
+       }
+       return response()->json($arr);
+    }
       /**
      * Remove the specified resource from storage.
      */
