@@ -46,5 +46,4 @@ Route::prefix('customers')->group(function () {
 Route::prefix('bills')->group(function () {
     Route::post('/',[BillsController::class,'store']);
     Route::post('/login',[BillsController::class,'store2']);
-
 });
