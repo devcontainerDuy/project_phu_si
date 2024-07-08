@@ -157,7 +157,12 @@ class PostController extends Controller
             return response()->json(['check' => false, 'msg' => 'Xóa thất bại']);
         }
     }
-
+    // =========================================
+    public function api_post(){
+        $posts= Posts::where('status',1)->orderBy('position','asc')->get();
+        $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
+        return response()->json(['posts'=>$posts,'postcates'=>$postcates]);
+    }
     // =========================================
     public function api_highlight(){
         $posts= Posts::where('status',1)->where('highlighted',1)->orderBy('position','asc')->get();
