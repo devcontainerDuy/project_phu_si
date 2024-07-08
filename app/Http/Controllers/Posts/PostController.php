@@ -42,6 +42,7 @@ class PostController extends Controller
             'id_category' => 'required',
             'position' => 'required',
             'content' => 'required',
+            'image' => 'required',
             'status' => 'boolean',
             'highlighted' => 'boolean',
         ]);

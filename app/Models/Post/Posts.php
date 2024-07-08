@@ -11,7 +11,7 @@ class Posts extends Model
 
     protected $table = 'posts';
 
-    protected $fillable = ['title', 'slug', 'summary', 'content', 'status', 'highlighted', 'id_collection', 'view', 'id_category', 'position', 'created_at', 'updated_at'];
+    protected $fillable = ['title', 'slug', 'summary','image', 'content', 'status', 'highlighted', 'id_collection', 'view', 'id_category', 'position', 'created_at', 'updated_at'];
 
     public function category()
     {
