@@ -9,6 +9,8 @@ use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Bills\BillsController;
 use App\Http\Controllers\Customers\CustomersController;
+use App\Http\Controllers\Posts\PostController;
+
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
 Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
@@ -46,4 +48,8 @@ Route::prefix('customers')->group(function () {
 Route::prefix('bills')->group(function () {
     Route::post('/',[BillsController::class,'store']);
     Route::post('/login',[BillsController::class,'store2']);
+});
+
+Route::prefix('post')->group(function () {
+    Route::get('/highlight',[PostController::class,'api_highlight']);
 });

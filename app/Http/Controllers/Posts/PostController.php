@@ -135,4 +135,10 @@ class PostController extends Controller
             return response()->json(['check' => false, 'msg' => 'Xóa thất bại']);
         }
     }
+
+    // =========================================
+    public function api_highlight(){
+        $posts= Posts::where('status',1)->where('highlighted',1)->get();
+        return response()->json($posts);
+    }
 }
