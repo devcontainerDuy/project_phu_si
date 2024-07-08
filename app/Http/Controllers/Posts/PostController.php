@@ -138,7 +138,7 @@ class PostController extends Controller
 
     // =========================================
     public function api_highlight(){
-        $posts= Posts::where('status',1)->where('highlighted',1)->get();
+        $posts= Posts::where('status',1)->where('highlighted',1)->orderBy('position','asc')->get();
         return response()->json($posts);
     }
 }
