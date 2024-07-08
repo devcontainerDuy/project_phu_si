@@ -278,6 +278,25 @@ class ProductsController extends Controller
         ->get();
         return response()->json($collections);
      }
+     /**
+     * Remove the specified resource from storage.
+     */
+    public function api_categories_products($id){
+        $collections = ProductCollection::where('status', 1)
+        ->where('slug', $id)
+        ->with(['products' => function($query) {
+            $query->where('products.status', 1)
+                  ->where('products.highlighted', 1)
+                  ->with('image')
+                  ->select('products.*')
+                  ->distinct('products.id');
+        }])
+        ->get();
+        return response()->json($collections);
+    }
+     /**
+     * Remove the specified resource from storage.
+     */
      public function api_single($id){
         $product=Products::where('slug',$id)->first();
         $idProduct=$product->id;

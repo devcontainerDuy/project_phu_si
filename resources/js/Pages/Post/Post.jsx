@@ -180,7 +180,7 @@ export default function Post({ posts, categorys }) {
 		{ field: "id", headerName: "#", width: 30 },
 		{ field: "title", headerName: "Tiêu đề bài viết", width: 240, editable: true },
 		{ field: "slug", headerName: "Slug", width: 180 },
-		{ field: "id_collection", headerName: "Danh mục", width: 160, editable: true },
+		{ field: "id_collection", headerName: "Danh mục", width: 160, editable: false },
 		{
 			field: "id_category",
 			headerName: "Chuyên mục",
