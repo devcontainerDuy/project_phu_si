@@ -215,12 +215,6 @@ export default function Post({ posts, categorys }) {
         },
         { field: "slug", headerName: "Slug", width: 180 },
         {
-            field: "id_collection",
-            headerName: "Danh mục",
-            width: 160,
-            editable: false,
-        },
-        {
             field: "position",
             headerName: "Thứ tự",
             width: 160,
@@ -573,7 +567,7 @@ export default function Post({ posts, categorys }) {
                     {data && (
                         <Col className="mt-3">
                             <div className="container-fluid">
-                           <div style={{width:'90%'}}>
+                           <div>
                            <DataGrid
                                     rows={data}
                                     columns={columns}
