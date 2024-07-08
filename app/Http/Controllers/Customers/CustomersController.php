@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 class CustomersController extends Controller
 {
      /**
@@ -28,21 +28,29 @@ class CustomersController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    private function calculateTotal($bill) {
+        return $bill->details->reduce(function ($carry, $detail) {
+            $productDiscount = $detail->product->discount;
+            $quantity = $detail->quantity;
+            return $carry + ($productDiscount * $quantity);
+        }, 0);
+    }
+        /**
+     * Show the form for creating a new resource.
+     */
     public function get_bills(Request $request)
     {
+        
         $bills = Bills::with(['details.product'])
-        ->where('email',Auth::user()->email)
-        ->get()
-        ->map(function ($bill) {
-            $total = $bill->details->reduce(function ($carry, $detail) {
-                $productDiscount = $detail->product->discount;
-                $quantity = $detail->quantity;
-                return $carry + ($productDiscount * $quantity);
-            }, 0);
-            $bill->total = $total;
+            ->where('email', Auth::user()->email)
+            ->paginate(3);
+
+        $bills->getCollection()->transform(function ($bill) {
+            $bill->total = $this->calculateTotal($bill);
             return $bill;
         });
-        return response ()->json($bills);
+
+        return response()->json($bills);
     }
 
     /**
