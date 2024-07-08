@@ -221,6 +221,12 @@ export default function Post({ posts, categorys }) {
             editable: false,
         },
         {
+            field: "position",
+            headerName: "Thứ tự",
+            width: 160,
+            editable: false,
+        },
+        {
             field: "id_category",
             headerName: "Chuyên mục",
             width: 160,
@@ -566,8 +572,9 @@ export default function Post({ posts, categorys }) {
                 <Row>
                     {data && (
                         <Col className="mt-3">
-                            <Box sx={{ height: 400, width: "100%" }}>
-                                <DataGrid
+                            <div className="container-fluid">
+                           <div style={{width:'90%'}}>
+                           <DataGrid
                                     rows={data}
                                     columns={columns}
                                     pageSize={5}
@@ -595,7 +602,8 @@ export default function Post({ posts, categorys }) {
                                         )
                                     }
                                 />
-                            </Box>
+                           </div>
+                            </div>
                         </Col>
                     )}
                     <Modal
