@@ -16,7 +16,18 @@ class BillsController extends Controller
      */
     public function index()
     {
-        //
+        $bills = Bills::with(['details.product'])
+        ->get()
+        ->map(function ($bill) {
+            $total = $bill->details->reduce(function ($carry, $detail) {
+                $productDiscount = $detail->product->price;
+                $quantity = $detail->quantity;
+                return $carry + ($productDiscount * $quantity);
+            }, 0);
+            $bill->total = $total;
+            return $bill;
+        });
+        return Inertia::render("Bills/Index",['bills'=>$bills]);
     }
 
     /**
@@ -55,12 +66,25 @@ class BillsController extends Controller
         return response()->json(['check'=>true]);
     }
 
-    /**
-     * Display the specified resource.
+    private function calculateTotal($bill) {
+        return $bill->details->reduce(function ($carry, $detail) {
+            $productDiscount = $detail->product->price;
+            $quantity = $detail->quantity;
+            return $carry + ($productDiscount * $quantity);
+        }, 0);
+    }
+        /**
+     * Show the form for creating a new resource.
      */
-    public function show(Bills $bills)
+    public function show(Request $request,$id)
     {
-        //
+        
+        $bill = Bills::with('details.product')->find($id);
+        $total = $bill->details->sum(function($detail) {
+            return $detail->quantity * $detail->product->price;
+        });
+       $billList = Bill_Detail::with(['product','product.image'])->where('hoa_don_chi_tiet.id_hoa_don',$id)->select()->get();
+       return Inertia::render("Bills/Detail",['total'=>$total,'bill'=>$bill,'billList'=>$billList]); 
     }
 
     /**
