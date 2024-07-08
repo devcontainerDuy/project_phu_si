@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import Gallery from "../../components/Gallery";
+import OutlinedInput from "@mui/material/OutlinedInput";
 import {
     Container,
     Row,
@@ -25,13 +26,14 @@ import "notyf/notyf.min.css";
 import axios from "axios";
 import CKEditor from "../../components/CKEditor";
 
-export default function Post({ posts, categorys }) {
+export default function Post({ posts, categorys, products }) {
     const [data, setData] = useState("");
     const [categories, setCategories] = useState("");
     const [show, setShow] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [modalShow, setModalShow] = React.useState(false);
     const [modalShow2, setModalShow2] = React.useState(false);
+    const [links,setLinks]= useState([]);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handledDetail = (id) => {
@@ -40,6 +42,8 @@ export default function Post({ posts, categorys }) {
             if (response.data.check === true) {
                 setId(response.data.data.id);
                 setTitle(response.data.data.title);
+                setLinks(response.data.links);
+                // console.log(response.data.links);
                 setSummary(response.data.data.summary);
                 setPosition(response.data.data.position);
                 setContent(response.data.data.content);
@@ -53,7 +57,16 @@ export default function Post({ posts, categorys }) {
         setData(posts);
         setCategories(categorys);
     }, [posts, categorys]);
-
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
     const formatCreatedAt = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleString();
@@ -64,6 +77,7 @@ export default function Post({ posts, categorys }) {
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
     const [collection, setCollection] = useState("");
+    const [idProduct,setIdProduct]= useState([]);
     const [category, setCategory] = useState("");
     const [position, setPosition] = useState(0);
     const [content, setContent] = useState("");
@@ -74,7 +88,6 @@ export default function Post({ posts, categorys }) {
     const handleSelectImages = (selectedImages) => {
         setImages(selectedImages);
         setModalShow(false);
-        console.log(images);
     };
     const handleSelectImages2 = (selectedImages) => {
         setImages2(selectedImages);
@@ -98,7 +111,25 @@ export default function Post({ posts, categorys }) {
         setContent("");
         setShowDetail(false);
     };
+    const handleChangeRelatedProduct = (event)=>{
+        const {
+            target: { value },
+        } = event;
+        setIdProduct(
+            // On autofill we get a stringified value.
+            typeof value === "string" ? value.split(",") : value
+        );
+    }
 
+    const handleChangeRelatedProduct1 = (event)=>{
+        const {
+            target: { value },
+        } = event;
+        setLinks(
+            // On autofill we get a stringified value.
+            typeof value === "string" ? value.split(",") : value
+        );
+    }
     const handleCreate = () => {
         axios
             .post("/admin/posts", {
@@ -109,8 +140,9 @@ export default function Post({ posts, categorys }) {
                 position: position,
                 content: content,
                 status: status,
-                image:images,
+                image: images,
                 highlighted: highlighted,
+                collection:JSON.stringify(idProduct)
             })
             .then((response) => {
                 if (response.data.check === true) {
@@ -144,8 +176,9 @@ export default function Post({ posts, categorys }) {
             .put(`/admin/posts/${id}`, {
                 summary: summary,
                 position: position,
-                image:images2,
+                image: images2,
                 content: content,
+                collection:JSON.stringify(links)
             })
             .then((response) => {
                 if (response.data.check === true) {
@@ -491,6 +524,42 @@ export default function Post({ posts, categorys }) {
                                             </Form.Group>
                                         </Col>
                                         <Col xs={12}>
+                                            <FormControl
+                                                sx={{
+                                                    m: 1,
+                                                    width: 300,
+                                                }}
+                                            >
+                                                <InputLabel id="demo-multiple-name-label">
+                                                    Danh mục sản phẩm xuất hiện
+                                                </InputLabel>
+                                                <Select
+                                                    labelId="demo-multiple-name-label"
+                                                    id="demo-multiple-name"
+                                                    multiple
+                                                    value={idProduct}
+                                                    onChange={handleChangeRelatedProduct}
+                                                    input={
+                                                        <OutlinedInput label="Name" />
+                                                    }
+                                                    MenuProps={MenuProps}
+                                                >
+                                                    {products.map(
+                                                        (item) => (
+                                                            <MenuItem
+                                                                key={item.id}
+                                                                value={item.id}
+                                                            >
+                                                                {
+                                                                    item.name
+                                                                }
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                        </Col>
+                                        <Col xs={12}>
                                             <button
                                                 onClick={(e) =>
                                                     setModalShow(true)
@@ -499,10 +568,9 @@ export default function Post({ posts, categorys }) {
                                             >
                                                 <i class="bi bi-card-image"></i>
                                             </button>
-
                                         </Col>
                                         <Col xs={5}>
-                                        {images && (
+                                            {images && (
                                                 <img src={images} alt="" />
                                             )}
                                         </Col>
@@ -567,36 +635,36 @@ export default function Post({ posts, categorys }) {
                     {data && (
                         <Col className="mt-3">
                             <div className="container-fluid">
-                           <div>
-                           <DataGrid
-                                    rows={data}
-                                    columns={columns}
-                                    pageSize={5}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: 5,
+                                <div>
+                                    <DataGrid
+                                        rows={data}
+                                        columns={columns}
+                                        pageSize={5}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 5,
+                                                },
                                             },
-                                        },
-                                    }}
-                                    pageSizeOptions={[5]}
-                                    slots={{ toolbar: GridToolbar }}
-                                    slotProps={{
-                                        toolbar: {
-                                            showQuickFilter: true,
-                                        },
-                                    }}
-                                    checkboxSelection
-                                    disableRowSelectionOnClick
-                                    onCellEditStop={(params, e) =>
-                                        handleCellEditStop(
-                                            params.row.id,
-                                            params.field,
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                           </div>
+                                        }}
+                                        pageSizeOptions={[5]}
+                                        slots={{ toolbar: GridToolbar }}
+                                        slotProps={{
+                                            toolbar: {
+                                                showQuickFilter: true,
+                                            },
+                                        }}
+                                        checkboxSelection
+                                        disableRowSelectionOnClick
+                                        onCellEditStop={(params, e) =>
+                                            handleCellEditStop(
+                                                params.row.id,
+                                                params.field,
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
                             </div>
                         </Col>
                     )}
@@ -649,6 +717,42 @@ export default function Post({ posts, categorys }) {
                                             />
                                         </Form.Group>
                                     </Col>
+                                    <Col xs={12}>
+                                            <FormControl
+                                                sx={{
+                                                    m: 1,
+                                                    width: 300,
+                                                }}
+                                            >
+                                                <InputLabel id="demo-multiple-name-label">
+                                                    Danh mục sản phẩm xuất hiện
+                                                </InputLabel>
+                                                <Select
+                                                    labelId="demo-multiple-name-label"
+                                                    id="demo-multiple-name"
+                                                    multiple
+                                                    value={links}
+                                                    onChange={handleChangeRelatedProduct1}
+                                                    input={
+                                                        <OutlinedInput label="Name" />
+                                                    }
+                                                    MenuProps={MenuProps}
+                                                >
+                                                    {products.map(
+                                                        (item) => (
+                                                            <MenuItem
+                                                                key={item.id}
+                                                                value={item.id}
+                                                            >
+                                                                {
+                                                                    item.name
+                                                                }
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                        </Col>
                                     <Gallery
                                         show={modalShow2}
                                         backdrop="static"
@@ -674,22 +778,19 @@ export default function Post({ posts, categorys }) {
                                         </Form.Group>
                                     </Col>
                                     <Col xs={12}>
-                                            <button
-                                                type="button"
-                                                onClick={(e) =>
-                                                    setModalShow2(true)
-                                                }
-                                                className="btn btn-primary m-2"
-                                            >
-                                                <i class="bi bi-card-image"></i>
-                                            </button>
-
-                                        </Col>
-                                        <Col xs={5}>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => setModalShow2(true)}
+                                            className="btn btn-primary m-2"
+                                        >
+                                            <i class="bi bi-card-image"></i>
+                                        </button>
+                                    </Col>
+                                    <Col xs={5}>
                                         {images2 && (
-                                                <img src={images2} alt="" />
-                                            )}
-                                        </Col>
+                                            <img src={images2} alt="" />
+                                        )}
+                                    </Col>
                                     <Col xs={12}>
                                         <Form.Group
                                             className="mb-3"

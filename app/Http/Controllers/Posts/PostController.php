@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Post\PostsCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Products\Products;
+use App\Models\Links;
 
 class PostController extends Controller
 {
@@ -18,8 +20,9 @@ class PostController extends Controller
     public function index()
     {
         $posts = Posts::with('category')->get();
+        $products=Products::select('id','name')->get();
         $categorys = PostsCategory::where('status', 1)->get();
-        return Inertia::render('Post/Post', ['posts' => $posts, 'categorys' => $categorys]);
+        return Inertia::render('Post/Post', ['products'=>$products,'posts' => $posts, 'categorys' => $categorys]);
     }
 
     /**
@@ -52,6 +55,9 @@ class PostController extends Controller
         }
 
         $data = $request->all();
+        if($data['collection']){
+            unset($data['collection']);
+        }
         $data['slug'] = Str::slug($request->title);
         $data['view'] = 0;
         $data['created_at'] = now();
@@ -59,6 +65,13 @@ class PostController extends Controller
         try {
             $created = Posts::create($data);
             if ($created) {
+                if($request->has('collection')){
+                    $collection=json_decode($request->collection);
+                    Links::where('id_link',$created->id)->delete();
+                    foreach ($collection as $key => $value) {
+                        Links::create(['id_link'=>$created->id,'model1'=>'POST','model2'=>'PRODUCT','id_parent'=>$value,'created_at'=>now()]);
+                    }
+                }
                 $posts = Posts::with('category')->get();
                 return response()->json(['check' => true, 'msg' => 'Tạo bài viết thành công', 'data' => $posts]);
             } else {
@@ -75,7 +88,8 @@ class PostController extends Controller
     public function show(string $id)
     {
         $data = Posts::with('category')->findOrFail($id);
-        return response()->json(['check' => true, 'data' => $data]);
+        $links = Links::where('id_link',$id)->pluck('id_parent');
+        return response()->json(['check' => true,'links'=> $links, 'data' => $data]);
     }
 
     /**
@@ -111,7 +125,15 @@ class PostController extends Controller
         $data['updated_at'] = now();
         try {
             $updated = Posts::findOrFail($id)->update($data);
+            if($request->has('collection')){
+                $collection=json_decode($request->collection);
+                Links::where('id_link',$id)->delete();
+                foreach ($collection as $key => $value) {
+                    Links::create(['id_link'=>$id,'model1'=>'POST','model2'=>'PRODUCT','id_parent'=>$value,'created_at'=>now()]);
+                }
+            }
             if ($updated) {
+
                 $posts = Posts::with('category')->get();
                 return response()->json(['check' => true, 'msg' => 'Cập nhật bài viết thành công', 'data' => $posts]);
             } else {
@@ -147,7 +169,14 @@ class PostController extends Controller
     public function single_post($id){
         $posts=Posts::where('status',1)->where('slug',$id)->first();
         $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
+        $products= Links::join('products','links.id_parent','=','products.id')
+        ->join('gallery','products.id','=','gallery.id_parent')
+        ->where('gallery.status',1)
+        ->where('links.id_link',$posts->id)
+        ->where('products.status',1)
+        ->select('products.name','products.slug','gallery.image','products.price','products.discount','products.compare_price')
+        ->get();
         $new_posts=Posts::where('status',1)->orderBy('id','desc')->take(4)->get();
-        return response()->json(['post'=>$posts,'newposts'=>$new_posts,'postcates'=>$postcates]);
+        return response()->json(['post'=>$posts,'products'=>$products,'newposts'=>$new_posts,'postcates'=>$postcates]);
     }
 }
