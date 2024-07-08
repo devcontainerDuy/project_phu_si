@@ -36,6 +36,23 @@ class ProductsController extends Controller
         return Inertia::render('Products/Index',['products'=>$products,'brands'=>$brands]);
 
      }
+       /**
+     * Display a listing of the resource.
+     */
+     public function api_search_products(Products $products,$id)
+     {
+        $products = Products::where('status', 1)
+        ->where(function($query) use ($id) {
+            $query->where('slug', 'like', '%' . $id . '%')
+                  ->orWhere('name', 'like', '%' . $id . '%');
+        })
+        ->with(['image' => function($query) {
+            $query->where('status', 1);
+        }])
+        ->select('products.*')
+        ->paginate(4);
+         return response()->json($products);
+     }
     /**
      * Display a listing of the resource.
      */
@@ -173,7 +190,7 @@ class ProductsController extends Controller
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
         return Inertia::render('Products/Edit',['idProducts'=>$id_products,'products'=>$products,'dataattributes'=>$dataattributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
-
+   
     public function exportExample(Products $products)
     {
         return Excel::download(new ProductExample, 'products.xlsx');
@@ -262,23 +279,7 @@ class ProductsController extends Controller
         }
 
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function api_products(Request $request){
-        $collections = ProductCollection::where('status', 1)
-        ->where('highlighted', 1)
-        ->with(['products' => function($query) {
-            $query->where('products.status', 1)
-                  ->where('products.highlighted', 1)
-                  ->with('image')
-                  ->select('products.*')
-                  ->distinct('products.id');
-        }])
-        ->get();
-        return response()->json($collections);
-     }
-     /**
+         /**
      * Remove the specified resource from storage.
      */
     public function api_categories_products($id){
@@ -297,6 +298,22 @@ class ProductsController extends Controller
      /**
      * Remove the specified resource from storage.
      */
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function api_products(Request $request){
+        $collections = ProductCollection::where('status', 1)
+        ->where('highlighted', 1)
+        ->with(['products' => function($query) {
+            $query->where('products.status', 1)
+                  ->where('products.highlighted', 1)
+                  ->with('image')
+                  ->select('products.*')
+                  ->distinct('products.id');
+        }])
+        ->get();
+        return response()->json($collections);
+     }
      public function api_single($id){
         $product=Products::where('slug',$id)->first();
         $idProduct=$product->id;
@@ -323,7 +340,7 @@ class ProductsController extends Controller
         return response()->json(['data'=>[
             'product'=>$product,
             'images'=>$images,
-            'links'=>$links
+            'links'=>$links 
         ]]);
     }
     /**

@@ -19,6 +19,7 @@ Route::get('collections/{id}',[ProductCollection::class,'api_children_collection
 Route::get('products',[ProductsController::class,'api_products']);
 Route::get('products-categories/{id}',[ProductsController::class,'api_categories_products']);
 Route::get('products/{id}',[ProductsController::class,'api_single']);
+Route::get('filter-products/{id}',[ProductsController::class,'api_search_products']);
 
 //======================================================================
 Route::get('slides/{id}',[SlidesController::class,'api_slides']);
