@@ -267,11 +267,13 @@ class ProductsController extends Controller
      */
     public function api_products(Request $request){
         $collections = ProductCollection::where('status', 1)
-        ->where('highlighted',1)
-        ->with(['products'=> function($query) {
+        ->where('highlighted', 1)
+        ->with(['products' => function($query) {
             $query->where('products.status', 1)
-                      ->where('products.highlighted', 1)
-                      ->with('image');
+                  ->where('products.highlighted', 1)
+                  ->with('image')
+                  ->select('products.*')
+                  ->distinct('products.id');
         }])
         ->get();
         return response()->json($collections);
