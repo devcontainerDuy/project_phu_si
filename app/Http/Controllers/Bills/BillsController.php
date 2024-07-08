@@ -98,9 +98,21 @@ class BillsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bills $bills)
+    public function update(Request $request, Bills $bills,$id)
     {
-        //
+        $bill= Bills::where('id',$id)->first();
+        if(!$bill){
+            return response()->json(['check'=>false,'msg'=>'Không tìm thấy mã hóa đơn']);
+        }
+        $data=$request->all();
+        $data['updated_at']=now();
+        Bills::where('id',$id)->update($data);
+        $bill = Bills::with('details.product')->find($id);
+        $total = $bill->details->sum(function($detail) {
+            return $detail->quantity * $detail->product->price;
+        });
+       $billList = Bill_Detail::with(['product','product.image'])->where('hoa_don_chi_tiet.id_hoa_don',$id)->select()->get();
+        return response()->json(['check'=>true,'bill'=>$bill,'total'=>$total,'billList'=>$billList]);
     }
 
     /**
