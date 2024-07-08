@@ -10,7 +10,7 @@ use App\Http\Controllers\Slide\SlidesController;
 use App\Http\Controllers\Bills\BillsController;
 use App\Http\Controllers\Customers\CustomersController;
 use App\Http\Controllers\Posts\PostController;
-
+use App\Http\Controllers\Carts\CartsController;
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
 Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
@@ -38,11 +38,22 @@ Route::post('/products/loadCart',[ProductsController::class,'api_load_cart_produ
 Route::post('/',[BillsController::class,'store']);
 //===================================================
 
+Route::prefix('carts')->middleware('auth:sanctum')->group(function () {
+    Route::get('/',[CartsController::class,'index']);
+    Route::post('/',[CartsController::class,'store']);
+    Route::delete('/{id}',[CartsController::class,'destroy']);
+    Route::get('/{id}',[CartsController::class,'show']);
+
+});
+//===================================================
+
 Route::prefix('customers')->group(function () {
+    Route::get('/',[CustomersController::class,'show'])->middleware('auth:sanctum');
     Route::post('/auth/register',[CustomersController::class,'store']);
     Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
     Route::post('/auth/login-email',[CustomersController::class,'CheckLogin']);
     Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
+
 });
 
 Route::prefix('bills')->group(function () {
@@ -50,8 +61,8 @@ Route::prefix('bills')->group(function () {
     Route::post('/login',[BillsController::class,'store2']);
 });
 
-Route::prefix('post')->group(function () {
-    Route::get('/highlight',[PostController::class,'api_highlight']);
+Route::prefix('posts')->group(function () {
     Route::get('/',[PostController::class,'api_post']);
+    Route::get('/highlight',[PostController::class,'api_highlight']);
     Route::get('/{id}',[PostController::class,'single_post']);
 });

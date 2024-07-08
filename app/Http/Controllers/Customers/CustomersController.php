@@ -30,7 +30,7 @@ class CustomersController extends Controller
      */
     private function calculateTotal($bill) {
         return $bill->details->reduce(function ($carry, $detail) {
-            $productDiscount = $detail->product->discount;
+            $productDiscount = $detail->product->price;
             $quantity = $detail->quantity;
             return $carry + ($productDiscount * $quantity);
         }, 0);
@@ -95,7 +95,9 @@ class CustomersController extends Controller
      */
     public function show(Customers $customers)
     {
-        //
+        $customers=Customers::where('id',Auth::id())->first();
+        return response()->json(['name'=>$customers->name,'email'=>$customers->email,'phone'=>$customers->phone,'address'=>$customers->address,'verified'=>$customers->email_verified_at]);
+        
     }
 
     /**
