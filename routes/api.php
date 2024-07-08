@@ -52,4 +52,5 @@ Route::prefix('bills')->group(function () {
 
 Route::prefix('post')->group(function () {
     Route::get('/highlight',[PostController::class,'api_highlight']);
+    Route::get('/{id}',[PostController::class,'single_post']);
 });

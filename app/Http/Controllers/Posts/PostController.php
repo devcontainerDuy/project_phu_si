@@ -141,4 +141,13 @@ class PostController extends Controller
         $posts= Posts::where('status',1)->where('highlighted',1)->orderBy('position','asc')->get();
         return response()->json($posts);
     }
+
+    // =========================================
+
+    public function single_post($id){
+        $posts=Posts::where('status',1)->where('slug',$id)->first();
+        $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
+        $new_posts=Posts::where('status',1)->orderBy('id','desc')->take(4)->get();
+        return response()->json(['post'=>$posts,'newposts'=>$new_posts,'postcates'=>$postcates]);
+    }
 }
