@@ -160,8 +160,9 @@ class PostController extends Controller
     // =========================================
     public function api_post(){
         $posts= Posts::where('status',1)->orderBy('position','asc')->get();
+        $new_posts=Posts::where('status',1)->orderBy('id','desc')->take(4)->get();
         $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
-        return response()->json(['posts'=>$posts,'postcates'=>$postcates]);
+        return response()->json(['posts'=>$posts,'new_posts'=>$new_posts,'postcates'=>$postcates]);
     }
     // =========================================
     public function api_highlight(){
