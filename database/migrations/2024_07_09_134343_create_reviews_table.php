@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_customer');
             $table->unsignedBigInteger('id_product');
             $table->longText('review');
-            $table->unsignedBigInteger('id_parent');
+            $table->longText('reply')->nullable();
             $table->boolean('status')->default(0);
             $table->timestamps();
             $table->foreign('id_customer')->references('id')->on('customers');
