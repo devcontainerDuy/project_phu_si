@@ -298,17 +298,23 @@ class ProductsController extends Controller
      /**
      * Remove the specified resource from storage.
      */
-    public function api_all_products(){
-        $collections = ProductCollection::where('status', 1)
-        ->with(['products' => function($query) {
-            $query->where('products.status', 1)
-                  ->where('products.highlighted', 1)
-                  ->with('image')
-                  ->select('products.*')
-                  ->distinct('products.id');
-        }])
-        ->get();
-        return response()->json($collections);
+    public function api_all_products(Request $request){
+        $query = Products::where('products.status', 1)
+        ->where('products.highlighted', 1)
+        ->with('image')
+        ->join('links','products.id','=','links.id_link')
+        ->join('collections','links.id_parent','=','collections.id')
+        ->where('collections.status', 1)
+        ->select('products.*')
+        ->distinct('products.id');
+        if ($request->has('filter') && $request->has('value')) {
+            $filter = $request->input('filter');
+            $value = $request->input('value');
+            $query->orderBy('products.' . $filter, $value);
+        }
+        $products = $query->paginate(4);
+
+        return response()->json($products);
     }
     /**
      * Remove the specified resource from storage.
