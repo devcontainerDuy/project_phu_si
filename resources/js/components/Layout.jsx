@@ -69,6 +69,9 @@ function Layout({ children }) {
 									Danh sách sản phẩm
 								</MenuItem>
 							</SubMenu>
+                            <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/comments">
+									Danh sách comments
+								</MenuItem>
 						</SubMenu>
 						<SubMenu label="Quản lý Bài viết" icon={<PostAddRoundedIcon />}>
 							<MenuItem icon={<PostAddRoundedIcon />} component="a" href="/admin/posts">

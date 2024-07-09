@@ -18,4 +18,8 @@ class Products extends Model
     {
         return $this->belongsToMany(ProductCollection::class, 'links', 'id_link', 'id_parent');
     }
+
+    public function comments(){
+        return $this->hasMany(Comments::class);
+    }
 }

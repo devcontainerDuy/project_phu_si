@@ -17,9 +17,11 @@ use App\Http\Controllers\Categories\CategoriesController;
 use App\Http\Controllers\Posts\PostCategoryController;
 use App\Http\Controllers\Contacts\ContactsController;
 use App\Http\Controllers\Posts\PostCollectionsController;
+use App\Http\Controllers\Comments\CommentController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('contacts', ContactsController::class);
+    Route::resource('comments', CommentController::class);
     //============================================================
     Route::resource('bills', BillsController::class);
     //============================================================
