@@ -190,7 +190,7 @@ class ProductsController extends Controller
         $allCollecions=ProductCollection::active()->select('id','collection')->get();
         return Inertia::render('Products/Edit',['idProducts'=>$id_products,'products'=>$products,'dataattributes'=>$dataattributes,'dataidCollections'=>$idCollections,'id'=>$id,'product'=>$product,'gallery'=>$gallery,'categories'=>$categories,'brands'=>$brands,'collections'=>$collections,'allCollecions'=>$allCollecions,'datacontent'=>$product->content,'datadescription'=>$product->description]);
     }
-   
+
     public function exportExample(Products $products)
     {
         return Excel::download(new ProductExample, 'products.xlsx');
@@ -298,6 +298,18 @@ class ProductsController extends Controller
      /**
      * Remove the specified resource from storage.
      */
+    public function api_all_products(){
+        $collections = ProductCollection::where('status', 1)
+        ->with(['products' => function($query) {
+            $query->where('products.status', 1)
+                  ->where('products.highlighted', 1)
+                  ->with('image')
+                  ->select('products.*')
+                  ->distinct('products.id');
+        }])
+        ->get();
+        return response()->json($collections);
+    }
     /**
      * Remove the specified resource from storage.
      */
@@ -340,7 +352,7 @@ class ProductsController extends Controller
         return response()->json(['data'=>[
             'product'=>$product,
             'images'=>$images,
-            'links'=>$links 
+            'links'=>$links
         ]]);
     }
     /**
