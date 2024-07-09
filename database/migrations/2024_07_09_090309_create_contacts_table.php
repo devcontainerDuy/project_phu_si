@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone',255);
             $table->boolean('status')->default(0);
             $table->string('message',255);
-            $table->string('note',255);
+            $table->longText('note')->nullable();
             $table->timestamps();
         });
     }

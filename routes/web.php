@@ -15,9 +15,13 @@ use App\Http\Controllers\Users\PermissionsController;
 use App\Http\Controllers\Collections\ProductCollection;
 use App\Http\Controllers\Categories\CategoriesController;
 use App\Http\Controllers\Posts\PostCategoryController;
+use App\Http\Controllers\Contacts\ContactsController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::resource('contacts', ContactsController::class);
+    //============================================================
     Route::resource('bills', BillsController::class);
+    //============================================================
     Route::resource('permissions', PermissionsController::class);
     //================================
     Route::post('/permissions/add-role-permision', [PermissionsController::class, 'role_permission']);

@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Carts;
 use App\Http\Controllers\Controller;
 use App\Models\Carts\Carts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class CartsController extends Controller
 {
      /**
      * Display a listing of the resource.
      */
-    public function index($id)
+    public function index()
     {
+        $id = Auth::id();
         $carts = Carts::join('customers','carts.id_customer','=','customers.id')
         ->join('products','carts.id_product','=','products.id')
         ->Join('gallery','gallery.id_parent','=','products.id')
@@ -68,8 +71,13 @@ class CartsController extends Controller
      */
     public function show($id)
     {
-        $cart = Carts::with(['customer', 'product'])->find($id);
-
+        $cart = Carts::join('customers','carts.id_customer','=','customers.id')
+        ->join('products','carts.id_product','=','products.id')
+        ->Join('gallery','gallery.id_parent','=','products.id')
+        ->where('customers.id',$id)
+        ->where('gallery.status',1)
+        ->select('products.*','gallery.image as image','carts.id as id_cart','carts.quantity as quantity')
+        ->get();
         if (!$cart) {
             return response()->json(['error' => 'Cart not found'], 404);
         }
@@ -101,7 +109,18 @@ class CartsController extends Controller
         $cart->update($request->all());
         return response()->json($cart);
     }
-
+        /**
+     * Update the specified resource in storage.
+     */
+    public function countCart()
+    {
+        $cart = Carts::with(['customer', 'product'])->where('id_customer',Auth::id())->get();
+        if(!$cart){
+            return response()->json(['check'=>true]);
+        }else{
+            return response()->json(['check'=>true,'cart'=>count($cart)]);
+            }
+    }
     /**
      * Remove the specified resource from storage.
      */

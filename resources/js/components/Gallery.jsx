@@ -80,6 +80,7 @@ function Gallery(props) {
     const [folders, setFolders] = useState([]);
     const [files, setFiles] = useState([]);
     const [idFolder, setIdFolder] = useState(null);
+
     useEffect(() => {
         setLoading(true);
         if (props.show && !idFolder) {
@@ -206,6 +207,11 @@ function Gallery(props) {
             })
             .catch((error) => {});
     };
+    useEffect(()=>{
+        if(files.length>0){
+            setLoading(false)
+        }
+    },[])
     return (
         <>
             <Modal
@@ -349,7 +355,7 @@ function Gallery(props) {
                         </div>
                     )}
                     <div className="row mb-3">
-                        {loading && (files.length==0||folders.length==0) &&  (
+                        {loading &&  (
                             <img
                                 style={{ width: "100px", margin: "0px auto" }}
                                 src="https://www.icegif.com/wp-content/uploads/2023/07/icegif-1263.gif"
@@ -358,7 +364,14 @@ function Gallery(props) {
                         )}
                         {files.length == 0 &&
                             folders.length == 0 &&
-                            !loading && <b>Chưa có hình ảnh</b>}
+
+                            <>
+                            <a href="#" onClick={(e)=>setIdFolder(null)}>Quay lại</a>
+                            <b>Chưa có hình ảnh</b>
+
+                            </>
+
+                            }
                         {files && files.length > 0 && (
                             <>
                                 {folders.map((folder, index) => (

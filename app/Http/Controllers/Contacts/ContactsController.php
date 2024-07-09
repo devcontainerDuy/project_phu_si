@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Contacts;
 use App\Http\Controllers\Controller;
 use App\Models\Contacts\Contacts;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 class ContactsController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class ContactsController extends Controller
      */
     public function index()
     {
-        //
+        $contact=Contacts::all();
+        return Inertia::render('Contacts/Index',['contacts'=>$contact]);
     }
 
     /**
@@ -29,7 +31,20 @@ class ContactsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+         'name'=>'required',
+         'email'=>'required|email',
+         'phone'=>'required|min:10|max:10',
+         'message'=>'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $data=$request->all();
+        $data['created_at']=now();
+        Contacts::create($data);
+        return response()->json(['check'=>true]);
     }
 
     /**
@@ -51,9 +66,13 @@ class ContactsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contacts $contacts)
+    public function update(Request $request, Contacts $contacts,$id)
     {
-        //
+        $data=$request->all();
+        $data['updated_at']=now();
+        Contacts::where('id',$id)->update($data);
+        $contacts=Contacts::all();
+        return response()->json(['check'=>true,'data'=>$contacts]);
     }
 
     /**

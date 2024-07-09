@@ -4,7 +4,7 @@ import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sideb
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import GroupIcon from "@mui/icons-material/Group";
 import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
-import InventoryIcon from "@mui/icons-material/Inventory";
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 import LogoutIcon from "@mui/icons-material/Logout";
 import CardTravelIcon from "@mui/icons-material/CardTravel";
 import ShopIcon from "@mui/icons-material/Shop";
@@ -86,6 +86,9 @@ function Layout({ children }) {
 						</MenuItem>
 						<MenuItem icon={<DesignServicesTwoToneIcon />} component="a" href="/admin/bills">
 							Hóa đơn
+						</MenuItem>
+                        <MenuItem icon={<ContactMailIcon />} component="a" href="/admin/contacts">
+							Liên hệ
 						</MenuItem>
 						<MenuItem icon={<LogoutIcon />} component="a" href="/logout">
 							Log out
