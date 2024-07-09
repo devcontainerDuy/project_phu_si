@@ -40,7 +40,7 @@ class CustomersController extends Controller
      */
     public function get_bills(Request $request)
     {
-        
+
         $bills = Bills::with(['details.product'])
             ->where('email', Auth::user()->email)
             ->paginate(3);
@@ -90,6 +90,29 @@ class CustomersController extends Controller
             return response()->json(['check'=>false,'msg'=>'Sai tên đăng nhập hoặc mật khẩu']);
         }
     }
+     // ==============================
+     public function CheckLoginSocial(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:customers,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $user=Customers::where('email',$request->email)->first();
+        if ($user) {
+            $user->tokens()->delete();
+            $token = $user->createToken('CustomerToken')->plainTextToken;
+
+            return response()->json([
+                'check' => true,
+                'id' => $user->id,
+                'token' => $token,
+            ]);
+        } else {
+            return response()->json(['check' => false, 'message' => 'Không tìm thấy email'], 200);
+        }
+    }
     /**
      * Display the specified resource.
      */
@@ -97,7 +120,7 @@ class CustomersController extends Controller
     {
         $customers=Customers::where('id',Auth::id())->first();
         return response()->json(['name'=>$customers->name,'email'=>$customers->email,'phone'=>$customers->phone,'address'=>$customers->address,'verified'=>$customers->email_verified_at]);
-        
+
     }
 
     /**

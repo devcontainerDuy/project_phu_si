@@ -54,7 +54,7 @@ Route::prefix('customers')->group(function () {
     Route::get('/',[CustomersController::class,'show'])->middleware('auth:sanctum');
     Route::post('/auth/register',[CustomersController::class,'store']);
     Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
-    Route::post('/auth/login-email',[CustomersController::class,'CheckLogin']);
+    Route::post('/auth/login-email',[CustomersController::class,'CheckLoginSocial']);
     Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
 });
 Route::prefix('contact')->group(function () {
