@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('id_customer')->references('id')->on('customers');
             $table->foreign('id_product')->references('id')->on('products');
         });
-        Schema::create('can-review', function (Blueprint $table) {
+        Schema::create('can_review', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('id_customer');
             $table->unsignedBigInteger('id_product');
