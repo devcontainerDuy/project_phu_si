@@ -197,7 +197,7 @@ function Index({ comments }) {
 
     return (
         <Layout>
-            <h4>Liên hệ</h4>
+            <h4>Quản lý bình luận</h4>
             {data && data.length > 0 && (
                 <Box sx={{ width: "100%" }}>
                     <DataGrid
