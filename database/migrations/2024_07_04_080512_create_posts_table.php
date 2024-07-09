@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('summary');
             $table->longText('content');
             $table->boolean('status')->default(0);
+            $table->string('image')->nullable();
             $table->boolean('highlighted')->default(0);
             $table->unsignedBigInteger('id_collection')->nullable();
             $table->unsignedBigInteger('view')->default(0);

@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Posts;
 
 use Inertia\Inertia;
+use App\Models\Links;
 use App\Models\Post\Posts;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\Products\Products;
 use App\Models\Post\PostsCategory;
 use App\Http\Controllers\Controller;
+use App\Models\Post\PostCollections;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Products\Products;
-use App\Models\Links;
 
 class PostController extends Controller
 {
@@ -20,9 +21,10 @@ class PostController extends Controller
     public function index()
     {
         $posts = Posts::with('category')->get();
-        $products=Products::select('id','name')->get();
+        $products = Products::select('id', 'name')->get();
         $categorys = PostsCategory::where('status', 1)->get();
-        return Inertia::render('Post/Post', ['products'=>$products,'posts' => $posts, 'categorys' => $categorys]);
+        $collection = PostCollections::where('status', 1)->get();
+        return Inertia::render('Post/Post', ['posts' => $posts, 'categorys' => $categorys, 'collections' => $collection, 'products' => $products]);
     }
 
     /**
@@ -41,7 +43,7 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'summary' => 'required',
-            // 'id_collection' => 'required',
+            'id_collection' => 'required',
             'id_category' => 'required',
             'position' => 'required',
             'content' => 'required',
@@ -55,7 +57,7 @@ class PostController extends Controller
         }
 
         $data = $request->all();
-        if($data['collection']){
+        if ($data['collection']) {
             unset($data['collection']);
         }
         $data['slug'] = Str::slug($request->title);
@@ -65,11 +67,11 @@ class PostController extends Controller
         try {
             $created = Posts::create($data);
             if ($created) {
-                if($request->has('collection')){
-                    $collection=json_decode($request->collection);
-                    Links::where('id_link',$created->id)->delete();
+                if ($request->has('collection')) {
+                    $collection = json_decode($request->collection);
+                    Links::where('id_link', $created->id)->delete();
                     foreach ($collection as $key => $value) {
-                        Links::create(['id_link'=>$created->id,'model1'=>'POST','model2'=>'PRODUCT','id_parent'=>$value,'created_at'=>now()]);
+                        Links::create(['id_link' => $created->id, 'model1' => 'POST', 'model2' => 'PRODUCT', 'id_parent' => $value, 'created_at' => now()]);
                     }
                 }
                 $posts = Posts::with('category')->get();
@@ -88,8 +90,8 @@ class PostController extends Controller
     public function show(string $id)
     {
         $data = Posts::with('category')->findOrFail($id);
-        $links = Links::where('id_link',$id)->pluck('id_parent');
-        return response()->json(['check' => true,'links'=> $links, 'data' => $data]);
+        $links = Links::where('id_link', $id)->pluck('id_parent');
+        return response()->json(['check' => true, 'links' => $links, 'data' => $data]);
     }
 
     /**
@@ -125,11 +127,11 @@ class PostController extends Controller
         $data['updated_at'] = now();
         try {
             $updated = Posts::findOrFail($id)->update($data);
-            if($request->has('collection')){
-                $collection=json_decode($request->collection);
-                Links::where('id_link',$id)->delete();
+            if ($request->has('collection')) {
+                $collection = json_decode($request->collection);
+                Links::where('id_link', $id)->delete();
                 foreach ($collection as $key => $value) {
-                    Links::create(['id_link'=>$id,'model1'=>'POST','model2'=>'PRODUCT','id_parent'=>$value,'created_at'=>now()]);
+                    Links::create(['id_link' => $id, 'model1' => 'POST', 'model2' => 'PRODUCT', 'id_parent' => $value, 'created_at' => now()]);
                 }
             }
             if ($updated) {
@@ -158,31 +160,34 @@ class PostController extends Controller
         }
     }
     // =========================================
-    public function api_post(){
-        $posts= Posts::where('status',1)->orderBy('position','asc')->get();
-        $new_posts=Posts::where('status',1)->orderBy('id','desc')->take(4)->get();
-        $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
-        return response()->json(['posts'=>$posts,'new_posts'=>$new_posts,'postcates'=>$postcates]);
+    public function api_post()
+    {
+        $posts = Posts::where('status', 1)->orderBy('position', 'asc')->get();
+        $new_posts = Posts::where('status', 1)->orderBy('id', 'desc')->take(4)->get();
+        $postcates = PostsCategory::where('status', 1)->select('id', 'slug', 'title')->get();
+        return response()->json(['posts' => $posts, 'new_posts' => $new_posts, 'postcates' => $postcates]);
     }
     // =========================================
-    public function api_highlight(){
-        $posts= Posts::where('status',1)->where('highlighted',1)->orderBy('position','asc')->get();
+    public function api_highlight()
+    {
+        $posts = Posts::where('status', 1)->where('highlighted', 1)->orderBy('position', 'asc')->get();
         return response()->json($posts);
     }
 
     // =========================================
 
-    public function single_post($id){
-        $posts=Posts::where('status',1)->where('slug',$id)->first();
-        $postcates=PostsCategory::where('status',1)->select('id','slug','title')->get();
-        $products= Links::join('products','links.id_parent','=','products.id')
-        ->join('gallery','products.id','=','gallery.id_parent')
-        ->where('gallery.status',1)
-        ->where('links.id_link',$posts->id)
-        ->where('products.status',1)
-        ->select('products.name','products.slug','gallery.image','products.price','products.discount','products.compare_price')
-        ->get();
-        $new_posts=Posts::where('status',1)->orderBy('id','desc')->take(4)->get();
-        return response()->json(['post'=>$posts,'products'=>$products,'newposts'=>$new_posts,'postcates'=>$postcates]);
+    public function single_post($id)
+    {
+        $posts = Posts::where('status', 1)->where('slug', $id)->first();
+        $postcates = PostsCategory::where('status', 1)->select('id', 'slug', 'title')->get();
+        $products = Links::join('products', 'links.id_parent', '=', 'products.id')
+            ->join('gallery', 'products.id', '=', 'gallery.id_parent')
+            ->where('gallery.status', 1)
+            ->where('links.id_link', $posts->id)
+            ->where('products.status', 1)
+            ->select('products.name', 'products.slug', 'gallery.image', 'products.price', 'products.discount', 'products.compare_price')
+            ->get();
+        $new_posts = Posts::where('status', 1)->orderBy('id', 'desc')->take(4)->get();
+        return response()->json(['post' => $posts, 'products' => $products, 'newposts' => $new_posts, 'postcates' => $postcates]);
     }
 }
