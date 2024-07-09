@@ -42,7 +42,7 @@ function Layout({ children }) {
 						</SubMenu>
 						<SubMenu label="Quản lý sản phẩm" icon={<BrandingWatermarkIcon />}>
 							<SubMenu label="Danh mục" icon={<ArrowForwardIosIcon />}>
-                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
 									Danh mục
 								</MenuItem>
 								{/* <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
@@ -62,7 +62,7 @@ function Layout({ children }) {
 								Thương hiệu
 							</MenuItem>
 							<SubMenu label="Sản phẩm" icon={<ArrowForwardIosIcon />}>
-                                <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products/create">
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products/create">
 									Thêm sản phẩm
 								</MenuItem>
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/products">
@@ -72,10 +72,13 @@ function Layout({ children }) {
 						</SubMenu>
 						<SubMenu label="Quản lý Bài viết" icon={<PostAddRoundedIcon />}>
 							<MenuItem icon={<PostAddRoundedIcon />} component="a" href="/admin/posts">
-								Bài viết
+								Danh sách bài viết
 							</MenuItem>
 							<MenuItem icon={<ClassIcon />} component="a" href="/admin/post/categories">
-								Doanh mục{" "}
+								Chuyên mục bài viết{" "}
+							</MenuItem>
+							<MenuItem icon={<ClassIcon />} component="a" href="/admin/posts-collections">
+								Loại bài viết
 							</MenuItem>
 						</SubMenu>
 						<MenuItem icon={<ShopIcon />} component="a" href="/admin/slides">
