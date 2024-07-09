@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import "notyf/notyf.min.css";
 import axios from "axios";
 
-function Index({ comments }) {
+function Index({ reviews }) {
     const formatCreatedAt = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString("en-GB"); // Format date as dd/mm/yyyy
@@ -56,7 +56,7 @@ function Index({ comments }) {
     const handleCellEditStop = (id, field, value) => {
         if (field === "position") {
             axios
-                .put(`/admin/comments/${id}`, { position: value })
+                .put(`/admin/reviews/${id}`, { position: value })
                 .then((res) => {
                     if (res.data.check === true) {
                         notyf.open({
@@ -70,7 +70,7 @@ function Index({ comments }) {
                 });
         } else {
             axios
-                .put(`/admin/comments/${id}`, { [field]: value })
+                .put(`/admin/reviews/${id}`, { [field]: value })
                 .then((res) => {
                     if (res.data.check === true) {
                         notyf.open({
@@ -85,7 +85,7 @@ function Index({ comments }) {
         }
     };
 
-    const [data, setData] = useState(comments);
+    const [data, setData] = useState(reviews);
 
     const columns = [
         {
@@ -126,8 +126,8 @@ function Index({ comments }) {
             ),
         },
         {
-            field: "comment",
-            headerName: "Comment",
+            field: "review",
+            headerName: "Reviews",
             width: 200,
             editable: false,
             renderCell: (params) => (
@@ -138,8 +138,8 @@ function Index({ comments }) {
         },
         ,
         {
-            field: "reply",
-            headerName: "Phản hồi",
+            field: "star",
+            headerName: "Điểm sao",
             width: 200,
             editable: true,
             renderCell: (params) => (
@@ -181,7 +181,7 @@ function Index({ comments }) {
     const switchContact = (params) => {
         const newStatus = params.row.status === 1 ? 0 : 1;
         axios
-            .put(`/admin/comments/${params.id}`, { status: newStatus })
+            .put(`/admin/reviews/${params.id}`, { status: newStatus })
             .then((res) => {
                 if (res.data.check === true) {
                     notyf.open({
@@ -197,7 +197,7 @@ function Index({ comments }) {
 
     return (
         <Layout>
-            <h4>Quản lý bình luận</h4>
+            <h4>Quản lý Review sản phẩm</h4>
             {data && data.length > 0 && (
                 <Box sx={{ width: "100%" }}>
                     <DataGrid

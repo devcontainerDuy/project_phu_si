@@ -2,6 +2,9 @@
 
 namespace App\Models\Products;
 
+use App\Models\Comments\Comments;
+use App\Models\Customers\Customers;
+use App\Models\Reviews\Reviews;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Collections\ProductCollection;
@@ -21,5 +24,13 @@ class Products extends Model
 
     public function comments(){
         return $this->hasMany(Comments::class);
+    }
+    public function reviewers()
+    {
+        return $this->belongsToMany(Customers::class, 'can_review', 'id_product', 'id_customer');
+    }
+
+    public function reviews(){
+        return $this->hasMany(Reviews::class);
     }
 }

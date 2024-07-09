@@ -18,6 +18,7 @@ use App\Http\Controllers\Posts\PostCategoryController;
 use App\Http\Controllers\Contacts\ContactsController;
 use App\Http\Controllers\Posts\PostCollectionsController;
 use App\Http\Controllers\Comments\CommentController;
+use App\Http\Controllers\Reviews\ReviewController;
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('contacts', ContactsController::class);
@@ -43,6 +44,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('categories', CategoriesController::class);
     //==========================================================
     Route::resource('brands', BrandController::class);
+    //==========================================================
+    Route::resource('reviews', ReviewController::class);
     //==========================================================
     Route::resource('slides', SlidesController::class);
     Route::post('/slides/image/{id}', [SlidesController::class, 'changeImage']);

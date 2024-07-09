@@ -13,6 +13,7 @@ use App\Http\Controllers\Posts\PostController;
 use App\Http\Controllers\Carts\CartsController;
 use App\Http\Controllers\Contacts\ContactsController;
 use App\Http\Controllers\Comments\CommentController;
+use App\Http\Controllers\Reviews\ReviewController;
 
 Route::get('collections',[ProductCollection::class,'api_collections']);
 Route::get('collections/{id}',[ProductCollection::class,'api_children_collections']);
@@ -47,7 +48,6 @@ Route::prefix('carts')->middleware('auth:sanctum')->group(function () {
     Route::post('/',[CartsController::class,'store']);
     Route::delete('/{id}',[CartsController::class,'destroy']);
     Route::get('/{id}',[CartsController::class,'show']);
-
 });
 //===================================================
 
@@ -56,6 +56,8 @@ Route::prefix('customers')->group(function () {
     Route::post('/auth/register',[CustomersController::class,'store']);
     Route::post('/auth/login',[CustomersController::class,'CheckLogin']);
     Route::post('/comment',[CommentController::class,'store'])->middleware('auth:sanctum');
+    Route::post('/can-review',[ReviewController::class,'can_review'])->middleware('auth:sanctum');
+    Route::post('/review',[ReviewController::class,'store'])->middleware('auth:sanctum');
     Route::post('/auth/login-email',[CustomersController::class,'CheckLoginSocial']);
     Route::get('/bills',[CustomersController::class,'get_bills'])->middleware('auth:sanctum');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models\Customers;
 
+use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,5 +23,9 @@ class Customers extends Model
 
     public function comment(){
         return $this->hasMany(Comments::class);
+    }
+    public function canReviewProducts()
+    {
+        return $this->belongsToMany(Products::class, 'can_review', 'id_customer', 'id_product');
     }
 }

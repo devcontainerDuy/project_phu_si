@@ -45,18 +45,10 @@ function Layout({ children }) {
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections">
 									Danh mục
 								</MenuItem>
-								{/* <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections-trang-chu">
-									Danh mục Trang chủ
-								</MenuItem> */}
+								
 								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/collections/create">
 									Thêm danh mục
 								</MenuItem>
-								{/* <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories">
-									Danh mục con
-								</MenuItem>
-								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/categories/create">
-									Tạo Danh mục con
-								</MenuItem> */}
 							</SubMenu>
 							<MenuItem icon={<BrandingWatermarkIcon />} component="a" href="/admin/brands">
 								Thương hiệu
@@ -71,6 +63,9 @@ function Layout({ children }) {
 							</SubMenu>
                             <MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/comments">
 									Danh sách comments
+								</MenuItem>
+								<MenuItem icon={<ArrowForwardIosIcon />} component="a" href="/admin/reviews">
+									Danh sách Reviews
 								</MenuItem>
 						</SubMenu>
 						<SubMenu label="Quản lý Bài viết" icon={<PostAddRoundedIcon />}>

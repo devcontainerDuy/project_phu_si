@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Bills;
 use App\Http\Controllers\Controller;
 use App\Models\Bills\Bill_Detail;
 use App\Models\Bills\Bills;
+use App\Models\Carts\Carts;
 use App\Models\Products\Products;
+use App\Models\Reviews\CanReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use App\Models\Customers\Customers;
+use App\Mail\Customer\createUser;
+use Illuminate\Support\Facades\Hash;
+
 class BillsController extends Controller
 {
     /**
@@ -41,6 +48,37 @@ class BillsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function store2(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'address' => 'required',
+            'id_customer'=>'required|exists:customers,id',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check'=>false , 'msg' => $validator->errors()->first()], 200);
+        }
+        $data= [];
+        $data['name']=$request->name;
+        $data['email']=$request->email;
+        $data['phone']=$request->phone;
+        $data['address']=$request->address;
+        $id_hoa_don = Bills::insertGetId($data);
+        $cart= Carts::where('id_customer',$request->id_customer)
+        ->select('id_product','quantity')
+        ->get();
+        foreach ($cart as $key => $value) {
+            Bill_Detail::create(['id_hoa_don'=>$id_hoa_don,'id_product'=>$value->id_product,'quantity'=>$value->quantity,'created_at'=>now()]);
+            CanReview::create(['id_customer'=> $request->id_customer,'id_product'=>$value->id_product,'created_at'=>now()]);
+        }
+        Carts::where('id_customer',$request->id_customer)->delete();
+        return response()->json(['check'=>true]);
+    }
+       /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -53,7 +91,20 @@ class BillsController extends Controller
         if ($validator->fails()) {
             return response()->json(['check'=>false , 'msg' => $validator->errors()->first()], 200);
         }
+        
         $data=[];
+        $customer = Customers::where('email',$request->email)->first();
+        $password= random_int(1000,9999);
+        $newCus['name']=$request->name;
+        $newCus['email']=$request->email;
+        $newCus['password']=Hash::make($password);
+        $newCus['created_at']= now();
+        $id_cus=Customers::insertGetId($newCus);
+        $dataMail = [
+            'email' => $request->email,
+            'password' => $password,
+        ];
+        Mail::to($customer->email)->send(new createUser($dataMail));
         $data['name']=$request->name;
         $data['email']=$request->email;
         $data['phone']=$request->phone;
@@ -62,6 +113,7 @@ class BillsController extends Controller
         foreach ($request->cart as $key => $item) {
             $id_product=Products::where('slug',$item[0])->value('id');
             Bill_Detail::create(['id_hoa_don'=>$id_hoa_don,'id_product'=>$id_product,'quantity'=>$item[1]]);
+            CanReview::create(['id_customer'=> $id_cus,'id_product'=>$id_product,'created_at'=>now()]);
         }
         return response()->json(['check'=>true]);
     }
