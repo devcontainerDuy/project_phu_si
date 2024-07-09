@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Comments\Comments;
 
-class Customers extends Model
+class Customers extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
