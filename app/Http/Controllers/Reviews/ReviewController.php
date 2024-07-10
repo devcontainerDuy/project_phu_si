@@ -97,7 +97,17 @@ class ReviewController extends Controller
         ->get();
         return response()->json(['check'=>true,'data'=>$reviews]);
     }
-
+ // ================================================
+    public function getProductReviews($id)
+    {
+        $comments = Reviews::where('status', 1)
+            ->whereHas('product', function ($query) use ($id) {
+                $query->where('id', $id);
+            })
+            ->with(['customer', 'product'])
+            ->get();
+        return response()->json($comments);
+    }
     /**
      * Remove the specified resource from storage.
      */

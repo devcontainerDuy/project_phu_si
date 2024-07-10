@@ -24,7 +24,8 @@ Route::get('categories',[ProductsController::class,'api_all_products']);
 Route::get('products-categories/{id}',[ProductsController::class,'api_categories_products']);
 Route::get('products/{id}',[ProductsController::class,'api_single']);
 Route::get('filter-products/{id}',[ProductsController::class,'api_search_products']);
-
+Route::get('products-comments/{id}',[CommentController::class,'getProductComment']);
+Route::get('products-reviews/{id}',[CommentController::class,'getProductComment']);
 //======================================================================
 Route::get('slides/{id}',[SlidesController::class,'api_slides']);
 

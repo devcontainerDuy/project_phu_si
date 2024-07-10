@@ -16,8 +16,8 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comments = Comments::with(['customer','products'])->get();
-        return Inertia::render('Comments/Index',['comments'=>$comments]);
+        $comments = Comments::with(['customer', 'products'])->get();
+        return Inertia::render('Comments/Index', ['comments' => $comments]);
     }
 
     /**
@@ -35,21 +35,21 @@ class CommentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|exists:customers,email',
-            'id_product'=>'required|exists:products,id',
-            'comment'=>'required'
+            'id_product' => 'required|exists:products,id',
+            'comment' => 'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
         $email = $request->email;
-        $id_cus=Customers::where('email',$email)->value('id');
-        $data['comment']=$request->comment;
-        $data['id_customer']=$id_cus;
-        $data['id_product']=$request->id_product;
-        $data['created_at']= now();
+        $id_cus = Customers::where('email', $email)->value('id');
+        $data['comment'] = $request->comment;
+        $data['id_customer'] = $id_cus;
+        $data['id_product'] = $request->id_product;
+        $data['created_at'] = now();
         Comments::create($data);
-        return response()->json(['check'=>true]);
+        return response()->json(['check' => true]);
     }
 
     /**
@@ -59,7 +59,16 @@ class CommentController extends Controller
     {
         //
     }
-
+    public function getProductComment($id)
+    {
+        $comments = Comments::where('status', 1)
+            ->whereHas('products', function ($query) use ($id) {
+                $query->where('slug', $id);
+            })
+            ->with(['customer', 'products'])
+            ->get();
+        return response()->json($comments);
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -71,17 +80,17 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comments $comments,$id)
+    public function update(Request $request, Comments $comments, $id)
     {
-        $comment = Comments::where('id',$id)->first();
-        if(!$comment){
-            return response()->json(['check'=>false,'msg'=>'Không tìm thấy mã comment']);
+        $comment = Comments::where('id', $id)->first();
+        if (!$comment) {
+            return response()->json(['check' => false, 'msg' => 'Không tìm thấy mã comment']);
         }
-        $data=$request->all();
-        $data['updated_at']=now();
-        Comments::where('id',$id)->update($data);
-        $comments = Comments::with(['customer','products'])->get();
-        return response()->json(['check'=>true,'data'=>$comments]);
+        $data = $request->all();
+        $data['updated_at'] = now();
+        Comments::where('id', $id)->update($data);
+        $comments = Comments::with(['customer', 'products'])->get();
+        return response()->json(['check' => true, 'data' => $comments]);
     }
 
     /**
