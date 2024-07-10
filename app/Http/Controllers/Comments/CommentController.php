@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Comments;
 
-use App\Http\Controllers\Controller;
-use App\Models\Comments\Comments;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Models\Comments\Comments;
+use App\Models\Products\Products;
 use App\Models\Customers\Customers;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
@@ -55,9 +56,22 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Comments $comments)
+    public function show(Comments $comments, Request $request, $id)
     {
-        //
+        $product = Products::where('slug', $id)->first();
+
+        if (!$product) {
+            return response()->json(['check' => false, 'message' => 'Product not found.'], 404);
+        }
+
+        $comments = Comments::with(['customer', 'products'])
+            ->where('id_product', $product->id)
+            ->get();
+        if ($comments->isEmpty()) {
+            return response()->json(['check' => false, 'message' => 'Sản phẩm chưa có bình luận.']);
+        }
+
+        return response()->json(['check' => true, 'data' => $comments]);
     }
     public function getProductComment($id)
     {
